@@ -48,9 +48,9 @@
         }
         .tossing { animation: toss 1.2s ease-in-out; }
 
-        /* --- MENU BURGER & DROPDOWN --- */
+        /* --- MENU BURGER --- */
         #burger-btn { 
-            position: fixed; top: 15px; left: 15px; width: 50px; height: 50px; 
+            position: fixed; top: 20px; left: 20px; width: 45px; height: 45px; 
             background: rgba(255,255,255,0.15); border-radius: 12px; cursor: pointer; 
             display: none; z-index: 9000; align-items: center; justify-content: center; 
             font-size: 28px; border: 1px solid rgba(255,255,255,0.3); transition: 0.2s;
@@ -59,7 +59,7 @@
         #burger-btn:hover { background: rgba(255,255,255,0.25); transform: scale(1.05); }
 
         #ingame-menu {
-            position: fixed; top: 75px; left: 15px; width: 260px;
+            position: fixed; top: 75px; left: 20px; width: 260px;
             background: #1e293b; border: 1px solid rgba(255,255,255,0.2);
             border-radius: 15px; padding: 15px;
             display: none; flex-direction: column; gap: 10px;
@@ -132,7 +132,7 @@
         
         #sidebar { width: 300px; height: auto; max-height: 90vh; display: flex; flex-direction: column; gap: 15px; flex-shrink: 1; }
         
-        /* CARTE JOUEUR AVEC TRONCATURE */
+        /* CARTE JOUEUR */
         .card { 
             background: var(--sidebar-bg); padding: 10px 20px; 
             border-radius: 18px; border-left: 6px solid #475569; border-top: 1px solid rgba(255,255,255,0.1); 
@@ -146,7 +146,7 @@
         
         #controls { margin-top: auto; text-align: center; background: var(--sidebar-bg); padding: 20px; border-radius: 25px; border: var(--glass-border); }
         
-        /* CIBLES - CLIGNOTEMENT PARTOUT */
+        /* CIBLES */
         .target { animation: flash-neon 0.8s infinite alternate !important; z-index: 200 !important; border: 2px solid #fff !important; cursor: pointer; }
         .target-passive { animation: flash-neon 0.8s infinite alternate !important; z-index: 100 !important; border: 2px solid #fff !important; cursor: default; opacity: 0.6; }
         @keyframes flash-neon { 0% { box-shadow: 0 0 5px #fff, 0 0 10px #fff inset; transform: scale(1.1) rotate(var(--r)); } 100% { box-shadow: 0 0 15px #fff, 0 0 20px #fff inset; transform: scale(1.2) rotate(var(--r)); } }
@@ -178,7 +178,7 @@
         .rule-section { margin-bottom: 15px; font-size: 14px; line-height: 1.4; }
         .rule-title { color: var(--gold); font-weight:bold; font-size:16px; margin-bottom:5px; }
 
-        /* RESPONSIVE OPTIMISÉ */
+        /* RESPONSIVE */
         @media (max-width: 1100px) {
             #game-layout { flex-direction: column-reverse; width: 100%; height: 100vh; padding: 0; justify-content: flex-end; }
             #board-container { transform: scale(0.6); margin-bottom: -150px; margin-top: -80px; }
@@ -203,7 +203,7 @@
             #sidebar { height: 160px; }
             .card { flex: 1 1 45%; } 
             h1 { font-size: 24px; }
-            #chat-container { bottom: 160px; width: 100%; right: 0; }
+            #chat-container { bottom: 180px; width: 100%; right: 0; }
             .ans-btn { width: 100%; margin: 5px 0; padding: 15px; font-size: 14px; }
             #q-txt { font-size: 18px; margin: 15px 0; }
         }
@@ -335,9 +335,12 @@
 <div id="initiative-screen" class="screen" style="display:none;">
     <div class="setup-box">
         <h2>TIRAGE AU SORT</h2>
-        <p style="margin-bottom: 30px; color: #cbd5e1;">Chacun lance le dé. Le plus grand score commence !</p>
+        <p style="margin-bottom: 30px; color: #cbd5e1;">Chacun lance le dé pour déterminer l'ordre de jeu. Le plus grand score commence !</p>
         <p id="init-msg" style="font-size: 1.2em; font-weight: bold; color: var(--gold);">Qui commence ?</p>
-        <div id="dice-tray-init" style="width: 120px; height: 120px; margin: 0 auto 20px auto; perspective: 800px; display: flex; justify-content: center; align-items: center;"></div>
+        
+        <div id="dice-tray-init" style="width: 120px; height: 120px; margin: 0 auto 20px auto; perspective: 800px; display: flex; justify-content: center; align-items: center;">
+            </div>
+
         <button id="btn-init-roll" style="display:none;" onclick="actionInitiativeRoll()">LANCER LE DÉ</button>
         <div id="init-results" style="margin-top:20px; text-align:left;"></div>
     </div>
@@ -352,6 +355,7 @@
         <div id="players-div"></div>
         <div id="controls">
             <div id="msg" style="min-height:30px; margin-bottom:15px; font-weight:bold; color:#fbbf24; font-size: 16px;">En attente...</div>
+            
             <div id="dice-tray">
                 <div class="dice-cube" id="cube">
                     <div class="face face-1"><div class="dot" style="grid-area:2/2;"></div></div>
@@ -362,8 +366,9 @@
                     <div class="face face-6"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:1/3;"></div><div class="dot" style="grid-area:2/1;"></div><div class="dot" style="grid-area:2/3;"></div><div class="dot" style="grid-area:3/1;"></div><div class="dot" style="grid-area:3/3;"></div></div>
                 </div>
             </div>
+
             <button id="btn-roll" onclick="actionRoll()">LANCER LE DÉ</button>
-        </div>
+            </div>
     </div>
 </div>
 
@@ -385,6 +390,7 @@
 
 <audio id="sfx-dice" src="dice-95077.mp3" preload="auto"></audio>
 <audio id="sfx-correct" src="correct-156911.mp3" preload="auto"></audio>
+
 <audio id="sfx-wrong" src="https://assets.mixkit.co/active_storage/sfx/948/948-preview.mp3" preload="auto"></audio>
 <audio id="sfx-win" src="https://assets.mixkit.co/active_storage/sfx/1431/1431-preview.mp3" preload="auto"></audio>
 <audio id="bg-music" src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3" loop preload="auto"></audio>
@@ -399,12 +405,15 @@ const CATS = [
     {id:"SCI", c:"#22c55e", n:"Sciences"},
     {id:"SPO", c:"#f97316", n:"Sports"}
 ];
+
+// NOUVEAUX TAUX DE DIFFICULTÉ
 const DROP_RATES = {
     "EASY": { EASY: 50, NORMAL: 35, HARD: 12, IMPOSSIBLE: 3 },
     "NORMAL": { EASY: 15, NORMAL: 45, HARD: 30, IMPOSSIBLE: 10 },   
     "HARD": { EASY: 5, NORMAL: 20, HARD: 50, IMPOSSIBLE: 25 },       
     "IMPOSSIBLE": { EASY: 0, NORMAL: 5, HARD: 30, IMPOSSIBLE: 65 } 
 };
+// --- FIN CONFIGURATION ---
 
 // ... La suite du code (MASTER_DB) ne change pas ...
 
@@ -2813,7 +2822,7 @@ const MASTER_DB = {
 };
 
 // =============================================================================
-// 3. MOTEUR DU JEU (Partie Logique)
+// 3. MOTEUR DU JEU
 // =============================================================================
 
 let GAME_MODE = ''; 
@@ -2826,10 +2835,10 @@ let GAME_STATE = {
     phase: "LOBBY", 
     moves: [],
     question: null,
-    initRolls: {},     // Scores précis (décimaux) pour le tri
-    displayRolls: {},  // Scores affichés (entiers) pour l'UI
-    tiedPlayers: [],   // Liste des ID en égalité active
-    tieDepth: 0,       // Profondeur de l'égalité (0=unités, 1=dixièmes...)
+    initRolls: {},     
+    displayRolls: {},  
+    tiedPlayers: [],   
+    tieDepth: 0,       
     paused: false 
 };
 
@@ -2840,9 +2849,7 @@ let autoRollTimer = null;
 let autoMoveTimer = null; 
 let IS_MUTED = false; 
 
-// --- CONFIGURATION ---
-
-// Volumes (0.0 à 1.0)
+// --- CONFIGURATION VOLUMES ---
 const SOUND_VOLUMES = {
     'sfx-dice': 1.0,
     'sfx-correct': 1.0,
@@ -2852,7 +2859,7 @@ const SOUND_VOLUMES = {
     'sfx-click': 0.3   
 };
 
-// Config Réseau (STUN pour 4G)
+// --- CONFIG RESEAU (STUN) ---
 const PEER_CONFIG = {
     debug: 1,
     config: {
@@ -2875,18 +2882,13 @@ document.addEventListener('keydown', function(event) {
         let p = GAME_STATE.players[GAME_STATE.curr];
         let isMyTurn = (GAME_MODE === 'LOCAL' || (p && p.id === myPeerId));
 
-        // Phase Initiative : Si c'est mon tour et que je n'ai pas encore de score "finalisé" pour ce round
         if(GAME_STATE.phase === 'INITIATIVE' && isMyTurn) {
-            // On vérifie simplement si le bouton est affiché (sécurité visuelle)
             let btn = document.getElementById('btn-init-roll');
             if(btn && btn.style.display !== 'none') actionInitiativeRoll();
         }
-        // Phase Jeu : Si c'est mon tour et pas de question en cours
         else if(GAME_STATE.phase === 'GAME' && !GAME_STATE.question && isMyTurn) {
-            // Si pas de mouvement en attente, on lance le dé
             if(GAME_STATE.moves.length === 0) {
                 let btn = document.getElementById('btn-roll');
-                // On autorise le tir si le bouton n'est pas masqué (display: none)
                 if(btn && btn.style.display !== 'none') {
                     if(btn.classList.contains('btn-endgame')) actionEntry();
                     else actionRoll();
@@ -2897,19 +2899,16 @@ document.addEventListener('keydown', function(event) {
 });
 
 document.addEventListener('click', function(e) {
-    // Gestion fermeture menu burger au clic extérieur
     let m = document.getElementById('ingame-menu');
     let btn = document.getElementById('burger-btn');
     if(m.style.display === 'flex' && e.target !== m && !m.contains(e.target) && e.target !== btn) {
         m.style.display = 'none';
     }
 
-    // Bloquer clics si pause
     if(GAME_STATE.paused && e.target.id !== 'pause-overlay' && !e.target.closest('#pause-overlay') && !e.target.closest('#ingame-menu')) {
          e.stopPropagation(); return;
     }
     
-    // Son de clic SAUF sur les cibles de déplacement (car bruit de pas géré ailleurs)
     if(e.target.classList.contains('target') || e.target.classList.contains('target-passive')) return;
 
     if(e.target.tagName === 'BUTTON' || e.target.closest('button') || e.target.classList.contains('cell')) {
@@ -2975,7 +2974,6 @@ function updatePauseUI() {
         let m = document.getElementById('bg-music'); 
         if(!IS_MUTED) m.play().catch(()=>{});
         
-        // Relance les timers si nécessaire
         if(GAME_STATE.phase === 'GAME' && GAME_MODE === 'LOCAL') {
              if(GAME_STATE.question) startQuestionTimer(); 
              else if(GAME_STATE.moves.length > 0) startAutoMoveTimer();
@@ -3002,7 +3000,6 @@ function quitGame() {
     if(music) { music.pause(); music.currentTime = 0; }
     stopTimers();
     
-    // Reset total de l'UI
     document.getElementById('game-layout').style.visibility = 'hidden';
     document.getElementById('lobby-screen').style.display = 'none';
     document.getElementById('initiative-screen').style.display = 'none';
@@ -3067,8 +3064,7 @@ function broadcastChat(sender, color, txt) {
     if(GAME_MODE === 'HOST') hostConns.forEach(c => c.send(netMsg));
 }
 
-// --- INITIALISATION DU JEU ---
-
+// --- INITIALISATION ---
 function startLocalGame() {
     GAME_MODE = 'LOCAL';
     unlockAudio();
@@ -3169,7 +3165,7 @@ function initJoin() {
 
 function actionInitiativeRoll() {
     let btn = document.getElementById('btn-init-roll');
-    if(btn) btn.style.display = 'none'; // Anti-double clic visuel
+    if(btn) btn.style.display = 'none'; 
     if(GAME_MODE === 'LOCAL' || GAME_MODE === 'HOST') performInitiativeRoll();
     else myConn.send({ type: 'ACTION_INIT_ROLL', senderId: myPeerId });
 }
@@ -3178,51 +3174,37 @@ function performInitiativeRoll() {
     let roll = Math.floor(Math.random() * 6) + 1;
     let p = GAME_STATE.players[GAME_STATE.curr];
     
-    // Stockage valeur brute (1-6) pour l'affichage
     GAME_STATE.displayRolls[p.id] = roll;
 
-    // Calcul du score pondéré pour le tri
-    // Tour 0 (normal) : score = roll
-    // Tour 1 (égalité) : score = score_précédent + (roll / 10)
-    // Tour 2 (re-égalité) : score = score_précédent + (roll / 100)
     let increment = roll / Math.pow(10, GAME_STATE.tieDepth);
-    
-    if(GAME_STATE.initRolls[p.id] === undefined) GAME_STATE.initRolls[p.id] = 0;
+    if(!GAME_STATE.initRolls[p.id]) GAME_STATE.initRolls[p.id] = 0;
     GAME_STATE.initRolls[p.id] += increment;
     
     broadcastState('INIT_ANIM', { val: roll, pid: p.id });
     
     setTimeout(() => {
-        // Déterminer le groupe actif (tout le monde ou juste les égalités)
         let group = (GAME_STATE.tiedPlayers.length > 0) ? GAME_STATE.tiedPlayers : GAME_STATE.players.map(pl=>pl.id);
         let idxInGroup = group.indexOf(p.id);
         
         if(idxInGroup < group.length - 1) {
-            // Joueur suivant dans le groupe
             let nextId = group[idxInGroup + 1];
             GAME_STATE.curr = GAME_STATE.players.findIndex(pl => pl.id === nextId);
             broadcastState();
         } else {
-            // Fin du tour pour ce groupe -> Résolution
             resolveInitiative();
         }
-    }, 3000);
+    }, 1500);
 }
 
 function resolveInitiative() {
-    broadcastState(); // Rafraichir l'UI pour voir le dernier chiffre
-    
+    broadcastState(); 
     setTimeout(() => {
-        // 1. On trie TOUS les joueurs par leur score total (décimal) décroissant
         GAME_STATE.players.sort((a, b) => (GAME_STATE.initRolls[b.id] || 0) - (GAME_STATE.initRolls[a.id] || 0));
         
-        // 2. On analyse les égalités UNIQUEMENT dans le groupe qui vient de jouer
-        // (Les autres joueurs sont déjà "figés" à leur place grâce au tri global)
         let scoreMap = {};
         let activeGroup = (GAME_STATE.tiedPlayers.length > 0) ? GAME_STATE.tiedPlayers : GAME_STATE.players.map(pl=>pl.id);
         
         activeGroup.forEach(id => {
-            // On arrondit pour éviter les erreurs de flottants (ex: 4.600000001)
             let s = parseFloat((GAME_STATE.initRolls[id] || 0).toFixed(4));
             if(!scoreMap[s]) scoreMap[s] = [];
             scoreMap[s].push(id);
@@ -3236,25 +3218,18 @@ function resolveInitiative() {
         }
         
         if(newTies.length > 0) {
-            // Cas d'égalité trouvé dans le groupe
             GAME_STATE.tiedPlayers = newTies;
             GAME_STATE.tieDepth++; 
-            // Le premier joueur à relancer est le premier de la nouvelle liste d'égalité
-            // (Qui est déjà triée correctement par rapport aux autres grâce au sort global)
             GAME_STATE.curr = GAME_STATE.players.findIndex(p => p.id === newTies[0]);
-            
-            // On efface les scores affichés pour ceux qui relancent (pour montrer qu'ils rejouent)
             newTies.forEach(id => delete GAME_STATE.displayRolls[id]);
-            
             broadcastState('INIT_TIE', { tied: newTies });
         } else {
-            // Plus d'égalité dans le groupe -> L'ordre global est valide
             GAME_STATE.phase = "GAME";
-            GAME_STATE.curr = 0; // Le premier de la liste triée commence
+            GAME_STATE.curr = 0; 
             GAME_STATE.tiedPlayers = [];
             broadcastState('GAME_START');
         }
-    }, 2000);
+    }, 1000);
 }
 
 function updateInitiativeUI() {
@@ -3277,30 +3252,23 @@ function updateInitiativeUI() {
     let btn = document.getElementById('btn-init-roll');
     let resDiv = document.getElementById('init-results');
     
-    let html = "<h3>Scores :</h3>";
-    GAME_STATE.players.forEach(pl => {
-        let faceVal = GAME_STATE.displayRolls[pl.id];
-        let total = GAME_STATE.initRolls[pl.id];
-        
-        // Logique d'affichage :
-        // 1. Si on a une valeur de face récente, on l'affiche.
-        // 2. Si on est dans une égalité active (tiedPlayers) et pas de face, on met '?'
-        // 3. Si on a fini notre tour (pas tied) mais pas de face (ex: tours précédents), on affiche la partie entière du total
-        
-        let displayVal = '-';
-        if(faceVal !== undefined) {
-            displayVal = faceVal;
-        } else if (GAME_STATE.tiedPlayers.includes(pl.id)) {
-            displayVal = '?';
-        } else if (total !== undefined) {
-            // Récupérer le dernier lancer significatif depuis le total décimal
-            // Ex: 4.6 -> 6. Ex: 5 -> 5.
-            // Formule inverse : (total * 10^depth) % 10 (approximatif)
-            // Plus simple : On affiche la partie entière (le score principal) pour l'historique
-            displayVal = Math.floor(total);
-        }
+    let sortedList = [...GAME_STATE.players].sort((a, b) => (GAME_STATE.initRolls[b.id] || 0) - (GAME_STATE.initRolls[a.id] || 0));
 
-        html += `<div style="color:${pl.c}; font-size:18px; margin-bottom:5px;">
+    let html = "<h3>Classement :</h3>";
+    sortedList.forEach(pl => {
+        let total = GAME_STATE.initRolls[pl.id];
+        let displayVal = "-";
+        if (total !== undefined) {
+            if (GAME_STATE.tiedPlayers.includes(pl.id) && GAME_STATE.displayRolls[pl.id] === undefined) {
+                 let prevDepth = Math.max(0, GAME_STATE.tieDepth - 1);
+                 displayVal = parseFloat(total.toFixed(prevDepth)) + "...";
+            } else {
+                let decimals = GAME_STATE.tieDepth > 0 ? GAME_STATE.tieDepth : 0;
+                displayVal = parseFloat(total.toFixed(decimals)); 
+            }
+        }
+        let activeStyle = (pl.id === p.id) ? "border: 2px solid var(--gold); background: rgba(251, 191, 36, 0.15);" : "border: 1px solid transparent;";
+        html += `<div style="color:${pl.c}; font-size:18px; margin-bottom:5px; padding:8px; border-radius:8px; ${activeStyle} transition:0.3s;">
             ${pl.n} : <b>${displayVal}</b> 
         </div>`;
     });
@@ -3348,7 +3316,6 @@ function performMove(targetId) {
     let path = findPath(p.p, targetId, p);
     GAME_STATE.moves = []; 
     broadcastState('ANIM_MOVE', { playerId: p.id, path: path });
-    // Durée exacte = (nb_etapes * 280ms) + marge
     let duration = (path.length * 300) + 500; 
     
     setTimeout(() => {
@@ -3436,7 +3403,7 @@ function handleClientData(data) {
             document.getElementById('burger-btn').style.display = 'flex';
             if(GAME_MODE !== 'LOCAL') { let c = document.getElementById('chat-container'); c.style.display = 'flex'; c.classList.add('chat-collapsed'); }
             if(!IS_MUTED) safePlaySound('bg-music');
-            buildBoard(); buildLegend(); updateUI(); drawPawns();
+            setTimeout(() => { buildBoard(); buildLegend(); updateUI(); drawPawns(); }, 50);
         }
         else if(data.event === 'ROLL_ANIM') {
             GAME_STATE = data.state;
@@ -3488,32 +3455,18 @@ function tryMove(id) {
 function actionEntry() { if(GAME_MODE === 'LOCAL' || GAME_MODE === 'HOST') startEntry(); else myConn.send({ type: 'ACTION_ENTRY', senderId: myPeerId }); }
 function submitAnswer(txt) { if(GAME_MODE === 'LOCAL' || GAME_MODE === 'HOST') checkAnswer(txt); else myConn.send({ type: 'ACTION_ANSWER', senderId: myPeerId, txt: txt }); }
 
-// --- ANIMATION DÉ 3D ---
 function rollDice3D(result, cubeId) {
     let cube = document.getElementById(cubeId);
     let container = cube.parentElement;
-    
-    container.classList.remove('tossing');
-    void container.offsetWidth; 
-    container.classList.add('tossing'); 
-
+    container.classList.remove('tossing'); void container.offsetWidth; container.classList.add('tossing'); 
     safePlaySound('sfx-dice');
-
     let rx = 0, ry = 0;
-    if(result === 1) { rx = 0; ry = 0; }
-    if(result === 2) { rx = 0; ry = -90; }
-    if(result === 3) { rx = 0; ry = -180; }
-    if(result === 4) { rx = 0; ry = 90; }
-    if(result === 5) { rx = -90; ry = 0; }
-    if(result === 6) { rx = 90; ry = 0; }
-
-    let turnsX = (Math.floor(Math.random() * 2) + 2) * 360; 
-    let turnsY = (Math.floor(Math.random() * 2) + 2) * 360;
-
+    if(result === 1) { rx = 0; ry = 0; } if(result === 2) { rx = 0; ry = -90; } if(result === 3) { rx = 0; ry = -180; }
+    if(result === 4) { rx = 0; ry = 90; } if(result === 5) { rx = -90; ry = 0; } if(result === 6) { rx = 90; ry = 0; }
+    let turnsX = (Math.floor(Math.random() * 2) + 2) * 360; let turnsY = (Math.floor(Math.random() * 2) + 2) * 360;
     cube.style.transform = `rotateX(${rx + turnsX}deg) rotateY(${ry + turnsY}deg)`;
 }
 
-// --- ANIMATION PION ---
 function findPath(start, end, player = null) {
     let queue = [[start]];
     let visited = new Set(); visited.add(start);
@@ -3528,33 +3481,25 @@ function findPath(start, end, player = null) {
 
 function animatePawnMovement(playerId, path) {
     let pIdx = GAME_STATE.players.findIndex(p => p.id === playerId);
-    let pawns = document.getElementsByClassName('pawn');
+    let pawns = document.querySelectorAll('.pawn');
     let pawnEl = pawns[pIdx];
     if(!pawnEl) return;
-    
-    let realPath = path.slice(1); 
-    let step = 0;
-    
+    let realPath = path.slice(1); let step = 0;
     function moveStep() {
         if(step >= realPath.length) return;
         let cellId = realPath[step];
-        
         let x=380, y=380;
         if(cellId !== 999) { let el = document.getElementById('cell-' + cellId); if(el) { x = parseFloat(el.style.left) + 21; y = parseFloat(el.style.top) + 21; } }
         let count = GAME_STATE.players.filter(pl => pl.p === cellId).length; 
         if(count > 0 && cellId !== 999) { x += (pIdx*5)-10; y += (pIdx*5)-10; }
-        
         pawnEl.style.left = x + 'px'; pawnEl.style.top = y + 'px';
-        
         safePlaySound('sfx-click');
-        
         step++;
         if(step < realPath.length) setTimeout(moveStep, 280);
     }
     moveStep();
 }
 
-// --- TIMERS ---
 function startQuestionTimer() {
     stopTimers();
     let bar = document.getElementById('timer-bar');
@@ -3568,38 +3513,19 @@ function startAutoRollTimer() {
 }
 function startAutoMoveTimer() {
     stopTimers();
-    autoMoveTimer = setTimeout(() => {
-        if(GAME_STATE.moves.length > 0) {
-            let firstChoice = GAME_STATE.moves[0];
-            tryMove(firstChoice);
-        }
-    }, 10000);
+    autoMoveTimer = setTimeout(() => { if(GAME_STATE.moves.length > 0) { let firstChoice = GAME_STATE.moves[0]; tryMove(firstChoice); } }, 10000);
 }
 
-// --- UTILS & UI ---
 function unlockAudio() {
     const soundIds = ['sfx-dice', 'sfx-correct', 'sfx-wrong', 'sfx-win', 'bg-music', 'sfx-click'];
     soundIds.forEach(id => { let s = document.getElementById(id); if(s) s.load(); });
 }
-
 function safePlaySound(id) { 
     if(IS_MUTED) return;
-
-    let original = document.getElementById(id);
-    if(!original) return;
-
-    if (id === 'bg-music') {
-        original.volume = SOUND_VOLUMES[id] || 0.1;
-        let p = original.play(); if(p) p.catch(()=>{});
-        return;
-    }
-
-    let s = original.cloneNode(true);
-    s.volume = SOUND_VOLUMES[id] || 1.0;
-    
-    let p = s.play();
-    if(p) p.catch(()=>{});
-    s.onended = function() { s.remove(); };
+    let original = document.getElementById(id); if(!original) return;
+    if (id === 'bg-music') { original.volume = SOUND_VOLUMES[id] || 0.1; let p = original.play(); if(p) p.catch(()=>{}); return; }
+    let s = original.cloneNode(true); s.volume = SOUND_VOLUMES[id] || 1.0;
+    let p = s.play(); if(p) p.catch(()=>{}); s.onended = function() { s.remove(); };
 }
 
 function broadcastState(event, extra) { let msg = { type: 'STATE_UPDATE', state: GAME_STATE, event: event, extra: extra }; handleClientData(msg); if(GAME_MODE === 'HOST') hostConns.forEach(c => c.send(msg)); }
@@ -3609,8 +3535,6 @@ function addPlayerToLobby(id, name) { if(GAME_STATE.players.length >= 6) return;
 function initQuestionDecks() { AVAILABLE_INDICES = {}; for (let t in MASTER_DB) { AVAILABLE_INDICES[t] = {}; MASTER_DB[t].forEach((q, idx) => { let c = q[0]; if (!AVAILABLE_INDICES[t][c]) AVAILABLE_INDICES[t][c] = []; AVAILABLE_INDICES[t][c].push(idx); }); } }
 function pickQuestion(catId) { let rates = DROP_RATES[GAME_STATE.difficulty]; let r = Math.random() * 100, tier = "NORMAL"; if (r < rates.EASY) tier = "EASY"; else if (r < rates.EASY + rates.NORMAL) tier = "NORMAL"; else if (r < rates.EASY + rates.NORMAL + rates.HARD) tier = "HARD"; else tier = "IMPOSSIBLE"; let deck = AVAILABLE_INDICES[tier][catId]; if (!deck || !deck.length) deck = AVAILABLE_INDICES["NORMAL"][catId]; if (!deck || !deck.length) { MASTER_DB[tier].forEach((q, idx) => { if (q[0] === catId) deck.push(idx); }); } let rndIdx = Math.floor(Math.random() * deck.length); let qIdx = deck[rndIdx]; deck.splice(rndIdx, 1); let qRaw = MASTER_DB[tier][qIdx]; return { q: qRaw[1], r: [qRaw[2],qRaw[3],qRaw[4],qRaw[5]].sort(()=>Math.random()-0.5), bon: qRaw[2] }; }
 function calculatePossibleMoves(start, steps, p) { let dests = []; function explore(curr, rem, prev) { if(rem === 0) { dests.push(curr); return; } getNeighbors(curr, p).forEach(n => { if(n !== prev) explore(n, rem-1, curr); }); } explore(start, steps, -1); return [...new Set(dests)]; }
-
-// LOGIQUE DE SENS UNIQUE DANS LES RAYONS
 function getNeighbors(id, player = null) { 
     let n = []; 
     if(id === 999) { for(let r=0; r<6; r++) n.push(1000 + r*10 + 4); return n; } 
@@ -3631,11 +3555,24 @@ function getNeighbors(id, player = null) {
     } 
     return n; 
 }
-
 function buildBoard() { const c = document.getElementById('board-content'); c.innerHTML = ""; for(let i=0; i<42; i++) { let ang = (i * (360/42)) - 90; createCellDOM(i, 380 + 340 * Math.cos(ang * Math.PI/180), 380 + 340 * Math.sin(ang * Math.PI/180), (i%7===0) ? "qg" : ((i%7===2 || i%7===5) ? "roll" : "norm"), CATS[i%6], c, ang+90); } for(let r=0; r<6; r++) { let ang = (r * 7 * (360/42)) - 90; for(let s=0; s<5; s++) { let dist = 340 - ((s+1)*(340/6)); createCellDOM(1000 + r*10 + s, 380 + dist * Math.cos(ang * Math.PI/180), 380 + dist * Math.sin(ang * Math.PI/180), "spoke", CATS[(r+1+s)%6], c, ang+90); } } }
 function createCellDOM(id, x, y, type, cat, container, rot) { let d = document.createElement('div'); d.className = 'cell ' + (type==='qg'?'qg':(type==='roll'?'roll':'')); if(type!=='roll') { d.style.background = cat.c; d.style.boxShadow = `0 0 10px ${cat.c}`; } let s = (type==='qg') ? 58 : 42; d.style.left = (x - s/2) + 'px'; d.style.top = (y - s/2) + 'px'; d.style.transform = `rotate(${rot}deg)`; d.style.setProperty('--r', rot+'deg'); if(type==='qg') d.innerHTML='★'; if(type==='roll') d.innerHTML='RE<br>LANCE'; d.id = 'cell-' + id; d.onclick = () => tryMove(id); boardCells[id] = { type: type, cat: cat }; container.appendChild(d); }
 function buildLegend() { document.getElementById('legend').innerHTML = CATS.map(c => `<div class="legend-item"><div class="legend-color" style="background:${c.c}"></div><span>${c.n}</span></div>`).join(''); }
-function drawPawns() { document.querySelectorAll('.pawn').forEach(e=>e.remove()); GAME_STATE.players.forEach((p,i) => { let d = document.createElement('div'); d.className = 'pawn'; d.style.background = p.c; let x=380, y=380; if(p.p !== 999) { let el = document.getElementById('cell-' + p.p); if(el) { x = parseFloat(el.style.left) + 21; y = parseFloat(el.style.top) + 21; } } let count = GAME_STATE.players.filter(pl => pl.p === p.p).length; if(count > 1) { x += (i*5)-10; y += (i*5)-10; } d.style.left = x + 'px'; d.style.top = y + 'px'; document.getElementById('board-content').appendChild(d); }); }
+function drawPawns() { 
+    document.querySelectorAll('.pawn').forEach(e=>e.remove()); 
+    GAME_STATE.players.forEach((p,i) => { 
+        let d = document.createElement('div'); d.className = 'pawn'; d.style.background = p.c; 
+        let x=380, y=380; 
+        if(p.p !== 999) { 
+            let el = document.getElementById('cell-' + p.p); 
+            if(el) { x = parseFloat(el.style.left) + 21; y = parseFloat(el.style.top) + 21; } 
+        } 
+        let count = GAME_STATE.players.filter(pl => pl.p === p.p).length; 
+        if(count > 1) { x += (i*5)-10; y += (i*5)-10; } 
+        d.style.left = x + 'px'; d.style.top = y + 'px'; 
+        document.getElementById('board-container').appendChild(d); 
+    }); 
+}
 
 function updateUI() { 
     const div = document.getElementById('players-div'); div.innerHTML = ''; 
