@@ -14,7 +14,7 @@
         .screen { position: absolute; z-index: 6000; background: rgba(2, 6, 23, 0.98); width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .setup-box { background: rgba(255, 255, 255, 0.05); padding: 40px; border-radius: 30px; text-align: center; border: var(--glass-border); box-shadow: 0 0 60px rgba(0,0,0,0.6); width: 550px; max-width: 90%; max-height: 90vh; overflow-y: auto; backdrop-filter: blur(10px); }
         
-        /* --- DÉ 3D PHYSIQUE (FACES FERMÉES) --- */
+        /* --- DÉ 3D PHYSIQUE --- */
         #dice-tray {
             width: 120px; height: 120px; margin: 0 auto 20px auto;
             perspective: 800px; display: flex; justify-content: center; align-items: center;
@@ -38,32 +38,24 @@
         /* BOUTONS NAV */
         .nav-btn { 
             position: fixed; top: 15px; width: 45px; height: 45px; 
-            background: rgba(255,255,255,0.15); border-radius: 50%; cursor: pointer; 
+            background: rgba(255,255,255,0.15); border-radius: 12px; cursor: pointer; 
             display: none; z-index: 9000; align-items: center; justify-content: center; 
             font-size: 22px; border: 1px solid rgba(255,255,255,0.3); transition: 0.2s;
             backdrop-filter: blur(5px);
         }
         .nav-btn:hover { background: rgba(255,255,255,0.25); transform: scale(1.05); }
         #burger-btn { left: 15px; }
-        #home-btn { right: 15px; } /* Gardé en backup si besoin */
         
         #ingame-menu {
-            position: fixed; top: 75px; left: 20px; width: 260px;
+            position: fixed; top: 70px; left: 15px; width: 240px;
             background: #1e293b; border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 15px; padding: 15px;
-            display: none; flex-direction: column; gap: 10px;
+            border-radius: 15px; padding: 10px;
+            display: none; flex-direction: column; gap: 8px;
             z-index: 9000; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
         }
-        .menu-item {
-            background: rgba(255,255,255,0.05); border: none;
-            padding: 15px; text-align: left; font-size: 15px;
-            color: #fff; cursor: pointer; border-radius: 8px;
-            transition: 0.2s; display: flex; align-items: center; gap: 15px;
-            font-family: 'Montserrat', sans-serif; font-weight: 600;
-        }
-        .menu-item:hover { background: rgba(255,255,255,0.15); padding-left: 20px; }
+        .menu-item { background: rgba(255,255,255,0.05); border: none; padding: 12px; text-align: left; font-size: 14px; color: #fff; cursor: pointer; border-radius: 8px; transition: 0.2s; display: flex; align-items: center; gap: 10px; font-family: 'Montserrat', sans-serif; font-weight: 600; }
+        .menu-item:hover { background: rgba(255,255,255,0.15); padding-left: 15px; }
         .menu-item.danger { color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
-        .menu-item.danger:hover { background: rgba(239, 68, 68, 0.2); }
 
         /* UI GEN */
         h1 { font-size: 50px; color: var(--gold); margin-bottom: 30px; text-shadow: 0 0 30px rgba(251, 191, 36, 0.3); }
@@ -75,42 +67,24 @@
         .btn-secondary { background: transparent; border: 2px solid rgba(255,255,255,0.2); box-shadow: none; font-size: 14px; padding: 10px; }
         .btn-big { font-size: 24px; padding: 30px; margin-bottom: 20px; }
         
-        /* --- TCHAT FLOTTANT (BULLE) --- */
-        #chat-btn {
-            position: fixed; bottom: 20px; right: 20px; width: 55px; height: 55px;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            z-index: 20001; display: none; justify-content: center; align-items: center;
-            font-size: 26px; cursor: pointer; border: 2px solid rgba(255,255,255,0.2);
-            transition: transform 0.2s;
-        }
-        #chat-btn:hover { transform: scale(1.1); }
-        
-        /* BADGE ROUGE */
-        #chat-badge {
-            position: absolute; top: 0; right: 0; width: 14px; height: 14px;
-            background: #ef4444; border-radius: 50%; border: 2px solid #1e293b;
-            display: none;
-        }
-
-        /* FENETRE TCHAT */
+        /* --- TCHAT BARRE BASSE --- */
         #chat-container { 
-            position: fixed; bottom: 85px; right: 20px; width: 300px; 
-            background: #0f172a; border-radius: 15px; 
-            border: 1px solid rgba(255,255,255,0.2); 
-            z-index: 20000; 
-            display: none; flex-direction: column; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6); 
-            overflow: hidden;
+            position: fixed; bottom: 0; right: 20px; width: 300px; 
+            background: #0f172a; border-radius: 15px 15px 0 0; 
+            border: 1px solid rgba(255,255,255,0.2); z-index: 20000; 
+            display: none; flex-direction: column; transition: transform 0.3s; 
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.5); 
         }
-        #chat-header { padding: 12px; background: rgba(255,255,255,0.1); cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; }
+        #chat-header { padding: 10px; background: rgba(255,255,255,0.1); cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; }
         #chat-body { height: 300px; display: flex; flex-direction: column; }
         #chat-messages { flex: 1; overflow-y: auto; padding: 10px; font-size: 13px; text-align: left; }
         .chat-msg { margin-bottom: 8px; line-height: 1.4; word-wrap: break-word; }
         .chat-name { font-weight: bold; margin-right: 5px; }
         #chat-input-row { display: flex; border-top: 1px solid rgba(255,255,255,0.1); }
-        #chat-input { border: none; border-radius: 0; margin: 0; text-align: left; padding: 12px; background: transparent; }
-        #chat-send { width: 50px; border-radius: 0; margin: 0; font-size: 16px; padding: 0; background: rgba(255,255,255,0.1); box-shadow:none; }
+        #chat-input { border: none; border-radius: 0; margin: 0; text-align: left; padding: 10px; background: transparent; }
+        #chat-send { width: 50px; border-radius: 0; margin: 0; font-size: 14px; padding: 0; }
+        .chat-collapsed { transform: translateY(300px); } /* Caché sauf header */
+        #chat-notif { background: red; width: 10px; height: 10px; border-radius: 50%; display: none; }
 
         /* JEU LOBBY */
         #player-list { text-align: left; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 10px; margin: 20px 0; min-height: 100px; }
@@ -139,7 +113,6 @@
         .player-name { font-size: 16px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0; text-align: left; }
         .wedges { display: flex; gap: 3px; flex-shrink: 0; }
         .wedge { width: 14px; height: 14px; background: rgba(0,0,0,0.6); border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); }
-        
         #controls { margin-top: auto; text-align: center; background: var(--sidebar-bg); padding: 20px; border-radius: 25px; border: var(--glass-border); }
         
         .target { animation: flash-neon 0.8s infinite alternate !important; z-index: 200 !important; border: 2px solid #fff !important; cursor: pointer; }
@@ -174,14 +147,21 @@
         /* RESPONSIVE */
         @media (max-width: 1100px) {
             #game-layout { flex-direction: column-reverse; width: 100%; height: 100vh; padding: 0; justify-content: flex-end; }
-            #board-container { transform: scale(0.6); margin-bottom: -150px; margin-top: -80px; }
-            #sidebar { width: 100%; flex-direction: row; background: rgba(15, 23, 42, 0.95); padding: 8px; box-sizing: border-box; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.1); height: 200px; }
+            
+            /* PLATEAU PLUS GRAND ET MIEUX PLACÉ */
+            #board-container { transform: scale(0.55); margin-bottom: -120px; margin-top: -50px; }
+            
+            #sidebar { 
+                width: 100%; flex-direction: row; background: rgba(15, 23, 42, 0.95); padding: 8px; 
+                box-sizing: border-box; align-items: center; justify-content: space-between; 
+                border-top: 1px solid rgba(255,255,255,0.1); height: 140px;
+            }
             #players-div { display: flex; flex-wrap: wrap; gap: 5px; width: 55%; height: 100%; overflow-y: auto; justify-content: flex-start; align-content: flex-start; }
             .card { padding: 5px 8px; font-size: 11px; flex: 1 1 45%; min-width: 0; border-radius: 8px; }
             .player-name { font-size: 12px; }
             .wedge { width: 10px; height: 10px; }
             #controls { width: 40%; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: none; border: none; height: 100%; }
-            #dice-tray { width: 60px; height: 60px; perspective: 400px; margin: 0 0 15px 0; flex-shrink: 0; }
+            #dice-tray { width: 60px; height: 60px; perspective: 400px; margin: 0 0 10px 0; flex-shrink: 0; }
             .dice-cube { width: 50px; height: 50px; }
             .face { width: 50px; height: 50px; border-radius: 8px; padding: 4px; }
             .dot { width: 10px; height: 10px; }
@@ -189,18 +169,15 @@
             #btn-roll { width: 90%; padding: 12px; font-size: 14px; margin-top: 0; }
             #legend { display: none; }
             
-            /* TCHAT MOBILE : Placé au-dessus de la barre de contrôle */
-            #chat-btn { bottom: 210px; right: 10px; width: 45px; height: 45px; font-size: 20px; }
-            #chat-container { bottom: 270px; width: 260px; right: 10px; }
+            /* TCHAT BARRE BASSE FIXE (Mobile) */
+            #chat-container { width: 100%; right: 0; bottom: 0; border-radius: 15px 15px 0 0; }
         }
         @media (max-width: 900px) {
-            #game-layout { padding-top: 60px; }
-            #board-container { transform: scale(0.42); margin-top: -200px; margin-bottom: -200px; }
-            #sidebar { height: 160px; }
+            #game-layout { padding-top: 50px; } /* Moins de marge en haut */
+            #board-container { transform: scale(0.55); margin-top: -100px; margin-bottom: -100px; } /* Optimisation espace */
+            #sidebar { height: 150px; }
             .card { flex: 1 1 45%; } 
             h1 { font-size: 24px; }
-            #chat-btn { bottom: 170px; }
-            #chat-container { bottom: 230px; }
             .ans-btn { width: 100%; margin: 5px 0; padding: 15px; font-size: 14px; }
             #q-txt { font-size: 18px; margin: 15px 0; }
         }
@@ -224,40 +201,16 @@
 <div id="rules-overlay">
     <div id="rules-box">
         <h2 style="color:#fbbf24; text-align:center; margin-top:0;">RÈGLES DU JEU</h2>
-        <div class="rule-section">
-            <div class="rule-title">1. LE BUT</div>
-            Remplissez votre camembert en obtenant les 6 couleurs. Une fois rempli, retournez au Hub central pour la question finale.
-        </div>
-        <div class="rule-section">
-            <div class="rule-title">2. DÉPLACEMENT</div>
-            Lancez le dé. Vous pouvez vous déplacer dans n'importe quelle direction.
-            <br><i>Attention : Dans les rayons, c'est sens unique vers l'extérieur tant que vous n'avez pas les 6 couleurs !</i>
-        </div>
-        <div class="rule-section">
-            <div class="rule-title">3. CASES</div>
-            <b>Case Couleur :</b> Répondez correctement pour rejouer.
-            <br><b>Case QG (Grosse) :</b> Répondez correctement pour gagner le camembert de cette couleur !
-            <br><b>Case "RELANCE" :</b> Relancez immédiatement le dé.
-        </div>
-        <div class="rule-section">
-            <div class="rule-title">4. VICTOIRE</div>
-            Avec les 6 camemberts, remontez au centre. Si vous répondez juste à la question finale, vous gagnez !
-        </div>
-        <div style="text-align:center; margin-top:30px;">
-            <button onclick="closeRules()">FERMER</button>
-        </div>
+        <div class="rule-section"><div class="rule-title">1. LE BUT</div>Remplissez votre camembert en obtenant les 6 couleurs. Une fois rempli, retournez au Hub central pour la question finale.</div>
+        <div class="rule-section"><div class="rule-title">2. DÉPLACEMENT</div>Lancez le dé. Vous pouvez vous déplacer dans n'importe quelle direction.<br><i>Attention : Dans les rayons, c'est sens unique vers l'extérieur tant que vous n'avez pas les 6 couleurs !</i></div>
+        <div class="rule-section"><div class="rule-title">3. CASES</div><b>Case Couleur :</b> Répondez correctement pour rejouer.<br><b>Case QG (Grosse) :</b> Répondez correctement pour gagner le camembert !<br><b>Case "RELANCE" :</b> Relancez le dé.</div>
+        <div class="rule-section"><div class="rule-title">4. VICTOIRE</div>Avec les 6 camemberts, remontez au centre. Répondez juste à la question finale pour gagner !</div>
+        <div style="text-align:center; margin-top:30px;"><button onclick="closeRules()">FERMER</button></div>
     </div>
-</div>
-
-<div id="chat-btn" onclick="toggleChat()">
-    💬 <span id="chat-badge"></span>
 </div>
 
 <div id="chat-container">
-    <div id="chat-header" onclick="toggleChat()">
-        <span>MESSAGERIE</span>
-        <span style="opacity:0.5">▼</span>
-    </div>
+    <div id="chat-header" onclick="toggleChat()">💬 TCHAT <span id="chat-notif"></span></div>
     <div id="chat-body">
         <div id="chat-messages"></div>
         <div id="chat-input-row">
@@ -348,7 +301,6 @@
 </div>
 
 <div id="loading-overlay">Connexion...</div>
-
 <div id="legend"></div>
 <div id="game-layout">
     <div id="board-container"><div id="board-content"></div><div class="hub" id="hub-cell">HUB</div></div>
@@ -410,7 +362,6 @@ const DROP_RATES = {
     "HARD": { EASY: 5, NORMAL: 20, HARD: 50, IMPOSSIBLE: 25 },       
     "IMPOSSIBLE": { EASY: 0, NORMAL: 5, HARD: 30, IMPOSSIBLE: 65 } 
 };
-// --- FIN CONFIGURATION ---
 
 // ... La suite du code (MASTER_DB) ne change pas ...
 
@@ -2868,9 +2819,9 @@ document.addEventListener('keydown', function(event) {
         event.preventDefault(); 
         let p = GAME_STATE.players[GAME_STATE.curr];
         let isMyTurn = (GAME_MODE === 'LOCAL' || (p && p.id === myPeerId));
-        if(GAME_STATE.phase === 'INITIATIVE' && isMyTurn) {
-            let btn = document.getElementById('btn-init-roll');
-            if(btn && btn.style.display !== 'none') actionInitiativeRoll();
+
+        if(GAME_STATE.phase === 'INITIATIVE' && isMyTurn && !GAME_STATE.initRolls[p.id]) {
+            actionInitiativeRoll();
         }
         else if(GAME_STATE.phase === 'GAME' && !GAME_STATE.question && isMyTurn) {
             if(GAME_STATE.moves.length === 0) {
@@ -2888,15 +2839,7 @@ document.addEventListener('click', function(e) {
     let m = document.getElementById('ingame-menu');
     let btn = document.getElementById('burger-btn');
     if(m.style.display === 'flex' && e.target !== m && !m.contains(e.target) && e.target !== btn) m.style.display = 'none';
-
-    // Fermeture tchat au clic dehors
-    let chat = document.getElementById('chat-container');
-    let chatBtn = document.getElementById('chat-btn');
-    if(chat.style.display === 'flex' && e.target !== chat && !chat.contains(e.target) && !chatBtn.contains(e.target)) {
-        chat.style.display = 'none';
-        chatBtn.style.display = 'flex';
-    }
-
+    
     if(GAME_STATE.paused && e.target.id !== 'pause-overlay' && !e.target.closest('#pause-overlay') && !e.target.closest('#ingame-menu')) {
          e.stopPropagation(); return;
     }
@@ -2904,10 +2847,7 @@ document.addEventListener('click', function(e) {
     if(e.target.tagName === 'BUTTON' || e.target.closest('button') || e.target.classList.contains('cell')) safePlaySound('sfx-click');
 });
 
-function toggleGameMenu() {
-    let m = document.getElementById('ingame-menu');
-    m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
-}
+function toggleGameMenu() { let m = document.getElementById('ingame-menu'); m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; }
 function toggleGlobalSound() {
     IS_MUTED = !IS_MUTED;
     let btn = document.getElementById('menu-sound-text');
@@ -2945,51 +2885,32 @@ function quitGame() {
     document.getElementById('pause-overlay').style.display = 'none';
     document.getElementById('rules-overlay').style.display = 'none';
     document.getElementById('chat-container').style.display = 'none'; 
-    document.getElementById('chat-btn').style.display = 'none';
     GAME_STATE = { players: [], curr: 0, difficulty: "NORMAL", phase: "LOBBY", moves: [], question: null, initRolls:{}, displayRolls:{}, tiedPlayers:[], tieDepth:0, paused:false };
     document.getElementById('main-menu').style.display = 'flex';
 }
 function generateLocalInputs() {
-    let nb = document.getElementById('nb-players-local').value;
+    let nb = document.getElementById('nb-players-local').value; if(nb < 1) nb = 1; if(nb > 6) nb = 6;
     let c = document.getElementById('local-names-container'); c.innerHTML = "";
     for(let i=0; i<nb; i++) { let inp = document.createElement("input"); inp.type = "text"; inp.id = "local-p-"+i; inp.placeholder = "Nom Joueur "+(i+1); inp.value = "Joueur "+(i+1); c.appendChild(inp); }
 }
 
 // --- TCHAT ---
 function toggleChat() {
-    let c = document.getElementById('chat-container');
-    let btn = document.getElementById('chat-btn');
-    let badge = document.getElementById('chat-badge');
-    
-    if(c.style.display === 'flex') {
-        c.style.display = 'none';
-        btn.style.display = 'flex'; // On réaffiche le bouton
+    let h = document.getElementById('chat-container');
+    if(h.classList.contains('chat-collapsed')) {
+        h.classList.remove('chat-collapsed');
+        document.getElementById('chat-notif').style.display = 'none';
     } else {
-        c.style.display = 'flex';
-        btn.style.display = 'none'; // On cache le bouton quand ouvert
-        badge.style.display = 'none'; // On enlève la notif
+        h.classList.add('chat-collapsed');
     }
 }
 function sendChat() {
-    let input = document.getElementById('chat-input');
-    let txt = input.value.trim(); if(!txt) return;
-    let p = GAME_STATE.players.find(pl=>pl.id===myPeerId);
-    let col = p ? p.c : '#fff';
-    if(GAME_MODE === 'HOST') broadcastChat(myPseudo, col, txt);
-    else if(GAME_MODE === 'CLIENT') myConn.send({ type: 'ACTION_CHAT', senderId: myPeerId, msg: txt });
+    let input = document.getElementById('chat-input'); let txt = input.value.trim(); if(!txt) return;
+    let p = GAME_STATE.players.find(pl=>pl.id===myPeerId); let col = p ? p.c : '#fff';
+    if(GAME_MODE === 'HOST') broadcastChat(myPseudo, col, txt); else if(GAME_MODE === 'CLIENT') myConn.send({ type: 'ACTION_CHAT', senderId: myPeerId, msg: txt });
     input.value = "";
 }
-function addChatMessageToUI(sender, color, txt) {
-    let div = document.getElementById('chat-messages');
-    let d = document.createElement('div'); d.className = 'chat-msg'; d.innerHTML = `<span class="chat-name" style="color:${color}">${sender}:</span> ${txt}`; div.appendChild(d); div.scrollTop = div.scrollHeight;
-    
-    let c = document.getElementById('chat-container');
-    if(c.style.display === 'none') {
-        // Si fermé, on montre le badge sur le bouton
-        let badge = document.getElementById('chat-badge');
-        badge.style.display = 'block';
-    }
-}
+function addChatMessageToUI(sender, color, txt) { let div = document.getElementById('chat-messages'); let d = document.createElement('div'); d.className = 'chat-msg'; d.innerHTML = `<span class="chat-name" style="color:${color}">${sender}:</span> ${txt}`; div.appendChild(d); div.scrollTop = div.scrollHeight; let c = document.getElementById('chat-container'); if(c.classList.contains('chat-collapsed')) document.getElementById('chat-notif').style.display = 'inline-block'; }
 function broadcastChat(sender, color, txt) { addChatMessageToUI(sender, color, txt); let netMsg = { type: 'CHAT_BROADCAST', data: {sender:sender, color:color, msg:txt} }; if(GAME_MODE === 'HOST') hostConns.forEach(c => c.send(netMsg)); }
 
 // --- INITIALISATION ---
@@ -3021,24 +2942,31 @@ function hostStartGame() {
 }
 function initHost() {
     GAME_MODE = 'HOST'; myPseudo = document.getElementById('my-pseudo').value || "Hôte"; unlockAudio();
+    if(peer) { peer.destroy(); peer = null; }
     document.getElementById('loading-overlay').style.display = 'flex';
     peer = new Peer(null, PEER_CONFIG);
     peer.on('open', (id) => { myPeerId = id; document.getElementById('loading-overlay').style.display = 'none'; showLobby(); addPlayerToLobby(id, myPseudo); });
-    peer.on('connection', (conn) => { hostConns.push(conn); conn.on('data', (data) => handleHostData(conn, data)); conn.on('open', () => { setTimeout(() => { broadcastLobby(); }, 500); }); });
-    peer.on('error', (err) => { alert("Erreur PeerJS: "+err.type); document.getElementById('loading-overlay').style.display='none'; });
+    peer.on('connection', (conn) => {
+        hostConns.push(conn);
+        conn.on('data', (data) => handleHostData(conn, data));
+        conn.on('open', () => { setTimeout(() => { broadcastLobby(); }, 500); });
+    });
+    peer.on('error', (err) => { alert("Erreur Réseau: "+err.type); document.getElementById('loading-overlay').style.display='none'; });
 }
 function initJoin() {
     GAME_MODE = 'CLIENT'; myPseudo = document.getElementById('my-pseudo').value || "Invité"; unlockAudio();
     let hostId = document.getElementById('host-id-input').value.trim(); if(!hostId) return alert("Code manquant");
+    if(peer) { peer.destroy(); peer = null; }
     document.getElementById('loading-overlay').style.display = 'flex';
     peer = new Peer(null, PEER_CONFIG);
     peer.on('open', (id) => {
         myPeerId = id;
-        myConn = peer.connect(hostId, {serialization: 'json'});
+        myConn = peer.connect(hostId);
         myConn.on('open', () => { document.getElementById('loading-overlay').style.display = 'none'; showLobby(); myConn.send({ type: 'JOIN', name: myPseudo, id: myPeerId }); });
         myConn.on('data', (data) => handleClientData(data));
         myConn.on('error', () => { alert("Erreur connexion"); document.getElementById('loading-overlay').style.display = 'none'; });
     });
+    peer.on('error', (err) => { if(err.type === 'peer-unavailable') alert("Partie introuvable."); else alert("Erreur Réseau: " + err.type); document.getElementById('loading-overlay').style.display = 'none'; });
 }
 
 // --- LOGIQUE INITIATIVE ---
@@ -3052,19 +2980,25 @@ function actionInitiativeRoll() {
 function performInitiativeRoll() {
     let roll = Math.floor(Math.random() * 6) + 1;
     let p = GAME_STATE.players[GAME_STATE.curr];
+    
     GAME_STATE.displayRolls[p.id] = roll;
     let increment = roll / Math.pow(10, GAME_STATE.tieDepth);
     if(!GAME_STATE.initRolls[p.id]) GAME_STATE.initRolls[p.id] = 0;
     GAME_STATE.initRolls[p.id] += increment;
+    
     broadcastState('INIT_ANIM', { val: roll, pid: p.id });
+    
     setTimeout(() => {
         let group = (GAME_STATE.tiedPlayers.length > 0) ? GAME_STATE.tiedPlayers : GAME_STATE.players.map(pl=>pl.id);
         let idxInGroup = group.indexOf(p.id);
+        
         if(idxInGroup < group.length - 1) {
             let nextId = group[idxInGroup + 1];
             GAME_STATE.curr = GAME_STATE.players.findIndex(pl => pl.id === nextId);
             broadcastState();
-        } else resolveInitiative();
+        } else {
+            resolveInitiative();
+        }
     }, 1500);
 }
 
@@ -3072,15 +3006,19 @@ function resolveInitiative() {
     broadcastState(); 
     setTimeout(() => {
         GAME_STATE.players.sort((a, b) => (GAME_STATE.initRolls[b.id] || 0) - (GAME_STATE.initRolls[a.id] || 0));
+        
         let scoreMap = {};
         let group = (GAME_STATE.tiedPlayers.length > 0) ? GAME_STATE.tiedPlayers : GAME_STATE.players.map(pl=>pl.id);
+        
         group.forEach(id => {
             let s = parseFloat((GAME_STATE.initRolls[id] || 0).toFixed(4));
             if(!scoreMap[s]) scoreMap[s] = [];
             scoreMap[s].push(id);
         });
+
         let newTies = [];
         for(let s in scoreMap) { if(scoreMap[s].length > 1) newTies.push(...scoreMap[s]); }
+        
         if(newTies.length > 0) {
             GAME_STATE.tiedPlayers = newTies;
             GAME_STATE.tieDepth++; 
@@ -3093,22 +3031,28 @@ function resolveInitiative() {
             GAME_STATE.tiedPlayers = [];
             broadcastState('GAME_START');
         }
-    }, 1000);
+    }, 1500);
 }
 
 function updateInitiativeUI() {
     document.getElementById('lobby-screen').style.display = 'none';
     document.getElementById('initiative-screen').style.display = 'flex';
     document.getElementById('game-layout').style.visibility = 'hidden';
+    
     let container = document.getElementById('dice-tray-init');
     if(container.innerHTML.trim() === '') {
         let original = document.querySelector('.dice-cube');
         if(original) { let clone = original.cloneNode(true); clone.id = 'cube-init'; container.appendChild(clone); }
     }
+
     let p = GAME_STATE.players[GAME_STATE.curr];
     let msg = document.getElementById('init-msg');
     let btn = document.getElementById('btn-init-roll');
     let resDiv = document.getElementById('init-results');
+    
+    // Masquer par défaut (important pour le fix du bug "tous les boutons")
+    btn.style.display = 'none';
+
     let sortedList = [...GAME_STATE.players].sort((a, b) => (GAME_STATE.initRolls[b.id] || 0) - (GAME_STATE.initRolls[a.id] || 0));
     let html = "<h3>Classement :</h3>";
     sortedList.forEach(pl => {
@@ -3127,10 +3071,26 @@ function updateInitiativeUI() {
         html += `<div style="color:${pl.c}; font-size:18px; margin-bottom:5px; padding:8px; border-radius:8px; ${activeStyle} transition:0.3s;">${pl.n} : <b>${displayVal}</b></div>`;
     });
     resDiv.innerHTML = html;
+
     if(GAME_STATE.tiedPlayers.length > 0) msg.innerText = "ÉGALITÉ ! " + p.n + " départage !";
     else msg.innerText = "Tour de " + p.n + " pour l'ordre du jeu";
+
     let isMyTurn = (GAME_MODE === 'LOCAL' || p.id === myPeerId);
-    if(isMyTurn) { btn.style.display = 'inline-block'; btn.disabled = false; } else { btn.style.display = 'none'; }
+    // Le bouton ne s'affiche que si c'est mon tour ET que je n'ai pas encore lancé (pour éviter le spam)
+    // Si je suis dans tiedPlayers, je dois relancer. Si personne n'est tied, tout le monde lance.
+    let needsToRoll = false;
+    if (GAME_STATE.tiedPlayers.length === 0) {
+        // Tour normal : Si pas de score ou score pas encore affiché
+        if (GAME_STATE.initRolls[p.id] === undefined) needsToRoll = true;
+    } else {
+        // Tour d'égalité : Si je suis dans la liste des égalités et pas encore de score affiché
+        if (GAME_STATE.tiedPlayers.includes(p.id) && GAME_STATE.displayRolls[p.id] === undefined) needsToRoll = true;
+    }
+
+    if(isMyTurn && needsToRoll) {
+        btn.style.display = 'inline-block';
+        btn.disabled = false;
+    }
 }
 
 // --- LOGIQUE JEU ---
@@ -3140,6 +3100,7 @@ function stopTimers() {
     if(autoMoveTimer) clearTimeout(autoMoveTimer);
     questionTimer = null; autoRollTimer = null; autoMoveTimer = null;
 }
+
 function performRoll() {
     stopTimers();
     let btn = document.getElementById('btn-roll');
@@ -3152,6 +3113,7 @@ function performRoll() {
 function performMove(targetId) {
     stopTimers();
     let p = GAME_STATE.players[GAME_STATE.curr];
+    // CORRECTION ICI : on passe bien 'p' pour gérer le sens unique
     let path = findPath(p.p, targetId, p);
     GAME_STATE.moves = []; 
     broadcastState('ANIM_MOVE', { playerId: p.id, path: path });
@@ -3225,7 +3187,7 @@ function handleClientData(data) {
             document.getElementById('initiative-screen').style.display = 'none';
             document.getElementById('game-layout').style.visibility = 'visible';
             document.getElementById('burger-btn').style.display = 'flex';
-            document.getElementById('chat-btn').style.display = (GAME_MODE !== 'LOCAL' ? 'flex' : 'none');
+            if(GAME_MODE !== 'LOCAL') { let c = document.getElementById('chat-container'); c.style.display = 'flex'; c.classList.add('chat-collapsed'); }
             if(!IS_MUTED) safePlaySound('bg-music');
             setTimeout(() => { buildBoard(); buildLegend(); updateUI(); drawPawns(); }, 50);
         }
