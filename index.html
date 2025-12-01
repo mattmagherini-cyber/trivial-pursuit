@@ -35,29 +35,17 @@
         @keyframes toss { 0% { transform: translateY(0) rotateZ(0); } 30% { transform: translateY(-120px) rotateZ(10deg); } 60% { transform: translateY(0) rotateZ(-5deg); } 80% { transform: translateY(-30px) rotateZ(2deg); } 100% { transform: translateY(0) rotateZ(0); } }
         .tossing { animation: toss 1.2s ease-in-out; }
 
-        /* BOUTONS NAV */
-        .nav-btn { 
-            position: fixed; top: 15px; width: 45px; height: 45px; 
-            background: rgba(255,255,255,0.15); border-radius: 12px; cursor: pointer; 
-            display: none; z-index: 9000; align-items: center; justify-content: center; 
-            font-size: 22px; border: 1px solid rgba(255,255,255,0.3); transition: 0.2s;
-            backdrop-filter: blur(5px);
-        }
+        /* NAV */
+        .nav-btn { position: fixed; top: 15px; width: 45px; height: 45px; background: rgba(255,255,255,0.15); border-radius: 12px; cursor: pointer; display: none; z-index: 9000; align-items: center; justify-content: center; font-size: 28px; border: 1px solid rgba(255,255,255,0.3); transition: 0.2s; backdrop-filter: blur(5px); }
         .nav-btn:hover { background: rgba(255,255,255,0.25); transform: scale(1.05); }
         #burger-btn { left: 15px; }
         
-        #ingame-menu {
-            position: fixed; top: 70px; left: 15px; width: 240px;
-            background: #1e293b; border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 15px; padding: 10px;
-            display: none; flex-direction: column; gap: 8px;
-            z-index: 9000; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-        }
-        .menu-item { background: rgba(255,255,255,0.05); border: none; padding: 12px; text-align: left; font-size: 14px; color: #fff; cursor: pointer; border-radius: 8px; transition: 0.2s; display: flex; align-items: center; gap: 10px; font-family: 'Montserrat', sans-serif; font-weight: 600; }
-        .menu-item:hover { background: rgba(255,255,255,0.15); padding-left: 15px; }
+        #ingame-menu { position: fixed; top: 75px; left: 20px; width: 260px; background: #1e293b; border: 1px solid rgba(255,255,255,0.2); border-radius: 15px; padding: 15px; display: none; flex-direction: column; gap: 10px; z-index: 9000; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
+        .menu-item { background: rgba(255,255,255,0.05); border: none; padding: 15px; text-align: left; font-size: 15px; color: #fff; cursor: pointer; border-radius: 8px; transition: 0.2s; display: flex; align-items: center; gap: 15px; font-family: 'Montserrat', sans-serif; font-weight: 600; }
+        .menu-item:hover { background: rgba(255,255,255,0.15); padding-left: 20px; }
         .menu-item.danger { color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
 
-        /* UI GEN */
+        /* UI */
         h1 { font-size: 50px; color: var(--gold); margin-bottom: 30px; text-shadow: 0 0 30px rgba(251, 191, 36, 0.3); }
         input, select { padding: 12px; font-size: 16px; width: 100%; box-sizing: border-box; text-align: center; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: #fff; font-weight: bold; font-family: 'Montserrat', sans-serif; margin-bottom: 10px; outline: none; transition: 0.3s; }
         label { display: block; margin: 15px 0 5px; font-size: 14px; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; }
@@ -67,14 +55,8 @@
         .btn-secondary { background: transparent; border: 2px solid rgba(255,255,255,0.2); box-shadow: none; font-size: 14px; padding: 10px; }
         .btn-big { font-size: 24px; padding: 30px; margin-bottom: 20px; }
         
-        /* --- TCHAT BARRE BASSE --- */
-        #chat-container { 
-            position: fixed; bottom: 0; right: 20px; width: 300px; 
-            background: #0f172a; border-radius: 15px 15px 0 0; 
-            border: 1px solid rgba(255,255,255,0.2); z-index: 20000; 
-            display: none; flex-direction: column; transition: transform 0.3s; 
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.5); 
-        }
+        /* TCHAT BARRE BASSE */
+        #chat-container { position: fixed; bottom: 0; right: 20px; width: 300px; background: #0f172a; border-radius: 15px 15px 0 0; border: 1px solid rgba(255,255,255,0.2); z-index: 20000; display: none; flex-direction: column; transition: transform 0.3s; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); }
         #chat-header { padding: 10px; background: rgba(255,255,255,0.1); cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; }
         #chat-body { height: 300px; display: flex; flex-direction: column; }
         #chat-messages { flex: 1; overflow-y: auto; padding: 10px; font-size: 13px; text-align: left; }
@@ -83,24 +65,17 @@
         #chat-input-row { display: flex; border-top: 1px solid rgba(255,255,255,0.1); }
         #chat-input { border: none; border-radius: 0; margin: 0; text-align: left; padding: 10px; background: transparent; }
         #chat-send { width: 50px; border-radius: 0; margin: 0; font-size: 14px; padding: 0; }
-        .chat-collapsed { transform: translateY(300px); } /* Caché sauf header */
+        .chat-collapsed { transform: translateY(300px); }
         #chat-notif { background: red; width: 10px; height: 10px; border-radius: 50%; display: none; }
 
-        /* JEU LOBBY */
+        /* JEU */
         #player-list { text-align: left; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 10px; margin: 20px 0; min-height: 100px; }
         .lobby-p { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
         .lobby-dot { width: 12px; height: 12px; border-radius: 50%; }
         #host-id-display { font-size: 24px; font-weight: 900; color: #4ade80; letter-spacing: 2px; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 10px; margin: 10px 0; user-select: text; cursor: pointer; }
         
-        /* LAYOUT */
         #game-layout { display: flex; gap: 20px; align-items: center; justify-content: center; visibility: hidden; width: 100%; height: 100%; overflow: hidden; } 
-        #board-container { 
-            width: 760px; height: 760px; position: relative; 
-            background: rgba(255, 255, 255, 0.02); border-radius: 50%; 
-            box-shadow: 0 0 120px rgba(0,0,0,0.6), inset 0 0 60px rgba(0,0,0,0.8); 
-            border: 2px solid rgba(255,255,255,0.08); 
-            flex-shrink: 0; transform-origin: center center; transition: transform 0.3s;
-        }
+        #board-container { width: 760px; height: 760px; position: relative; background: rgba(255, 255, 255, 0.02); border-radius: 50%; box-shadow: 0 0 120px rgba(0,0,0,0.6), inset 0 0 60px rgba(0,0,0,0.8); border: 2px solid rgba(255,255,255,0.08); flex-shrink: 0; transform-origin: center center; transition: transform 0.3s; }
         .cell { position: absolute; width: 42px; height: 42px; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 10px; font-weight: bold; color: rgba(255,255,255,0.95); box-shadow: inset 0 0 8px rgba(0,0,0,0.4), 0 4px 6px rgba(0,0,0,0.3); cursor: pointer; z-index: 5; transition: transform 0.2s; border: 1px solid rgba(255,255,255,0.2); text-align:center; line-height:1; }
         .cell.qg { width: 58px; height: 58px; border: 3px solid #fff; z-index: 10; border-radius: 12px; font-size: 24px; box-shadow: 0 0 20px rgba(255,255,255,0.3); }
         .cell.roll { background: linear-gradient(135deg, #fff, #cbd5e1) !important; color: #000 !important; font-size: 9px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
@@ -147,15 +122,8 @@
         /* RESPONSIVE */
         @media (max-width: 1100px) {
             #game-layout { flex-direction: column-reverse; width: 100%; height: 100vh; padding: 0; justify-content: flex-end; }
-            
-            /* PLATEAU PLUS GRAND ET MIEUX PLACÉ */
-            #board-container { transform: scale(0.55); margin-bottom: -120px; margin-top: -50px; }
-            
-            #sidebar { 
-                width: 100%; flex-direction: row; background: rgba(15, 23, 42, 0.95); padding: 8px; 
-                box-sizing: border-box; align-items: center; justify-content: space-between; 
-                border-top: 1px solid rgba(255,255,255,0.1); height: 140px;
-            }
+            #board-container { transform: scale(0.55); margin-bottom: -120px; margin-top: -50px; } /* Échelle 0.55 pour agrandir un peu */
+            #sidebar { width: 100%; flex-direction: row; background: rgba(15, 23, 42, 0.95); padding: 8px; box-sizing: border-box; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.1); height: 140px; }
             #players-div { display: flex; flex-wrap: wrap; gap: 5px; width: 55%; height: 100%; overflow-y: auto; justify-content: flex-start; align-content: flex-start; }
             .card { padding: 5px 8px; font-size: 11px; flex: 1 1 45%; min-width: 0; border-radius: 8px; }
             .player-name { font-size: 12px; }
@@ -168,13 +136,11 @@
             .face-1 { transform: rotateY(0deg) translateZ(25px); } .face-2 { transform: rotateY(90deg) translateZ(25px); } .face-3 { transform: rotateY(180deg) translateZ(25px); } .face-4 { transform: rotateY(-90deg) translateZ(25px); } .face-5 { transform: rotateX(90deg) translateZ(25px); } .face-6 { transform: rotateX(-90deg) translateZ(25px); }
             #btn-roll { width: 90%; padding: 12px; font-size: 14px; margin-top: 0; }
             #legend { display: none; }
-            
-            /* TCHAT BARRE BASSE FIXE (Mobile) */
-            #chat-container { width: 100%; right: 0; bottom: 0; border-radius: 15px 15px 0 0; }
+            #chat-container { bottom: 0; width: 100%; right: 0; border-radius: 15px 15px 0 0; } /* Tchat barre basse mobile */
         }
         @media (max-width: 900px) {
-            #game-layout { padding-top: 50px; } /* Moins de marge en haut */
-            #board-container { transform: scale(0.55); margin-top: -100px; margin-bottom: -100px; } /* Optimisation espace */
+            #game-layout { padding-top: 50px; }
+            #board-container { transform: scale(0.55); margin-top: -100px; margin-bottom: -100px; }
             #sidebar { height: 150px; }
             .card { flex: 1 1 45%; } 
             h1 { font-size: 24px; }
@@ -301,6 +267,7 @@
 </div>
 
 <div id="loading-overlay">Connexion...</div>
+
 <div id="legend"></div>
 <div id="game-layout">
     <div id="board-container"><div id="board-content"></div><div class="hub" id="hub-cell">HUB</div></div>
@@ -2770,7 +2737,7 @@ const MASTER_DB = {
 };
 
 // =============================================================================
-// 3. MOTEUR DU JEU
+// 3. MOTEUR DU JEU (FINAL)
 // =============================================================================
 
 let GAME_MODE = ''; 
@@ -2820,8 +2787,16 @@ document.addEventListener('keydown', function(event) {
         let p = GAME_STATE.players[GAME_STATE.curr];
         let isMyTurn = (GAME_MODE === 'LOCAL' || (p && p.id === myPeerId));
 
-        if(GAME_STATE.phase === 'INITIATIVE' && isMyTurn && !GAME_STATE.initRolls[p.id]) {
-            actionInitiativeRoll();
+        if(GAME_STATE.phase === 'INITIATIVE' && isMyTurn) {
+            // On vérifie si le joueur DOIT jouer (pas de score affiché pour ce tour)
+            let needsToRoll = false;
+            if (GAME_STATE.tiedPlayers.length === 0) {
+                if (GAME_STATE.initRolls[p.id] === undefined) needsToRoll = true;
+            } else {
+                if (GAME_STATE.tiedPlayers.includes(p.id) && GAME_STATE.displayRolls[p.id] === undefined) needsToRoll = true;
+            }
+            
+            if(needsToRoll) actionInitiativeRoll();
         }
         else if(GAME_STATE.phase === 'GAME' && !GAME_STATE.question && isMyTurn) {
             if(GAME_STATE.moves.length === 0) {
@@ -2839,7 +2814,7 @@ document.addEventListener('click', function(e) {
     let m = document.getElementById('ingame-menu');
     let btn = document.getElementById('burger-btn');
     if(m.style.display === 'flex' && e.target !== m && !m.contains(e.target) && e.target !== btn) m.style.display = 'none';
-    
+
     if(GAME_STATE.paused && e.target.id !== 'pause-overlay' && !e.target.closest('#pause-overlay') && !e.target.closest('#ingame-menu')) {
          e.stopPropagation(); return;
     }
@@ -2895,15 +2870,7 @@ function generateLocalInputs() {
 }
 
 // --- TCHAT ---
-function toggleChat() {
-    let h = document.getElementById('chat-container');
-    if(h.classList.contains('chat-collapsed')) {
-        h.classList.remove('chat-collapsed');
-        document.getElementById('chat-notif').style.display = 'none';
-    } else {
-        h.classList.add('chat-collapsed');
-    }
-}
+function toggleChat() { let h = document.getElementById('chat-container'); if(h.classList.contains('chat-collapsed')) { h.classList.remove('chat-collapsed'); document.getElementById('chat-notif').style.display = 'none'; } else { h.classList.add('chat-collapsed'); } }
 function sendChat() {
     let input = document.getElementById('chat-input'); let txt = input.value.trim(); if(!txt) return;
     let p = GAME_STATE.players.find(pl=>pl.id===myPeerId); let col = p ? p.c : '#fff';
@@ -2961,7 +2928,7 @@ function initJoin() {
     peer = new Peer(null, PEER_CONFIG);
     peer.on('open', (id) => {
         myPeerId = id;
-        myConn = peer.connect(hostId);
+        myConn = peer.connect(hostId, {serialization: 'json'});
         myConn.on('open', () => { document.getElementById('loading-overlay').style.display = 'none'; showLobby(); myConn.send({ type: 'JOIN', name: myPseudo, id: myPeerId }); });
         myConn.on('data', (data) => handleClientData(data));
         myConn.on('error', () => { alert("Erreur connexion"); document.getElementById('loading-overlay').style.display = 'none'; });
@@ -3017,7 +2984,9 @@ function resolveInitiative() {
         });
 
         let newTies = [];
-        for(let s in scoreMap) { if(scoreMap[s].length > 1) newTies.push(...scoreMap[s]); }
+        for(let s in scoreMap) {
+            if(scoreMap[s].length > 1) newTies.push(...scoreMap[s]);
+        }
         
         if(newTies.length > 0) {
             GAME_STATE.tiedPlayers = newTies;
@@ -3031,7 +3000,7 @@ function resolveInitiative() {
             GAME_STATE.tiedPlayers = [];
             broadcastState('GAME_START');
         }
-    }, 1500);
+    }, 1000);
 }
 
 function updateInitiativeUI() {
@@ -3050,10 +3019,11 @@ function updateInitiativeUI() {
     let btn = document.getElementById('btn-init-roll');
     let resDiv = document.getElementById('init-results');
     
-    // Masquer par défaut (important pour le fix du bug "tous les boutons")
+    // Masquer par défaut
     btn.style.display = 'none';
 
     let sortedList = [...GAME_STATE.players].sort((a, b) => (GAME_STATE.initRolls[b.id] || 0) - (GAME_STATE.initRolls[a.id] || 0));
+
     let html = "<h3>Classement :</h3>";
     sortedList.forEach(pl => {
         let total = GAME_STATE.initRolls[pl.id];
@@ -3076,14 +3046,14 @@ function updateInitiativeUI() {
     else msg.innerText = "Tour de " + p.n + " pour l'ordre du jeu";
 
     let isMyTurn = (GAME_MODE === 'LOCAL' || p.id === myPeerId);
-    // Le bouton ne s'affiche que si c'est mon tour ET que je n'ai pas encore lancé (pour éviter le spam)
-    // Si je suis dans tiedPlayers, je dois relancer. Si personne n'est tied, tout le monde lance.
+    
+    // CORRECTION BUG : Le bouton ne s'affiche que si je DOIS jouer
     let needsToRoll = false;
     if (GAME_STATE.tiedPlayers.length === 0) {
-        // Tour normal : Si pas de score ou score pas encore affiché
+        // Tour normal
         if (GAME_STATE.initRolls[p.id] === undefined) needsToRoll = true;
     } else {
-        // Tour d'égalité : Si je suis dans la liste des égalités et pas encore de score affiché
+        // Egalité
         if (GAME_STATE.tiedPlayers.includes(p.id) && GAME_STATE.displayRolls[p.id] === undefined) needsToRoll = true;
     }
 
@@ -3100,7 +3070,6 @@ function stopTimers() {
     if(autoMoveTimer) clearTimeout(autoMoveTimer);
     questionTimer = null; autoRollTimer = null; autoMoveTimer = null;
 }
-
 function performRoll() {
     stopTimers();
     let btn = document.getElementById('btn-roll');
@@ -3113,7 +3082,6 @@ function performRoll() {
 function performMove(targetId) {
     stopTimers();
     let p = GAME_STATE.players[GAME_STATE.curr];
-    // CORRECTION ICI : on passe bien 'p' pour gérer le sens unique
     let path = findPath(p.p, targetId, p);
     GAME_STATE.moves = []; 
     broadcastState('ANIM_MOVE', { playerId: p.id, path: path });
