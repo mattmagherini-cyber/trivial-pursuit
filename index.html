@@ -14,7 +14,7 @@
         .screen { position: absolute; z-index: 6000; background: rgba(2, 6, 23, 0.98); width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .setup-box { background: rgba(255, 255, 255, 0.05); padding: 40px; border-radius: 30px; text-align: center; border: var(--glass-border); box-shadow: 0 0 60px rgba(0,0,0,0.6); width: 550px; max-width: 90%; max-height: 90vh; overflow-y: auto; backdrop-filter: blur(10px); }
         
-        /* --- DÉ 3D PHYSIQUE (FACES FERMÉES) --- */
+        /* --- DÉ 3D PHYSIQUE --- */
         #dice-tray {
             width: 120px; height: 120px; margin: 0 auto 20px auto;
             perspective: 800px; display: flex; justify-content: center; align-items: center;
@@ -26,7 +26,7 @@
         }
         .face {
             position: absolute; width: 80px; height: 80px; background: #fdfbf7;
-            border: 2px solid #d1d5db; /* Arêtes nettes, pas de border-radius */
+            border: 2px solid #d1d5db; /* Arêtes nettes */
             box-shadow: inset 0 0 15px rgba(0,0,0,0.1);
             display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); padding: 8px; box-sizing: border-box;
         }
@@ -86,8 +86,17 @@
         .btn-secondary { background: transparent; border: 2px solid rgba(255,255,255,0.2); box-shadow: none; font-size: 14px; padding: 10px; }
         .btn-big { font-size: 24px; padding: 30px; margin-bottom: 20px; }
         
-        /* TCHAT */
-        #chat-container { position: fixed; bottom: 0; right: 20px; width: 300px; background: #0f172a; border-radius: 15px 15px 0 0; border: 1px solid rgba(255,255,255,0.2); z-index: 20000; display: none; flex-direction: column; transition: transform 0.3s; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); }
+        /* TCHAT CORRIGÉ : PETIT BOUTON */
+        #chat-container { 
+            position: fixed; bottom: 20px; right: 20px; 
+            width: 300px; /* Largeur fixe même sur mobile */
+            background: #0f172a; border-radius: 15px 15px 0 0; 
+            border: 1px solid rgba(255,255,255,0.2); 
+            z-index: 20000; 
+            display: none; flex-direction: column; 
+            transition: transform 0.3s; 
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.5); 
+        }
         #chat-header { padding: 10px; background: rgba(255,255,255,0.1); cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; border-radius: 15px 15px 0 0; }
         #chat-body { height: 300px; display: flex; flex-direction: column; }
         #chat-messages { flex: 1; overflow-y: auto; padding: 10px; font-size: 13px; text-align: left; }
@@ -127,7 +136,7 @@
             position: absolute; 
             transition: left 0.28s linear, top 0.28s linear; 
             box-shadow: 0 5px 15px rgba(0,0,0,0.8); 
-            z-index: 500; /* Au dessus de tout */
+            z-index: 500; 
             transform: translate(-50%, -50%); 
             pointer-events: none; 
         }
@@ -197,7 +206,8 @@
             .face-1 { transform: rotateY(0deg) translateZ(25px); } .face-2 { transform: rotateY(90deg) translateZ(25px); } .face-3 { transform: rotateY(180deg) translateZ(25px); } .face-4 { transform: rotateY(-90deg) translateZ(25px); } .face-5 { transform: rotateX(90deg) translateZ(25px); } .face-6 { transform: rotateX(-90deg) translateZ(25px); }
             #btn-roll { width: 90%; padding: 12px; font-size: 14px; margin-top: 0; }
             #legend { display: none; }
-            #chat-container { bottom: 200px; } 
+            /* CORRECTION TCHAT MOBILE : Largeur fixe et ne cache pas le jeu */
+            #chat-container { bottom: 200px; width: 280px; right: 10px; } 
         }
         @media (max-width: 900px) {
             #game-layout { padding-top: 60px; }
@@ -205,7 +215,7 @@
             #sidebar { height: 160px; }
             .card { flex: 1 1 45%; } 
             h1 { font-size: 24px; }
-            #chat-container { bottom: 180px; width: 100%; right: 0; }
+            #chat-container { bottom: 160px; }
             .ans-btn { width: 100%; margin: 5px 0; padding: 15px; font-size: 14px; }
             #q-txt { font-size: 18px; margin: 15px 0; }
         }
@@ -402,15 +412,12 @@ const CATS = [
     {id:"SCI", c:"#22c55e", n:"Sciences"},
     {id:"SPO", c:"#f97316", n:"Sports"}
 ];
-
-// NOUVEAUX TAUX DE DIFFICULTÉ
 const DROP_RATES = {
     "EASY": { EASY: 50, NORMAL: 35, HARD: 12, IMPOSSIBLE: 3 },
     "NORMAL": { EASY: 15, NORMAL: 45, HARD: 30, IMPOSSIBLE: 10 },   
     "HARD": { EASY: 5, NORMAL: 20, HARD: 50, IMPOSSIBLE: 25 },       
     "IMPOSSIBLE": { EASY: 0, NORMAL: 5, HARD: 30, IMPOSSIBLE: 65 } 
 };
-// --- FIN CONFIGURATION ---
 // --- FIN CONFIGURATION ---
 
 // ... La suite du code (MASTER_DB) ne change pas ...
@@ -2820,7 +2827,7 @@ const MASTER_DB = {
 };
 
 // =============================================================================
-// 3. MOTEUR DU JEU (PARTIE 3 - FINAL)
+// MOTEUR FINAL (MOBILE CHAT FIX + SENS UNIQUE RAYONS)
 // =============================================================================
 
 let GAME_MODE = ''; 
@@ -2849,11 +2856,14 @@ let IS_MUTED = false;
 
 // --- CONFIGURATION ---
 const SOUND_VOLUMES = {
-    'sfx-dice': 1.0, 'sfx-correct': 1.0, 'sfx-wrong': 0.3, 
-    'sfx-win': 0.8, 'bg-music': 0.1, 'sfx-click': 0.3   
+    'sfx-dice': 1.0,
+    'sfx-correct': 1.0,
+    'sfx-wrong': 0.3, 
+    'sfx-win': 0.8,
+    'bg-music': 0.1,  
+    'sfx-click': 0.3   
 };
 
-// Config réseau compatible 4G (Serveurs Google)
 const PEER_CONFIG = {
     debug: 1,
     config: {
@@ -2871,6 +2881,7 @@ document.addEventListener('keydown', function(event) {
     
     if (event.code === 'Space' || event.code === 'Enter') {
         event.preventDefault(); 
+        
         let p = GAME_STATE.players[GAME_STATE.curr];
         let isMyTurn = (GAME_MODE === 'LOCAL' || (p && p.id === myPeerId));
 
@@ -2896,42 +2907,102 @@ document.addEventListener('click', function(e) {
     if(m.style.display === 'flex' && e.target !== m && !m.contains(e.target) && e.target !== btn) {
         m.style.display = 'none';
     }
+
     if(GAME_STATE.paused && e.target.id !== 'pause-overlay' && !e.target.closest('#pause-overlay') && !e.target.closest('#ingame-menu')) {
          e.stopPropagation(); return;
     }
+    
     if(e.target.classList.contains('target') || e.target.classList.contains('target-passive')) return;
+
     if(e.target.tagName === 'BUTTON' || e.target.closest('button') || e.target.classList.contains('cell')) {
         safePlaySound('sfx-click');
     }
 });
 
-// --- MENU & UTILS ---
-function toggleGameMenu() { let m = document.getElementById('ingame-menu'); m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; }
+// --- FONCTIONS MENU ---
+
+function toggleGameMenu() {
+    let m = document.getElementById('ingame-menu');
+    m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
+}
+
 function toggleGlobalSound() {
     IS_MUTED = !IS_MUTED;
     let btn = document.getElementById('menu-sound-text');
     let music = document.getElementById('bg-music');
-    if(IS_MUTED) { btn.innerText = "🔇 SON : OFF"; if(music) music.pause(); } 
-    else { btn.innerText = "🔊 SON : ON"; if(GAME_STATE.phase === 'GAME' || GAME_STATE.phase === 'INITIATIVE') { if(music) { music.volume = SOUND_VOLUMES['bg-music']; music.play().catch(()=>{}); } } }
+    
+    if(IS_MUTED) {
+        btn.innerText = "🔇 SON : OFF";
+        if(music) music.pause();
+    } else {
+        btn.innerText = "🔊 SON : ON";
+        if(GAME_STATE.phase === 'GAME' || GAME_STATE.phase === 'INITIATIVE') {
+            if(music) { music.volume = SOUND_VOLUMES['bg-music']; music.play().catch(()=>{}); }
+        }
+    }
     toggleGameMenu(); 
 }
-function showRules() { if(GAME_MODE === 'LOCAL') { GAME_STATE.paused = true; updatePauseUI(); } document.getElementById('rules-overlay').style.display = 'flex'; document.getElementById('ingame-menu').style.display = 'none'; }
-function closeRules() { document.getElementById('rules-overlay').style.display = 'none'; if(GAME_MODE === 'LOCAL') { GAME_STATE.paused = false; updatePauseUI(); } }
-function togglePause() { if(GAME_MODE === 'LOCAL') { GAME_STATE.paused = !GAME_STATE.paused; updatePauseUI(); } document.getElementById('ingame-menu').style.display = 'none'; }
+
+function showRules() {
+    if(GAME_MODE === 'LOCAL') { GAME_STATE.paused = true; updatePauseUI(); }
+    document.getElementById('rules-overlay').style.display = 'flex';
+    document.getElementById('ingame-menu').style.display = 'none';
+}
+
+function closeRules() {
+    document.getElementById('rules-overlay').style.display = 'none';
+    if(GAME_MODE === 'LOCAL') { GAME_STATE.paused = false; updatePauseUI(); }
+}
+
+function togglePause() {
+    if(GAME_MODE === 'LOCAL') {
+        GAME_STATE.paused = !GAME_STATE.paused;
+        updatePauseUI();
+    }
+    document.getElementById('ingame-menu').style.display = 'none';
+}
+
 function updatePauseUI() {
     let overlay = document.getElementById('pause-overlay');
     let btnText = document.getElementById('menu-pause-text');
-    if(GAME_STATE.paused) { overlay.style.display = 'flex'; btnText.innerText = "▶️ REPRENDRE"; stopTimers(); let m = document.getElementById('bg-music'); if(m) m.pause(); } 
-    else { overlay.style.display = 'none'; btnText.innerText = "⏸️ PAUSE"; let m = document.getElementById('bg-music'); if(!IS_MUTED) m.play().catch(()=>{}); 
-        if(GAME_STATE.phase === 'GAME' && GAME_MODE === 'LOCAL') { if(GAME_STATE.question) startQuestionTimer(); else if(GAME_STATE.moves.length > 0) startAutoMoveTimer(); else startAutoRollTimer(); }
+    
+    if(GAME_STATE.paused) {
+        overlay.style.display = 'flex';
+        btnText.innerText = "▶️ REPRENDRE";
+        stopTimers(); 
+        let m = document.getElementById('bg-music'); if(m) m.pause();
+    } else {
+        overlay.style.display = 'none';
+        btnText.innerText = "⏸️ PAUSE";
+        let m = document.getElementById('bg-music'); 
+        if(!IS_MUTED) m.play().catch(()=>{});
+        
+        if(GAME_STATE.phase === 'GAME' && GAME_MODE === 'LOCAL') {
+             if(GAME_STATE.question) startQuestionTimer(); 
+             else if(GAME_STATE.moves.length > 0) startAutoMoveTimer();
+             else startAutoRollTimer();
+        }
     }
 }
-function selectMode(mode) { unlockAudio(); document.getElementById('main-menu').style.display = 'none'; if(mode === 'LOCAL') { document.getElementById('setup-local').style.display = 'flex'; generateLocalInputs(); } else { document.getElementById('setup-online').style.display = 'flex'; } }
+
+function selectMode(mode) {
+    unlockAudio();
+    document.getElementById('main-menu').style.display = 'none';
+    if(mode === 'LOCAL') {
+        document.getElementById('setup-local').style.display = 'flex';
+        generateLocalInputs();
+    } else {
+        document.getElementById('setup-online').style.display = 'flex';
+    }
+}
+
 function quitGame() {
     if(peer) { peer.destroy(); peer = null; }
     hostConns = []; myConn = null;
-    let music = document.getElementById('bg-music'); if(music) { music.pause(); music.currentTime = 0; }
+    let music = document.getElementById('bg-music');
+    if(music) { music.pause(); music.currentTime = 0; }
     stopTimers();
+    
     document.getElementById('game-layout').style.visibility = 'hidden';
     document.getElementById('lobby-screen').style.display = 'none';
     document.getElementById('initiative-screen').style.display = 'none';
@@ -2944,86 +3015,156 @@ function quitGame() {
     document.getElementById('pause-overlay').style.display = 'none';
     document.getElementById('rules-overlay').style.display = 'none';
     document.getElementById('chat-container').style.display = 'none'; 
+    
     GAME_STATE = { players: [], curr: 0, difficulty: "NORMAL", phase: "LOBBY", moves: [], question: null, initRolls:{}, displayRolls:{}, tiedPlayers:[], tieDepth:0, paused:false };
     document.getElementById('main-menu').style.display = 'flex';
 }
+
 function generateLocalInputs() {
-    let nb = document.getElementById('nb-players-local').value; if(nb < 1) nb = 1; if(nb > 6) nb = 6;
-    let c = document.getElementById('local-names-container'); c.innerHTML = "";
-    for(let i=0; i<nb; i++) { let inp = document.createElement("input"); inp.type = "text"; inp.id = "local-p-"+i; inp.placeholder = "Nom Joueur "+(i+1); inp.value = "Joueur "+(i+1); c.appendChild(inp); }
+    let nb = document.getElementById('nb-players-local').value;
+    if(nb < 1) nb = 1; if(nb > 6) nb = 6;
+    let c = document.getElementById('local-names-container');
+    c.innerHTML = "";
+    for(let i=0; i<nb; i++) {
+        let inp = document.createElement("input");
+        inp.type = "text"; inp.id = "local-p-"+i; inp.placeholder = "Nom Joueur "+(i+1); inp.value = "Joueur "+(i+1);
+        c.appendChild(inp);
+    }
 }
 
 // --- TCHAT ---
-function toggleChat() { let h = document.getElementById('chat-container'); if(h.classList.contains('chat-collapsed')) { h.classList.remove('chat-collapsed'); document.getElementById('chat-notif').style.display = 'none'; } else { h.classList.add('chat-collapsed'); } }
+function toggleChat() {
+    let h = document.getElementById('chat-container');
+    if(h.classList.contains('chat-collapsed')) {
+        h.classList.remove('chat-collapsed');
+        document.getElementById('chat-notif').style.display = 'none';
+    } else {
+        h.classList.add('chat-collapsed');
+    }
+}
 function sendChat() {
-    let input = document.getElementById('chat-input'); let txt = input.value.trim(); if(!txt) return;
-    let p = GAME_STATE.players.find(pl=>pl.id===myPeerId); let col = p ? p.c : '#fff';
-    if(GAME_MODE === 'HOST') broadcastChat(myPseudo, col, txt); else if(GAME_MODE === 'CLIENT') myConn.send({ type: 'ACTION_CHAT', senderId: myPeerId, msg: txt });
+    let input = document.getElementById('chat-input');
+    let txt = input.value.trim();
+    if(!txt) return;
+    let p = GAME_STATE.players.find(pl=>pl.id===myPeerId);
+    let col = p ? p.c : '#fff';
+    if(GAME_MODE === 'HOST') broadcastChat(myPseudo, col, txt);
+    else if(GAME_MODE === 'CLIENT') myConn.send({ type: 'ACTION_CHAT', senderId: myPeerId, msg: txt });
     input.value = "";
 }
-function addChatMessageToUI(sender, color, txt) { let div = document.getElementById('chat-messages'); let d = document.createElement('div'); d.className = 'chat-msg'; d.innerHTML = `<span class="chat-name" style="color:${color}">${sender}:</span> ${txt}`; div.appendChild(d); div.scrollTop = div.scrollHeight; let c = document.getElementById('chat-container'); if(c.classList.contains('chat-collapsed')) document.getElementById('chat-notif').style.display = 'inline-block'; }
-function broadcastChat(sender, color, txt) { addChatMessageToUI(sender, color, txt); let netMsg = { type: 'CHAT_BROADCAST', data: {sender:sender, color:color, msg:txt} }; if(GAME_MODE === 'HOST') hostConns.forEach(c => c.send(netMsg)); }
+function addChatMessageToUI(sender, color, txt) {
+    let div = document.getElementById('chat-messages');
+    let d = document.createElement('div');
+    d.className = 'chat-msg';
+    d.innerHTML = `<span class="chat-name" style="color:${color}">${sender}:</span> ${txt}`;
+    div.appendChild(d); div.scrollTop = div.scrollHeight;
+    let c = document.getElementById('chat-container');
+    if(c.classList.contains('chat-collapsed')) document.getElementById('chat-notif').style.display = 'inline-block';
+}
+function broadcastChat(sender, color, txt) {
+    addChatMessageToUI(sender, color, txt); 
+    let netMsg = { type: 'CHAT_BROADCAST', data: {sender:sender, color:color, msg:txt} };
+    if(GAME_MODE === 'HOST') hostConns.forEach(c => c.send(netMsg));
+}
 
 // --- INITIALISATION ---
 function startLocalGame() {
-    GAME_MODE = 'LOCAL'; unlockAudio();
+    GAME_MODE = 'LOCAL';
+    unlockAudio();
     let nb = document.getElementById('nb-players-local').value;
-    GAME_STATE.players = []; GAME_STATE.difficulty = document.getElementById('local-difficulty').value;
-    GAME_STATE.phase = "INITIATIVE"; GAME_STATE.initRolls = {}; GAME_STATE.displayRolls = {}; GAME_STATE.tiedPlayers = []; GAME_STATE.tieDepth = 0; GAME_STATE.curr = 0; GAME_STATE.paused = false;
+    GAME_STATE.players = [];
+    GAME_STATE.difficulty = document.getElementById('local-difficulty').value;
+    GAME_STATE.phase = "INITIATIVE";
+    GAME_STATE.initRolls = {};
+    GAME_STATE.displayRolls = {};
+    GAME_STATE.tiedPlayers = [];
+    GAME_STATE.tieDepth = 0;
+    GAME_STATE.curr = 0;
+    GAME_STATE.paused = false;
+
     let colorIndices = [0,1,2,3,4,5].sort(() => Math.random() - 0.5);
     for(let i=0; i<nb; i++) {
         let name = document.getElementById("local-p-" + i).value || "J"+(i+1);
         let cIdx = colorIndices[i];
-        GAME_STATE.players.push({ id: 'local-'+i, n: name, c: CATS[cIdx].c, homeColorIdx: cIdx, p: 999, w: [], hub: true });
+        GAME_STATE.players.push({
+            id: 'local-'+i, n: name, c: CATS[cIdx].c, homeColorIdx: cIdx,
+            p: 999, w: [], hub: true
+        });
     }
     initQuestionDecks();
     document.getElementById('setup-local').style.display = 'none';
     document.getElementById('burger-btn').style.display = 'flex';
+    
     if(!IS_MUTED) safePlaySound('bg-music');
+    
     updateInitiativeUI();
 }
+
 function hostStartGame() {
     if(GAME_STATE.players.length < 1) return;
     let colorIndices = [0,1,2,3,4,5].sort(() => Math.random() - 0.5);
-    GAME_STATE.players.forEach((p, idx) => { let cIdx = colorIndices[idx % 6]; p.c = CATS[cIdx].c; p.homeColorIdx = cIdx; });
+    GAME_STATE.players.forEach((p, idx) => {
+        let cIdx = colorIndices[idx % 6];
+        p.c = CATS[cIdx].c;
+        p.homeColorIdx = cIdx;
+    });
     GAME_STATE.difficulty = document.getElementById('online-difficulty').value;
-    GAME_STATE.phase = "INITIATIVE"; GAME_STATE.curr = 0; GAME_STATE.initRolls = {}; GAME_STATE.displayRolls = {}; GAME_STATE.tiedPlayers = []; GAME_STATE.tieDepth = 0;
+    GAME_STATE.phase = "INITIATIVE";
+    GAME_STATE.curr = 0;
+    GAME_STATE.initRolls = {};
+    GAME_STATE.displayRolls = {};
+    GAME_STATE.tiedPlayers = [];
+    GAME_STATE.tieDepth = 0;
     initQuestionDecks();
     broadcastState('INIT_START');
 }
 
-// --- RESEAU (HÔTE & CLIENT) ---
 function initHost() {
-    GAME_MODE = 'HOST'; myPseudo = document.getElementById('my-pseudo').value || "Hôte"; unlockAudio();
-    if(peer) { peer.destroy(); peer = null; }
+    GAME_MODE = 'HOST';
+    myPseudo = document.getElementById('my-pseudo').value || "Hôte";
+    unlockAudio();
     document.getElementById('loading-overlay').style.display = 'flex';
     peer = new Peer(null, PEER_CONFIG);
-    peer.on('open', (id) => { myPeerId = id; document.getElementById('loading-overlay').style.display = 'none'; showLobby(); addPlayerToLobby(id, myPseudo); });
+    
+    peer.on('open', (id) => {
+        myPeerId = id;
+        document.getElementById('loading-overlay').style.display = 'none';
+        showLobby();
+        addPlayerToLobby(id, myPseudo); 
+    });
     peer.on('connection', (conn) => {
         hostConns.push(conn);
         conn.on('data', (data) => handleHostData(conn, data));
-        conn.on('open', () => { setTimeout(() => { broadcastLobby(); }, 500); });
+        conn.on('open', () => { 
+            setTimeout(() => { broadcastLobby(); }, 500);
+        });
     });
-    peer.on('error', (err) => { alert("Erreur Réseau: "+err.type); document.getElementById('loading-overlay').style.display='none'; });
+    peer.on('error', (err) => { alert("Erreur PeerJS: "+err.type); document.getElementById('loading-overlay').style.display='none'; });
 }
+
 function initJoin() {
-    GAME_MODE = 'CLIENT'; myPseudo = document.getElementById('my-pseudo').value || "Invité"; unlockAudio();
-    let hostId = document.getElementById('host-id-input').value.trim(); if(!hostId) return alert("Code manquant");
-    if(peer) { peer.destroy(); peer = null; }
+    GAME_MODE = 'CLIENT';
+    myPseudo = document.getElementById('my-pseudo').value || "Invité";
+    unlockAudio();
+    let hostId = document.getElementById('host-id-input').value.trim();
+    if(!hostId) return alert("Code manquant");
     document.getElementById('loading-overlay').style.display = 'flex';
     peer = new Peer(null, PEER_CONFIG);
+    
     peer.on('open', (id) => {
         myPeerId = id;
-        // RETOUR A LA CONFIG SIMPLE SANS SERIALIZATION JSON FORCÉ
-        myConn = peer.connect(hostId);
-        myConn.on('open', () => { document.getElementById('loading-overlay').style.display = 'none'; showLobby(); myConn.send({ type: 'JOIN', name: myPseudo, id: myPeerId }); });
+        myConn = peer.connect(hostId, {serialization: 'json'});
+        myConn.on('open', () => {
+            document.getElementById('loading-overlay').style.display = 'none';
+            showLobby();
+            myConn.send({ type: 'JOIN', name: myPseudo, id: myPeerId });
+        });
         myConn.on('data', (data) => handleClientData(data));
         myConn.on('error', () => { alert("Erreur connexion"); document.getElementById('loading-overlay').style.display = 'none'; });
     });
-    peer.on('error', (err) => { if(err.type === 'peer-unavailable') alert("Partie introuvable."); else alert("Erreur Réseau: " + err.type); document.getElementById('loading-overlay').style.display = 'none'; });
 }
 
-// --- LOGIQUE INITIATIVE (CORRIGÉE & VISIBLE) ---
+// --- LOGIQUE INITIATIVE ---
 
 function actionInitiativeRoll() {
     let btn = document.getElementById('btn-init-roll');
@@ -3037,15 +3178,12 @@ function performInitiativeRoll() {
     let p = GAME_STATE.players[GAME_STATE.curr];
     
     GAME_STATE.displayRolls[p.id] = roll;
-    
-    // Calcul du score décimal (ex: 5.0, 4.3)
     let increment = roll / Math.pow(10, GAME_STATE.tieDepth);
     if(!GAME_STATE.initRolls[p.id]) GAME_STATE.initRolls[p.id] = 0;
     GAME_STATE.initRolls[p.id] += increment;
     
     broadcastState('INIT_ANIM', { val: roll, pid: p.id });
     
-    // Délais réduits : 1.2s animation + courte pause
     setTimeout(() => {
         let group = (GAME_STATE.tiedPlayers.length > 0) ? GAME_STATE.tiedPlayers : GAME_STATE.players.map(pl=>pl.id);
         let idxInGroup = group.indexOf(p.id);
@@ -3063,28 +3201,26 @@ function performInitiativeRoll() {
 function resolveInitiative() {
     broadcastState(); 
     setTimeout(() => {
-        // 1. Tri Global décroissant
         GAME_STATE.players.sort((a, b) => (GAME_STATE.initRolls[b.id] || 0) - (GAME_STATE.initRolls[a.id] || 0));
         
-        // 2. Analyse des égalités dans le groupe actif
         let scoreMap = {};
-        let group = (GAME_STATE.tiedPlayers.length > 0) ? GAME_STATE.tiedPlayers : GAME_STATE.players.map(pl=>pl.id);
+        let activeGroup = (GAME_STATE.tiedPlayers.length > 0) ? GAME_STATE.tiedPlayers : GAME_STATE.players.map(pl=>pl.id);
         
-        group.forEach(id => {
-            // Arrondi pour éviter les bugs de float (ex 4.30000001)
+        activeGroup.forEach(id => {
             let s = parseFloat((GAME_STATE.initRolls[id] || 0).toFixed(4));
             if(!scoreMap[s]) scoreMap[s] = [];
             scoreMap[s].push(id);
         });
 
         let newTies = [];
-        for(let s in scoreMap) { if(scoreMap[s].length > 1) newTies.push(...scoreMap[s]); }
+        for(let s in scoreMap) {
+            if(scoreMap[s].length > 1) newTies.push(...scoreMap[s]);
+        }
         
         if(newTies.length > 0) {
             GAME_STATE.tiedPlayers = newTies;
             GAME_STATE.tieDepth++; 
             GAME_STATE.curr = GAME_STATE.players.findIndex(p => p.id === newTies[0]);
-            // On reset l'affichage pour les égalités
             newTies.forEach(id => delete GAME_STATE.displayRolls[id]);
             broadcastState('INIT_TIE', { tied: newTies });
         } else {
@@ -3093,7 +3229,7 @@ function resolveInitiative() {
             GAME_STATE.tiedPlayers = [];
             broadcastState('GAME_START');
         }
-    }, 1500);
+    }, 1000);
 }
 
 function updateInitiativeUI() {
@@ -3101,7 +3237,6 @@ function updateInitiativeUI() {
     document.getElementById('initiative-screen').style.display = 'flex';
     document.getElementById('game-layout').style.visibility = 'hidden';
     
-    // Dé 3D Initiative
     let container = document.getElementById('dice-tray-init');
     if(container.innerHTML.trim() === '') {
         let original = document.querySelector('.dice-cube');
@@ -3117,27 +3252,21 @@ function updateInitiativeUI() {
     let btn = document.getElementById('btn-init-roll');
     let resDiv = document.getElementById('init-results');
     
-    // Tri pour affichage propre
     let sortedList = [...GAME_STATE.players].sort((a, b) => (GAME_STATE.initRolls[b.id] || 0) - (GAME_STATE.initRolls[a.id] || 0));
 
     let html = "<h3>Classement :</h3>";
     sortedList.forEach(pl => {
         let total = GAME_STATE.initRolls[pl.id];
         let displayVal = "-";
-        
         if (total !== undefined) {
-            // Si le joueur est en attente de relance (égalité) ET qu'il n'a pas encore lancé ce tour-ci
             if (GAME_STATE.tiedPlayers.includes(pl.id) && GAME_STATE.displayRolls[pl.id] === undefined) {
                  let prevDepth = Math.max(0, GAME_STATE.tieDepth - 1);
-                 // Affiche "4" ou "4.3" ...
-                 displayVal = parseFloat(total.toFixed(prevDepth)) + "..."; 
+                 displayVal = parseFloat(total.toFixed(prevDepth)) + "...";
             } else {
-                // Sinon affiche le score complet (ex: 4.3, 5)
                 let decimals = GAME_STATE.tieDepth > 0 ? GAME_STATE.tieDepth : 0;
-                displayVal = parseFloat(total.toFixed(decimals));
+                displayVal = parseFloat(total.toFixed(decimals)); 
             }
         }
-        
         let activeStyle = (pl.id === p.id) ? "border: 2px solid var(--gold); background: rgba(251, 191, 36, 0.15);" : "border: 1px solid transparent;";
         html += `<div style="color:${pl.c}; font-size:18px; margin-bottom:5px; padding:8px; border-radius:8px; ${activeStyle} transition:0.3s;">
             ${pl.n} : <b>${displayVal}</b> 
@@ -3184,6 +3313,7 @@ function performRoll() {
 function performMove(targetId) {
     stopTimers();
     let p = GAME_STATE.players[GAME_STATE.curr];
+    // ON PASSE 'p' ICI POUR VÉRIFIER LES CAMEMBERTS
     let path = findPath(p.p, targetId, p);
     GAME_STATE.moves = []; 
     broadcastState('ANIM_MOVE', { playerId: p.id, path: path });
@@ -3338,6 +3468,7 @@ function rollDice3D(result, cubeId) {
     cube.style.transform = `rotateX(${rx + turnsX}deg) rotateY(${ry + turnsY}deg)`;
 }
 
+// CORRECTION ICI : On passe 'player' à getNeighbors
 function findPath(start, end, player = null) {
     let queue = [[start]];
     let visited = new Set(); visited.add(start);
@@ -3345,6 +3476,7 @@ function findPath(start, end, player = null) {
         let path = queue.shift();
         let node = path[path.length-1];
         if(node === end) return path;
+        // AJOUT DU PLAYER POUR LA LOGIQUE DE SENS UNIQUE
         getNeighbors(node, player).forEach(n => { if(!visited.has(n)) { visited.add(n); let newPath = [...path, n]; queue.push(newPath); } });
     }
     return [start, end];
@@ -3413,9 +3545,10 @@ function getNeighbors(id, player = null) {
         let r = Math.floor((id - 1000) / 10), s = (id - 1000) % 10; 
         if(s < 4) n.push(id + 1); else n.push(999); 
         if(s > 0) n.push(id - 1); else n.push(r * 7); 
+        // RESTRICTION SENS UNIQUE VERS L'EXTÉRIEUR SI PAS 6 CAMEMBERTS
         if(player && player.w.length < 6) {
-            if(s < 4) n = n.filter(neighbor => neighbor !== id + 1);
-            else n = n.filter(neighbor => neighbor !== 999);
+            if(s < 4) n = n.filter(neighbor => neighbor !== id + 1); // Bloque montée
+            else n = n.filter(neighbor => neighbor !== 999);         // Bloque accès Hub
         }
         return n; 
     } 
