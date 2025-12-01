@@ -14,7 +14,7 @@
         .screen { position: absolute; z-index: 6000; background: rgba(2, 6, 23, 0.98); width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .setup-box { background: rgba(255, 255, 255, 0.05); padding: 40px; border-radius: 30px; text-align: center; border: var(--glass-border); box-shadow: 0 0 60px rgba(0,0,0,0.6); width: 550px; max-width: 90%; max-height: 90vh; overflow-y: auto; backdrop-filter: blur(10px); }
         
-        /* --- DÉ 3D PHYSIQUE (CORRIGÉ : FACES CARRÉES) --- */
+        /* --- DÉ 3D PHYSIQUE --- */
         #dice-tray {
             width: 120px; height: 120px; margin: 0 auto 20px auto;
             perspective: 800px; display: flex; justify-content: center; align-items: center;
@@ -26,8 +26,7 @@
         }
         .face {
             position: absolute; width: 80px; height: 80px; background: #fdfbf7;
-            /* border-radius supprimé pour fermer le cube */
-            border: 2px solid #e5e7eb; /* Bordure légèrement plus épaisse pour définir les arêtes */
+            border: 2px solid #d1d5db; /* Arêtes nettes pour fermer le cube */
             box-shadow: inset 0 0 15px rgba(0,0,0,0.1);
             display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); padding: 8px; box-sizing: border-box;
         }
@@ -49,15 +48,15 @@
         }
         .tossing { animation: toss 1.2s ease-in-out; }
 
-        /* BOUTONS NAV (Position sécurisée) */
+        /* BOUTONS NAV */
         .nav-btn { 
             position: fixed; top: 15px; width: 45px; height: 45px; 
-            background: rgba(255,255,255,0.1); border-radius: 50%; cursor: pointer; 
-            display: none; z-index: 8000; align-items: center; justify-content: center; 
-            font-size: 22px; border: 1px solid rgba(255,255,255,0.2); transition: 0.2s;
+            background: rgba(255,255,255,0.15); border-radius: 50%; cursor: pointer; 
+            display: none; z-index: 9000; align-items: center; justify-content: center; 
+            font-size: 22px; border: 1px solid rgba(255,255,255,0.3); transition: 0.2s;
             backdrop-filter: blur(5px);
         }
-        .nav-btn:hover { background: rgba(255,255,255,0.2); transform: scale(1.1); }
+        .nav-btn:hover { background: rgba(255,255,255,0.3); transform: scale(1.1); }
         #home-btn { right: 15px; }
         #home-btn:hover { background: rgba(239, 68, 68, 0.8); }
         #pause-btn { left: 15px; }
@@ -91,26 +90,18 @@
         .lobby-dot { width: 12px; height: 12px; border-radius: 50%; }
         #host-id-display { font-size: 24px; font-weight: 900; color: #4ade80; letter-spacing: 2px; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 10px; margin: 10px 0; user-select: text; cursor: pointer; }
         
-        /* LAYOUT CORRIGÉ POUR MISE EN PAGE HYBRIDE */
+        /* LAYOUT */
         #game-layout { 
-            display: flex; 
-            gap: 20px; 
-            align-items: center; 
-            justify-content: center;
-            visibility: hidden; 
-            width: 100%; height: 100%;
-            overflow: hidden;
+            display: flex; gap: 20px; align-items: center; justify-content: center;
+            visibility: hidden; width: 100%; height: 100%; overflow: hidden;
         } 
         
         #board-container { 
-            width: 760px; height: 760px; 
-            position: relative; 
+            width: 760px; height: 760px; position: relative; 
             background: rgba(255, 255, 255, 0.02); border-radius: 50%; 
             box-shadow: 0 0 120px rgba(0,0,0,0.6), inset 0 0 60px rgba(0,0,0,0.8); 
             border: 2px solid rgba(255,255,255,0.08); 
-            flex-shrink: 0; /* Empêche l'écrasement */
-            transform-origin: center center;
-            transition: transform 0.3s;
+            flex-shrink: 0; transform-origin: center center; transition: transform 0.3s;
         }
         
         .cell { position: absolute; width: 42px; height: 42px; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 10px; font-weight: bold; color: rgba(255,255,255,0.95); box-shadow: inset 0 0 8px rgba(0,0,0,0.4), 0 4px 6px rgba(0,0,0,0.3); cursor: pointer; z-index: 5; transition: transform 0.2s; border: 1px solid rgba(255,255,255,0.2); text-align:center; line-height:1; }
@@ -126,22 +117,20 @@
             z-index: 200; transform: translate(-50%, -50%); pointer-events: none; 
         }
         
-        #sidebar { 
-            width: 300px; height: auto; max-height: 90vh;
-            display: flex; flex-direction: column; gap: 15px; 
-            flex-shrink: 1;
-        }
-        
+        #sidebar { width: 300px; height: auto; max-height: 90vh; display: flex; flex-direction: column; gap: 15px; flex-shrink: 1; }
         .card { background: var(--sidebar-bg); padding: 10px 20px; border-radius: 18px; border-left: 6px solid #475569; border-top: 1px solid rgba(255,255,255,0.1); transition:0.3s; display:flex; justify-content:space-between; align-items:center; }
         .card.active { background: rgba(59, 130, 246, 0.15); border-left-color: var(--gold); transform: scale(1.02) translateX(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
         .wedges { display: flex; gap: 4px; }
         .wedge { width: 16px; height: 16px; background: rgba(0,0,0,0.6); border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); }
         #controls { margin-top: auto; text-align: center; background: var(--sidebar-bg); padding: 20px; border-radius: 25px; border: var(--glass-border); }
         
+        /* CIBLES */
         .target { animation: flash-neon 0.8s infinite alternate !important; z-index: 200 !important; border: 2px solid #fff !important; cursor: pointer; }
-        .target-passive { animation: flash-gray 1.5s infinite alternate !important; z-index: 100 !important; opacity: 0.7; cursor: default; }
+        
+        /* CORRECTION : Le passif est identique au target visuellement (flash-neon) mais sans curseur main */
+        .target-passive { animation: flash-neon 0.8s infinite alternate !important; z-index: 100 !important; border: 2px solid #fff !important; cursor: default; opacity: 0.6; }
+        
         @keyframes flash-neon { 0% { box-shadow: 0 0 5px #fff, 0 0 10px #fff inset; transform: scale(1.1) rotate(var(--r)); } 100% { box-shadow: 0 0 15px #fff, 0 0 20px #fff inset; transform: scale(1.2) rotate(var(--r)); } }
-        @keyframes flash-gray { 0% { box-shadow: 0 0 2px #aaa; transform: scale(1.0) rotate(var(--r)); } 100% { box-shadow: 0 0 8px #aaa; transform: scale(1.05) rotate(var(--r)); } }
 
         #modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(12px); display: none; justify-content: center; align-items: center; z-index: 9000; }
         #q-box { background: #1e293b; color: #fff; padding: 50px; border-radius: 25px; width: 700px; max-width: 95%; text-align: center; border-top: 15px solid #333; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8); position: relative; }
@@ -162,70 +151,36 @@
         .confetti { position: absolute; width: 10px; height: 10px; background: #f00; animation: fall 3s linear infinite; }
         @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
         #loading-overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:none; justify-content:center; align-items:center; z-index:7000; font-size:24px; color:#fbbf24; }
-        
-        /* PAUSE OVERLAY */
         #pause-overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter: blur(5px); display:none; justify-content:center; align-items:center; z-index:8500; flex-direction: column; }
 
-        /* --- RESPONSIVE AGRESSIF --- */
-        
-        /* Si l'écran est étroit (mode demi-fenêtre ou tablette portrait) */
+        /* --- RESPONSIVE OPTIMISÉ POUR MOBILE --- */
         @media (max-width: 1100px) {
             #game-layout { flex-direction: column-reverse; width: 100%; height: 100vh; padding: 0; justify-content: flex-end; }
-            
-            /* Le plateau prend toute la place disponible en haut */
-            #board-container { 
-                transform: scale(0.6); 
-                margin-bottom: -150px; /* Remonte le plateau */
-                margin-top: -80px;
-            }
-            
-            /* La sidebar devient une barre de contrôle en bas */
+            #board-container { transform: scale(0.6); margin-bottom: -150px; margin-top: -80px; }
             #sidebar { 
-                width: 100%; 
-                flex-direction: row; 
-                background: rgba(15, 23, 42, 0.95);
-                padding: 10px; 
-                box-sizing: border-box;
-                align-items: center;
-                justify-content: space-between;
-                border-top: 1px solid rgba(255,255,255,0.1);
-                height: 160px; /* Hauteur fixe en bas */
+                width: 100%; flex-direction: row; background: rgba(15, 23, 42, 0.95); padding: 10px; 
+                box-sizing: border-box; align-items: center; justify-content: space-between;
+                border-top: 1px solid rgba(255,255,255,0.1); height: 160px; 
             }
-            
-            #players-div { 
-                display: flex; flex-wrap: wrap; gap: 5px; 
-                width: 50%; height: 100%; overflow-y: auto;
-                justify-content: flex-start;
-            }
+            #players-div { display: flex; flex-wrap: wrap; gap: 5px; width: 50%; height: 100%; overflow-y: auto; justify-content: flex-start; }
             .card { padding: 5px 10px; font-size: 12px; min-width: 120px; }
-            
-            #controls { 
-                width: 45%; padding: 5px; display: flex; flex-direction: row; align-items: center; justify-content: space-around;
-                background: none; border: none;
-            }
-            
-            /* Réduction du dé sur mobile/étroit */
+            #controls { width: 45%; padding: 5px; display: flex; flex-direction: row; align-items: center; justify-content: space-around; background: none; border: none; }
             #dice-tray { width: 60px; height: 60px; perspective: 400px; margin: 0 10px; }
             .dice-cube { width: 50px; height: 50px; }
             .face { width: 50px; height: 50px; border-radius: 8px; padding: 4px; }
             .dot { width: 10px; height: 10px; }
-            
-            /* Ajustement faces petit dé */
             .face-1 { transform: rotateY(0deg) translateZ(25px); } .face-2 { transform: rotateY(90deg) translateZ(25px); } .face-3 { transform: rotateY(180deg) translateZ(25px); } .face-4 { transform: rotateY(-90deg) translateZ(25px); } .face-5 { transform: rotateX(90deg) translateZ(25px); } .face-6 { transform: rotateX(-90deg) translateZ(25px); }
-
             #legend { display: none; }
-            
-            /* Boutons nav plus petits */
             .nav-btn { width: 35px; height: 35px; font-size: 18px; top: 10px; }
             #home-btn { right: 10px; }
             #pause-btn { left: 10px; }
-            
-            #chat-container { bottom: 160px; } /* Au dessus de la sidebar */
+            #chat-container { bottom: 160px; } 
         }
 
-        /* Très petits écrans (téléphone vertical) */
-        @media (max-width: 600px) {
-            #board-container { transform: scale(0.42); margin-bottom: -220px; margin-top: -120px; }
+        @media (max-width: 900px) {
+            /* CORRECTION : Espace en haut pour les boutons */
+            #game-layout { padding-top: 60px; }
+            #board-container { transform: scale(0.42); margin-top: -200px; margin-bottom: -200px; }
             #sidebar { height: 180px; flex-direction: column-reverse; }
             #players-div { width: 100%; height: 60px; flex-wrap: nowrap; overflow-x: auto; }
             #controls { width: 100%; height: 100px; }
@@ -330,10 +285,7 @@
         <h2>TIRAGE AU SORT</h2>
         <p style="margin-bottom: 30px; color: #cbd5e1;">Chacun lance le dé pour déterminer l'ordre de jeu. Le plus grand score commence !</p>
         <p id="init-msg" style="font-size: 1.2em; font-weight: bold; color: var(--gold);">Qui commence ?</p>
-        
-        <div id="dice-tray-init" style="width: 120px; height: 120px; margin: 0 auto 20px auto; perspective: 800px; display: flex; justify-content: center; align-items: center;">
-            </div>
-
+        <div id="dice-tray-init" style="width: 120px; height: 120px; margin: 0 auto 20px auto; perspective: 800px; display: flex; justify-content: center; align-items: center;"></div>
         <button id="btn-init-roll" style="display:none;" onclick="actionInitiativeRoll()">LANCER LE DÉ</button>
         <div id="init-results" style="margin-top:20px; text-align:left;"></div>
     </div>
@@ -348,7 +300,6 @@
         <div id="players-div"></div>
         <div id="controls">
             <div id="msg" style="min-height:30px; margin-bottom:15px; font-weight:bold; color:#fbbf24; font-size: 16px;">En attente...</div>
-            
             <div id="dice-tray">
                 <div class="dice-cube" id="cube">
                     <div class="face face-1"><div class="dot" style="grid-area:2/2;"></div></div>
@@ -359,7 +310,6 @@
                     <div class="face face-6"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:1/3;"></div><div class="dot" style="grid-area:2/1;"></div><div class="dot" style="grid-area:2/3;"></div><div class="dot" style="grid-area:3/1;"></div><div class="dot" style="grid-area:3/3;"></div></div>
                 </div>
             </div>
-
             <button id="btn-roll" onclick="actionRoll()">LANCER LE DÉ</button>
             <button id="btn-music" onclick="toggleMusic()" style="margin-top:10px; padding:10px; font-size:12px; background:transparent; border:1px solid #555;">🎵 Musique : ON</button>
         </div>
@@ -384,7 +334,6 @@
 
 <audio id="sfx-dice" src="dice-95077.mp3" preload="auto"></audio>
 <audio id="sfx-correct" src="correct-156911.mp3" preload="auto"></audio>
-
 <audio id="sfx-wrong" src="https://assets.mixkit.co/active_storage/sfx/948/948-preview.mp3" preload="auto"></audio>
 <audio id="sfx-win" src="https://assets.mixkit.co/active_storage/sfx/1431/1431-preview.mp3" preload="auto"></audio>
 <audio id="bg-music" src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3" loop preload="auto"></audio>
@@ -399,12 +348,16 @@ const CATS = [
     {id:"SCI", c:"#22c55e", n:"Sciences"},
     {id:"SPO", c:"#f97316", n:"Sports"}
 ];
+
+// NOUVEAUX TAUX DE DIFFICULTÉ (Plus challengeants)
 const DROP_RATES = {
     "EASY": { EASY: 50, NORMAL: 35, HARD: 12, IMPOSSIBLE: 3 },
     "NORMAL": { EASY: 15, NORMAL: 45, HARD: 30, IMPOSSIBLE: 10 },   
-    "HARD": { EASY: 5, NORMAL: 20, HARD: 50, IMPOSSIBLE: 25 },      
-    "IMPOSSIBLE": { EASY: 0, NORMAL: 5, HARD: 30, IMPOSSIBLE: 65 }  
+    "HARD": { EASY: 5, NORMAL: 20, HARD: 50, IMPOSSIBLE: 25 },       
+    "IMPOSSIBLE": { EASY: 0, NORMAL: 5, HARD: 30, IMPOSSIBLE: 65 } 
 };
+
+// ... La suite du code (MASTER_DB) ne change pas ...
 
 // 2. BASE DE DONNÉES MAÎTRE (Toutes les questions ici)
 const MASTER_DB = {
@@ -2811,7 +2764,7 @@ const MASTER_DB = {
 };
 
 // =============================================================================
-// MOTEUR FINAL (RESPONSIVE OK + PAS DE CLIC EN TROP SUR CIBLE)
+// MOTEUR FINAL (LOGIQUE SENS UNIQUE + CLIC)
 // =============================================================================
 
 let GAME_MODE = ''; 
@@ -2837,12 +2790,12 @@ let autoMoveTimer = null;
 
 // --- CONFIGURATION VOLUME ---
 const SOUND_VOLUMES = {
-    'sfx-dice': 0.5,
-    'sfx-correct': 0.5,
-    'sfx-wrong': 0.1, 
-    'sfx-win': 0.5,
+    'sfx-dice': 1.0,
+    'sfx-correct': 1.0,
+    'sfx-wrong': 0.3, 
+    'sfx-win': 0.8,
     'bg-music': 0.1,  
-    'sfx-click': 0.2   
+    'sfx-click': 0.3   
 };
 
 // --- CLAVIER & SONS ---
@@ -2873,7 +2826,7 @@ document.addEventListener('click', function(e) {
     if(GAME_STATE.paused && e.target.id !== 'pause-overlay' && !e.target.closest('#pause-overlay')) {
          e.stopPropagation(); return;
     }
-    // On joue le son SAUF si c'est une case de déplacement (car elle fera du bruit en bougeant)
+    // Suppression du son clic sur les cibles pour éviter le doublon avec le son de pas
     if(e.target.classList.contains('target') || e.target.classList.contains('target-passive')) return;
 
     if(e.target.tagName === 'BUTTON' || e.target.closest('button') || e.target.classList.contains('cell')) {
@@ -3204,10 +3157,10 @@ function performRoll() {
 function performMove(targetId) {
     stopTimers();
     let p = GAME_STATE.players[GAME_STATE.curr];
-    let path = findPath(p.p, targetId);
+    // On recalcule les voisins en passant le joueur pour vérifier les camemberts
+    let path = findPath(p.p, targetId, p);
     GAME_STATE.moves = []; 
     broadcastState('ANIM_MOVE', { playerId: p.id, path: path });
-    // Durée exacte = (nb_etapes * 280ms) + marge
     let duration = (path.length * 300) + 500; 
     
     setTimeout(() => {
@@ -3373,25 +3326,26 @@ function rollDice3D(result, cubeId) {
     cube.style.transform = `rotateX(${rx + turnsX}deg) rotateY(${ry + turnsY}deg)`;
 }
 
-// --- ANIMATION PION (FIXED LOOP) ---
-function findPath(start, end) {
+// --- ANIMATION PION ---
+function findPath(start, end, player = null) {
     let queue = [[start]];
     let visited = new Set(); visited.add(start);
     while(queue.length > 0) {
         let path = queue.shift();
         let node = path[path.length-1];
         if(node === end) return path;
-        getNeighbors(node).forEach(n => { if(!visited.has(n)) { visited.add(n); let newPath = [...path, n]; queue.push(newPath); } });
+        // On passe le joueur à getNeighbors pour appliquer la contrainte de direction
+        getNeighbors(node, player).forEach(n => { if(!visited.has(n)) { visited.add(n); let newPath = [...path, n]; queue.push(newPath); } });
     }
     return [start, end];
 }
+
 function animatePawnMovement(playerId, path) {
     let pIdx = GAME_STATE.players.findIndex(p => p.id === playerId);
     let pawns = document.getElementsByClassName('pawn');
     let pawnEl = pawns[pIdx];
     if(!pawnEl) return;
     
-    // FIX: On ignore la case de départ (index 0) pour ne pas jouer de son/mouvement sur place
     let realPath = path.slice(1); 
     let step = 0;
     
@@ -3406,7 +3360,6 @@ function animatePawnMovement(playerId, path) {
         
         pawnEl.style.left = x + 'px'; pawnEl.style.top = y + 'px';
         
-        // Jouer le son pour ce pas
         safePlaySound('sfx-click');
         
         step++;
@@ -3430,12 +3383,11 @@ function startAutoRollTimer() {
 function startAutoMoveTimer() {
     stopTimers();
     autoMoveTimer = setTimeout(() => {
-        // Si le joueur ne bouge pas, on prend le premier choix possible
         if(GAME_STATE.moves.length > 0) {
             let firstChoice = GAME_STATE.moves[0];
             tryMove(firstChoice);
         }
-    }, 10000); // 10 secondes pour choisir
+    }, 10000);
 }
 
 // --- UTILS & UI ---
@@ -3469,8 +3421,52 @@ function isPlayerTurn(id) { return GAME_STATE.players[GAME_STATE.curr] && GAME_S
 function addPlayerToLobby(id, name) { if(GAME_STATE.players.length >= 6) return; GAME_STATE.players.push({ id: id, n: name, c: '#fff', homeColorIdx: 0, p: 999, w: [], hub: true }); broadcastLobby(); }
 function initQuestionDecks() { AVAILABLE_INDICES = {}; for (let t in MASTER_DB) { AVAILABLE_INDICES[t] = {}; MASTER_DB[t].forEach((q, idx) => { let c = q[0]; if (!AVAILABLE_INDICES[t][c]) AVAILABLE_INDICES[t][c] = []; AVAILABLE_INDICES[t][c].push(idx); }); } }
 function pickQuestion(catId) { let rates = DROP_RATES[GAME_STATE.difficulty]; let r = Math.random() * 100, tier = "NORMAL"; if (r < rates.EASY) tier = "EASY"; else if (r < rates.EASY + rates.NORMAL) tier = "NORMAL"; else if (r < rates.EASY + rates.NORMAL + rates.HARD) tier = "HARD"; else tier = "IMPOSSIBLE"; let deck = AVAILABLE_INDICES[tier][catId]; if (!deck || !deck.length) deck = AVAILABLE_INDICES["NORMAL"][catId]; if (!deck || !deck.length) { MASTER_DB[tier].forEach((q, idx) => { if (q[0] === catId) deck.push(idx); }); } let rndIdx = Math.floor(Math.random() * deck.length); let qIdx = deck[rndIdx]; deck.splice(rndIdx, 1); let qRaw = MASTER_DB[tier][qIdx]; return { q: qRaw[1], r: [qRaw[2],qRaw[3],qRaw[4],qRaw[5]].sort(()=>Math.random()-0.5), bon: qRaw[2] }; }
-function calculatePossibleMoves(start, steps, p) { let dests = []; function explore(curr, rem, prev) { if(rem === 0) { dests.push(curr); return; } getNeighbors(curr).forEach(n => { if(n !== prev) explore(n, rem-1, curr); }); } explore(start, steps, -1); return [...new Set(dests)]; }
-function getNeighbors(id) { let n = []; if(id === 999) { for(let r=0; r<6; r++) n.push(1000 + r*10 + 4); return n; } if(id >= 1000) { let r = Math.floor((id - 1000) / 10), s = (id - 1000) % 10; if(s < 4) n.push(id + 1); else n.push(999); if(s > 0) n.push(id - 1); else n.push(r * 7); return n; } if(id < 100) { n.push((id + 1) % 42); n.push((id - 1 + 42) % 42); } return n; }
+function calculatePossibleMoves(start, steps, p) { let dests = []; function explore(curr, rem, prev) { if(rem === 0) { dests.push(curr); return; } getNeighbors(curr, p).forEach(n => { if(n !== prev) explore(n, rem-1, curr); }); } explore(start, steps, -1); return [...new Set(dests)]; }
+
+// --- CORRECTION LOGIQUE : SENS UNIQUE SUR RAYONS ---
+function getNeighbors(id, player = null) { 
+    let n = []; 
+    // HUB (999) : Toujours connecté au bout intérieur des rayons (1004, 1014...)
+    if(id === 999) { 
+        for(let r=0; r<6; r++) n.push(1000 + r*10 + 4); 
+        return n; 
+    } 
+    // RAYONS (1000-1054)
+    if(id >= 1000) { 
+        let r = Math.floor((id - 1000) / 10), s = (id - 1000) % 10; 
+        
+        // Vers l'intérieur (Hub) : ID + 1 (ex: 1000 -> 1001 ... 1004 -> 999)
+        if(s < 4) n.push(id + 1); else n.push(999); 
+        
+        // Vers l'extérieur (Cercle) : ID - 1 (ex: 1004 -> 1003 ... 1000 -> Cercle)
+        if(s > 0) n.push(id - 1); else n.push(r * 7); 
+
+        // CONTRAINTE : Si on n'a pas les 6 camemberts, on interdit la remontée vers le Hub
+        if(player && player.w.length < 6) {
+            // Le chemin vers le Hub est celui qui augmente 's' ou mène à 999
+            // Donc on retire le voisin qui est soit id+1, soit 999
+            if(s < 4) {
+                n = n.filter(neighbor => neighbor !== id + 1);
+            } else {
+                n = n.filter(neighbor => neighbor !== 999);
+            }
+        }
+        return n; 
+    } 
+    // CERCLE EXTERIEUR (<100)
+    if(id < 100) { 
+        n.push((id + 1) % 42); 
+        n.push((id - 1 + 42) % 42); 
+        // Connexion vers les rayons (si on est sur une case QG)
+        if(id % 7 === 0) {
+            let r = id / 7;
+            // Le début du rayon est 1000 + r*10 + 0
+            n.push(1000 + r*10);
+        }
+    } 
+    return n; 
+}
+
 function buildBoard() { const c = document.getElementById('board-content'); c.innerHTML = ""; for(let i=0; i<42; i++) { let ang = (i * (360/42)) - 90; createCellDOM(i, 380 + 340 * Math.cos(ang * Math.PI/180), 380 + 340 * Math.sin(ang * Math.PI/180), (i%7===0) ? "qg" : ((i%7===2 || i%7===5) ? "roll" : "norm"), CATS[i%6], c, ang+90); } for(let r=0; r<6; r++) { let ang = (r * 7 * (360/42)) - 90; for(let s=0; s<5; s++) { let dist = 340 - ((s+1)*(340/6)); createCellDOM(1000 + r*10 + s, 380 + dist * Math.cos(ang * Math.PI/180), 380 + dist * Math.sin(ang * Math.PI/180), "spoke", CATS[(r+1+s)%6], c, ang+90); } } }
 function createCellDOM(id, x, y, type, cat, container, rot) { let d = document.createElement('div'); d.className = 'cell ' + (type==='qg'?'qg':(type==='roll'?'roll':'')); if(type!=='roll') { d.style.background = cat.c; d.style.boxShadow = `0 0 10px ${cat.c}`; } let s = (type==='qg') ? 58 : 42; d.style.left = (x - s/2) + 'px'; d.style.top = (y - s/2) + 'px'; d.style.transform = `rotate(${rot}deg)`; d.style.setProperty('--r', rot+'deg'); if(type==='qg') d.innerHTML='★'; if(type==='roll') d.innerHTML='RE<br>LANCE'; d.id = 'cell-' + id; d.onclick = () => tryMove(id); boardCells[id] = { type: type, cat: cat }; container.appendChild(d); }
 function buildLegend() { document.getElementById('legend').innerHTML = CATS.map(c => `<div class="legend-item"><div class="legend-color" style="background:${c.c}"></div><span>${c.n}</span></div>`).join(''); }
@@ -3490,18 +3486,16 @@ function updateUI() {
     let msg = document.getElementById('msg'); 
     let diceDiv = document.getElementById('dice-tray'); 
     
-    // Reset UI
+    if(isMyTurn && !questionTimer && !autoRollTimer && !autoMoveTimer && !GAME_STATE.moves.length && !GAME_STATE.question && !GAME_STATE.paused) startAutoRollTimer();
+    else if (!isMyTurn) stopTimers();
+
+    btn.disabled = !isMyTurn; btn.className = ''; btn.onclick = null; 
     document.querySelectorAll('.target').forEach(e => e.classList.remove('target')); 
     document.querySelectorAll('.target-passive').forEach(e => e.classList.remove('target-passive')); 
 
-    // Gestion des timers
-    if(isMyTurn && !questionTimer && !autoRollTimer && !autoMoveTimer && !GAME_STATE.moves.length && !GAME_STATE.question && !GAME_STATE.paused) startAutoRollTimer();
-    else if (!isMyTurn) stopTimers();
-    
-    // Affichage "En Attente"
     if(!isMyTurn) { 
         msg.innerText = "Tour de " + p.n; btn.innerText = "EN ATTENTE..."; 
-        btn.style.display = 'inline-block'; btn.disabled = true; diceDiv.style.visibility = 'visible'; 
+        btn.style.display = 'inline-block'; diceDiv.style.visibility = 'visible'; 
         if(GAME_STATE.moves && GAME_STATE.moves.length > 0) {
             GAME_STATE.moves.forEach(mId => {
                 let el = (mId === 999) ? document.getElementById('hub-cell') : document.getElementById('cell-' + mId);
@@ -3510,10 +3504,7 @@ function updateUI() {
         }
         return; 
     } 
-
-    // Tour du joueur
     msg.innerText = "À toi de jouer !"; 
-    btn.disabled = false; btn.className = ''; btn.onclick = null;
     
     if(GAME_STATE.moves && GAME_STATE.moves.length > 0) { 
         stopTimers(); 
