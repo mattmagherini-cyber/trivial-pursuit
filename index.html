@@ -5,7 +5,9 @@
     <title>TRIVIAL PURSUIT - ULTIMATE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+    
+    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+    
     <style>
         :root { --bg-color: #0f172a; --sidebar-bg: rgba(30, 41, 59, 0.95); --gold: #fbbf24; --glass-border: 1px solid rgba(255, 255, 255, 0.1); }
         body { background: radial-gradient(circle at center, #1e293b, #020617); color: #fff; font-family: 'Montserrat', sans-serif; height: 100vh; margin: 0; display: flex; flex-direction:column; justify-content:center; align-items:center; overflow: hidden; user-select: none; }
@@ -2825,13 +2827,12 @@ const MASTER_DB = {
 };
 
 // =============================================================================
-// 3. MOTEUR DU JEU (RÉSEAU STABILISÉ POUR GITHUB PAGES)
+// 3. MOTEUR DU JEU (VERSION HYBRIDE : STABLE + ROBUSTE)
 // =============================================================================
 
-// CONFIGURATION RÉSEAU AVEC SERVEURS GOOGLE ET INTERVALLE DE PING
+// CONFIGURATION OBLIGATOIRE POUR GITHUB PAGES
 const PEER_CONFIG = {
     debug: 2,
-    pingInterval: 5000, 
     config: {
         iceServers: [
             { urls: 'stun:stun.l.google.com:19302' },
@@ -2969,7 +2970,7 @@ function sendChat() {
 function addChatMessageToUI(sender, color, txt) { let div = document.getElementById('chat-messages'); let d = document.createElement('div'); d.className = 'chat-msg'; d.innerHTML = `<span class="chat-name" style="color:${color}">${sender}:</span> ${txt}`; div.appendChild(d); div.scrollTop = div.scrollHeight; let c = document.getElementById('chat-container'); if(c.classList.contains('chat-collapsed')) document.getElementById('chat-notif').style.display = 'inline-block'; }
 function broadcastChat(sender, color, txt) { addChatMessageToUI(sender, color, txt); let netMsg = { type: 'CHAT_BROADCAST', data: {sender:sender, color:color, msg:txt} }; if(GAME_MODE === 'HOST') hostConns.forEach(c => c.send(netMsg)); }
 
-// --- INITIALISATION & RESEAU (CORRECTIFS APPLIQUÉS) ---
+// --- INITIALISATION & RESEAU ---
 function startLocalGame() {
     GAME_MODE = 'LOCAL'; unlockAudio();
     let nb = document.getElementById('nb-players-local').value;
@@ -3000,20 +3001,26 @@ function hostStartGame() {
     broadcastState('INIT_START');
 }
 
+// ==========================================
+// HÔTE : CONFIGURATION ROBUSTE
+// ==========================================
 function initHost() {
     GAME_MODE = 'HOST';
     myPseudo = document.getElementById('my-pseudo').value || "Hôte";
     unlockAudio();
     
+    // Nettoyage complet
     if(peer) { peer.destroy(); peer = null; } 
     hostConns = [];
 
     document.getElementById('loading-overlay').style.display = 'flex';
-    
-    // Config STUN Google + pas de reliable
+    console.log("Démarrage Hôte (PeerJS 1.4.7 + Google STUN)...");
+
+    // Utilisation de la config Google pour passer les pare-feu
     peer = new Peer(null, PEER_CONFIG);
     
     peer.on('open', (id) => {
+        console.log(">>> HÔTE PRÊT. ID:", id);
         myPeerId = id;
         document.getElementById('loading-overlay').style.display = 'none';
         showLobby();
@@ -3021,38 +3028,52 @@ function initHost() {
     });
 
     peer.on('connection', (conn) => {
-        // Envoi d'un Ping régulier pour maintenir la connexion
-        let pingInterval = setInterval(() => {
-            if(conn.open) conn.send({ type: 'PING' });
-            else clearInterval(pingInterval);
-        }, 2000);
-
+        console.log("Tentative de connexion entrante de :", conn.peer);
+        
         conn.on('open', () => {
+            console.log(">>> TUNNEL OUVERT AVEC SUCCÈS ! (Joueur connecté)");
+            
             if(!hostConns.find(c => c.peer === conn.peer)) {
                 hostConns.push(conn);
+                // Petit délai pour laisser le tunnel se stabiliser
                 setTimeout(() => broadcastLobby(), 500);
+
+                // KEEPALIVE : Ping régulier pour empêcher la déconnexion (2s)
+                let keepAlive = setInterval(() => {
+                    if(conn.open) conn.send({ type: 'PING' });
+                    else clearInterval(keepAlive);
+                }, 2000);
             }
         });
 
         conn.on('data', (data) => {
-            if(data.type !== 'PING') handleHostData(conn, data);
+            // On ignore les pings, on traite le reste
+            if(data.type !== 'PING') {
+                console.log("Donnée reçue:", data.type);
+                handleHostData(conn, data);
+            }
         });
 
         conn.on('close', () => { 
+            console.log("Fermeture connexion:", conn.peer);
             hostConns = hostConns.filter(c => c !== conn);
             let p = GAME_STATE.players.find(pl => pl.id === conn.peer);
             if(p) broadcastChat("Système", "#ff0000", p.n + " déconnecté.");
         });
         
-        conn.on('error', (err) => console.log("Erreur connexion entrante", err));
+        conn.on('error', (err) => console.error("Erreur Connexion Entrante:", err));
     });
 
     peer.on('error', (err) => { 
-        if(err.type !== 'peer-unavailable') alert("Erreur Hôte : " + err.type); 
+        console.error("Erreur PeerJS Hôte:", err);
+        alert("Erreur Hôte : " + err.type); 
         document.getElementById('loading-overlay').style.display='none'; 
     });
 }
 
+// ==========================================
+// CLIENT : CONFIGURATION ROBUSTE
+// ==========================================
 function initJoin() {
     GAME_MODE = 'CLIENT';
     myPseudo = document.getElementById('my-pseudo').value || "Invité";
@@ -3064,26 +3085,31 @@ function initJoin() {
     if(peer) { peer.destroy(); peer = null; }
     
     document.getElementById('loading-overlay').style.display = 'flex';
+    console.log("Démarrage Client vers:", hostId);
     
+    // Config Google STUN
     peer = new Peer(null, PEER_CONFIG);
     
     peer.on('open', (id) => {
         myPeerId = id;
-        // Connexion légère sans 'reliable: true' qui bloquait
+        console.log("Client connecté au serveur. ID:", id);
+
+        // CONNEXION SANS 'RELIABLE' MAIS AVEC 'JSON'
+        // C'est la combinaison gagnante pour la v1.4.7 sur mobile
         myConn = peer.connect(hostId, {
             serialization: 'json'
         });
         
-        // Ping inverse pour maintenir la ligne ouverte
-        let pingInterval = setInterval(() => {
-            if(myConn && myConn.open) myConn.send({ type: 'PING' });
-            else if(!myConn || !myConn.open) clearInterval(pingInterval);
-        }, 2000);
-
         myConn.on('open', () => {
+            console.log(">>> CONNECTÉ À L'HÔTE ! <<<");
             document.getElementById('loading-overlay').style.display = 'none';
             showLobby();
             myConn.send({ type: 'JOIN', name: myPseudo, id: myPeerId });
+
+            // Ping inverse pour maintenir la ligne
+            setInterval(() => {
+                if(myConn.open) myConn.send({ type: 'PING' });
+            }, 2000);
         });
         
         myConn.on('data', (data) => {
@@ -3091,17 +3117,19 @@ function initJoin() {
         });
         
         myConn.on('error', (err) => {
-            console.log("Erreur connexion client", err);
+            console.error("Erreur Tunnel Client:", err);
         });
 
         myConn.on('close', () => {
-            alert("Déconnecté de l'hôte.");
+            alert("Connexion perdue avec l'hôte.");
             quitGame();
         });
     });
     
     peer.on('error', (err) => { 
-        if(err.type !== 'peer-unavailable') alert("Erreur Réseau : " + err.type); 
+        console.error("Erreur PeerJS Client:", err);
+        if(err.type === 'peer-unavailable') alert("Partie introuvable. Vérifiez le code.");
+        else alert("Erreur Réseau : " + err.type); 
         document.getElementById('loading-overlay').style.display = 'none'; 
     });
 }
