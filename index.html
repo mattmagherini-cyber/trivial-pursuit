@@ -3004,10 +3004,10 @@ function initHost() {
     unlockAudio();
     
     if(peer) { peer.destroy(); peer = null; } 
-    
+    hostConns = []; // Reset des connexions
+
     document.getElementById('loading-overlay').style.display = 'flex';
     
-    // On utilise la config définie plus haut
     peer = new Peer(null, PEER_CONFIG);
     
     peer.on('open', (id) => {
@@ -3018,37 +3018,29 @@ function initHost() {
         addPlayerToLobby(id, myPseudo); 
     });
 
-    // C'EST ICI QUE TOUT SE JOUE
     peer.on('connection', (conn) => {
         console.log("Tentative de connexion de :", conn.peer);
         
-        // On écoute les erreurs AVANT l'ouverture
-        conn.on('error', (err) => console.error("Erreur de connexion entrante:", err));
-
         conn.on('open', () => {
-            console.log(">>> TUNNEL OUVERT AVEC SUCCÈS ! <<<");
+            console.log(">>> TUNNEL OUVERT AVEC :", conn.peer);
             
-            // Vérifions qu'on n'a pas déjà ce joueur
+            // Vérification anti-doublon
             if(!hostConns.find(c => c.peer === conn.peer)) {
                 hostConns.push(conn);
-                
-                // On envoie le lobby immédiatement pour débloquer le client
+                // On attend 500ms pour être sûr que le canal est stable avant d'envoyer
                 setTimeout(() => broadcastLobby(), 500);
             }
         });
 
-        conn.on('data', (data) => {
-            console.log("Données reçues:", data);
-            handleHostData(conn, data);
-        });
+        conn.on('data', (data) => handleHostData(conn, data));
 
         conn.on('close', () => { 
-            console.log("Déconnexion:", conn.peer);
             hostConns = hostConns.filter(c => c !== conn);
-            // On retire le joueur visuellement si nécessaire
             GAME_STATE.players = GAME_STATE.players.filter(p => p.id !== conn.peer);
             renderLobbyList();
         });
+        
+        conn.on('error', (err) => console.error("Erreur connection:", err));
     });
 
     peer.on('error', (err) => { 
@@ -3065,35 +3057,33 @@ function initJoin() {
     let hostId = document.getElementById('host-id-input').value.trim();
     if(!hostId) return alert("Code manquant");
     
+    // Nettoyage
     if(peer) { peer.destroy(); peer = null; }
     
     document.getElementById('loading-overlay').style.display = 'flex';
     
+    // On utilise la config définie plus haut (PEER_CONFIG)
     peer = new Peer(null, PEER_CONFIG);
     
     peer.on('open', (id) => {
         myPeerId = id;
-        console.log("Client prêt. Tentative de connexion vers:", hostId);
+        console.log("Client prêt. ID:", id);
 
-        // --- CORRECTIF CRITIQUE ICI ---
-        // On force le mode JSON pour éviter les blocages de sécurité
+        // --- C'EST ICI QUE CA SE JOUE ---
+        // On force la sérialisation JSON pour passer les sécurités
         myConn = peer.connect(hostId, {
             reliable: true,
-            serialization: 'json'
+            serialization: 'json'  // <--- INDISPENSABLE
         });
         
         myConn.on('open', () => {
             console.log(">>> CONNECTÉ À L'HÔTE ! <<<");
             document.getElementById('loading-overlay').style.display = 'none';
             showLobby();
-            // On envoie nos infos tout de suite
             myConn.send({ type: 'JOIN', name: myPseudo, id: myPeerId });
         });
         
-        myConn.on('data', (data) => {
-            console.log("Reçu de l'hôte:", data);
-            handleClientData(data);
-        });
+        myConn.on('data', (data) => handleClientData(data));
         
         myConn.on('error', (err) => {
             console.error("Erreur Connexion:", err);
@@ -3109,8 +3099,7 @@ function initJoin() {
     
     peer.on('error', (err) => { 
         console.error("Erreur PeerJS:", err);
-        if(err.type === 'peer-unavailable') alert("Partie introuvable (Code incorrect).");
-        else alert("Erreur Réseau : " + err.type); 
+        alert("Erreur : " + err.type); 
         document.getElementById('loading-overlay').style.display = 'none'; 
     });
 }
