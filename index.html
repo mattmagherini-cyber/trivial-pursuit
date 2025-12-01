@@ -416,6 +416,18 @@ const DROP_RATES = {
     "HARD": { EASY: 5, NORMAL: 20, HARD: 50, IMPOSSIBLE: 25 },        
     "IMPOSSIBLE": { EASY: 0, NORMAL: 5, HARD: 30, IMPOSSIBLE: 65 } 
 };
+
+// --- AJOUTEZ CECI JUSTE APRÈS DROP_RATES ---
+
+const PEER_CONFIG = {
+    debug: 2,
+    config: {
+        iceServers: [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun1.l.google.com:19302' }
+        ]
+    }
+};
 // --- FIN CONFIGURATION ---
 
 // ... La suite du code (MASTER_DB) ne change pas ...
@@ -2992,48 +3004,55 @@ function initHost() {
     myPseudo = document.getElementById('my-pseudo').value || "Hôte";
     unlockAudio();
     
+    // Nettoyage propre
     if(peer) { peer.destroy(); peer = null; } 
-    
+    hostConns = [];
+
     document.getElementById('loading-overlay').style.display = 'flex';
     
-    peer = new Peer(); // Config par défaut
+    // Création avec la config STUN de Google
+    peer = new Peer(null, PEER_CONFIG);
     
     peer.on('open', (id) => {
-        console.log("Hôte prêt, ID:", id);
+        console.log("Hôte connecté au serveur de signalisation. ID:", id);
         myPeerId = id;
         document.getElementById('loading-overlay').style.display = 'none';
         showLobby();
         addPlayerToLobby(id, myPseudo); 
     });
 
-    // QUAND UN JOUEUR SE CONNECTE
+    // Gestion des connexions entrantes
     peer.on('connection', (conn) => {
-        console.log("Nouvelle connexion entrante de :", conn.peer);
+        console.log("Tentative de connexion entrante de :", conn.label);
         
-        hostConns.push(conn);
-        
-        // On écoute les données
-        conn.on('data', (data) => {
-            console.log("Hôte a reçu:", data);
-            handleHostData(conn, data);
-        });
-
-        // Dès que c'est ouvert, on envoie l'état du lobby pour débloquer le client
         conn.on('open', () => {
-            console.log("Tunnel ouvert avec", conn.peer);
+            console.log(">> Tunnel ouvert avec succès avec :", conn.peer);
+            hostConns.push(conn);
+            
+            // On envoie immédiatement le lobby au nouveau joueur
             broadcastLobby();
         });
 
-        conn.on('close', () => { 
+        conn.on('data', (data) => {
+            console.log("Données reçues de", conn.peer, data);
+            handleHostData(conn, data);
+        });
+
+        conn.on('close', () => {
             console.log("Fermeture connexion", conn.peer);
             hostConns = hostConns.filter(c => c !== conn);
-            // Optionnel : Retirer le joueur de la liste visuelle ici
+            let p = GAME_STATE.players.find(pl => pl.id === conn.peer);
+            if(p) broadcastChat("Système", "#ff0000", p.n + " déconnecté.");
+        });
+        
+        conn.on('error', (err) => {
+            console.error("Erreur connexion hôte:", err);
         });
     });
 
     peer.on('error', (err) => { 
-        console.error("Erreur Hôte:", err);
-        alert("Erreur création hôte : " + err.type); 
+        console.error("Erreur PeerJS Hôte:", err);
+        alert("Erreur Hôte (" + err.type + ") : " + err.message); 
         document.getElementById('loading-overlay').style.display='none'; 
     });
 }
@@ -3041,62 +3060,57 @@ function initHost() {
 function initJoin() {
     GAME_MODE = 'CLIENT';
     myPseudo = document.getElementById('my-pseudo').value || "Invité";
-    unlockAudio(); // Important pour les sons sur mobile
+    unlockAudio();
     
     let hostId = document.getElementById('host-id-input').value.trim();
-    if(!hostId) return alert("Veuillez entrer le code de l'hôte.");
+    if(!hostId) return alert("Code manquant");
+    
+    if(peer) { peer.destroy(); peer = null; }
     
     document.getElementById('loading-overlay').style.display = 'flex';
     
-    // Destruction préventive si une instance existe déjà
-    if(peer) { peer.destroy(); peer = null; }
-
-    // 1. Création du Peer client
-    peer = new Peer(); // Laisse PeerJS gérer l'ID automatiquement
+    // Création du peer client avec la config Google STUN
+    peer = new Peer(null, PEER_CONFIG);
     
     peer.on('open', (id) => {
+        console.log("Client connecté au serveur. Mon ID:", id);
         myPeerId = id;
-        console.log("Mon ID Client:", id);
-
-        // 2. TENTATIVE DE CONNEXION AVEC OPTIONS EXPLICITES
-        // C'est ici que ça bloquait souvent : on force le JSON et la fiabilité
+        
+        // Tentative de connexion à l'hôte
+        // 'reliable: true' est important pour le jeu
         myConn = peer.connect(hostId, {
             reliable: true,
-            serialization: 'json' 
+            serialization: 'json'
         });
         
-        // 3. Gestion de l'ouverture du tunnel
         myConn.on('open', () => {
-            console.log("Connexion établie avec l'hôte !");
+            console.log(">> Connecté à l'hôte !");
             document.getElementById('loading-overlay').style.display = 'none';
             showLobby();
-            // On envoie immédiatement ses infos
+            // Envoi immédiat du pseudo
             myConn.send({ type: 'JOIN', name: myPseudo, id: myPeerId });
         });
         
-        // 4. Écoute des messages venant de l'hôte
         myConn.on('data', (data) => {
             console.log("Données reçues:", data);
             handleClientData(data);
         });
         
-        // 5. Gestion des erreurs de connexion directe
         myConn.on('error', (err) => {
-            console.error("Erreur connexion:", err);
-            alert("Erreur de connexion : " + err);
-            document.getElementById('loading-overlay').style.display = 'none';
+            console.error("Erreur connexion client:", err);
+            alert("Erreur de connexion à l'hôte.");
         });
 
         myConn.on('close', () => {
-            alert("L'hôte a fermé la connexion.");
+            alert("Déconnecté de l'hôte.");
             quitGame();
         });
     });
     
-    // Erreur globale du Peer (ex: pare-feu bloquant)
     peer.on('error', (err) => { 
-        console.error("Erreur PeerJS:", err);
-        alert("Erreur réseau (Code " + err.type + "). Vérifiez le code de l'hôte."); 
+        console.error("Erreur PeerJS Client:", err);
+        if(err.type === 'peer-unavailable') alert("Partie introuvable (Code incorrect ou Hôte parti).");
+        else alert("Erreur : " + err.type); 
         document.getElementById('loading-overlay').style.display = 'none'; 
     });
 }
