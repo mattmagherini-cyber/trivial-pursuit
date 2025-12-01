@@ -14,7 +14,7 @@
         .screen { position: absolute; z-index: 6000; background: rgba(2, 6, 23, 0.98); width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .setup-box { background: rgba(255, 255, 255, 0.05); padding: 40px; border-radius: 30px; text-align: center; border: var(--glass-border); box-shadow: 0 0 60px rgba(0,0,0,0.6); width: 550px; max-width: 90%; max-height: 90vh; overflow-y: auto; backdrop-filter: blur(10px); }
         
-        /* --- DÉ 3D PHYSIQUE --- */
+        /* --- DÉ 3D PHYSIQUE (FACES FERMÉES) --- */
         #dice-tray {
             width: 120px; height: 120px; margin: 0 auto 20px auto;
             perspective: 800px; display: flex; justify-content: center; align-items: center;
@@ -26,26 +26,57 @@
         }
         .face {
             position: absolute; width: 80px; height: 80px; background: #fdfbf7;
-            border: 2px solid #d1d5db;
+            border: 2px solid #d1d5db; /* Arêtes nettes, pas de border-radius */
             box-shadow: inset 0 0 15px rgba(0,0,0,0.1);
             display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); padding: 8px; box-sizing: border-box;
         }
         .dot { align-self: center; justify-self: center; width: 16px; height: 16px; background-color: #222; border-radius: 50%; box-shadow: inset 1px 1px 2px rgba(255,255,255,0.3); }
-        .face-1 { transform: rotateY(0deg) translateZ(40px); } .face-2 { transform: rotateY(90deg) translateZ(40px); } .face-3 { transform: rotateY(180deg) translateZ(40px); } .face-4 { transform: rotateY(-90deg) translateZ(40px); } .face-5 { transform: rotateX(90deg) translateZ(40px); } .face-6 { transform: rotateX(-90deg) translateZ(40px); }
-        @keyframes toss { 0% { transform: translateY(0) rotateZ(0); } 30% { transform: translateY(-120px) rotateZ(10deg); } 60% { transform: translateY(0) rotateZ(-5deg); } 80% { transform: translateY(-30px) rotateZ(2deg); } 100% { transform: translateY(0) rotateZ(0); } }
+        
+        .face-1 { transform: rotateY(0deg) translateZ(40px); }
+        .face-2 { transform: rotateY(90deg) translateZ(40px); }
+        .face-3 { transform: rotateY(180deg) translateZ(40px); }
+        .face-4 { transform: rotateY(-90deg) translateZ(40px); }
+        .face-5 { transform: rotateX(90deg) translateZ(40px); }
+        .face-6 { transform: rotateX(-90deg) translateZ(40px); }
+
+        @keyframes toss {
+            0% { transform: translateY(0) rotateZ(0); }
+            30% { transform: translateY(-120px) rotateZ(10deg); } 
+            60% { transform: translateY(0) rotateZ(-5deg); } 
+            80% { transform: translateY(-30px) rotateZ(2deg); } 
+            100% { transform: translateY(0) rotateZ(0); }
+        }
         .tossing { animation: toss 1.2s ease-in-out; }
 
-        /* NAV */
-        .nav-btn { position: fixed; top: 15px; width: 45px; height: 45px; background: rgba(255,255,255,0.15); border-radius: 12px; cursor: pointer; display: none; z-index: 9000; align-items: center; justify-content: center; font-size: 28px; border: 1px solid rgba(255,255,255,0.3); transition: 0.2s; backdrop-filter: blur(5px); }
-        .nav-btn:hover { background: rgba(255,255,255,0.25); transform: scale(1.05); }
-        #burger-btn { left: 15px; }
-        
-        #ingame-menu { position: fixed; top: 75px; left: 20px; width: 260px; background: #1e293b; border: 1px solid rgba(255,255,255,0.2); border-radius: 15px; padding: 15px; display: none; flex-direction: column; gap: 10px; z-index: 9000; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
-        .menu-item { background: rgba(255,255,255,0.05); border: none; padding: 15px; text-align: left; font-size: 15px; color: #fff; cursor: pointer; border-radius: 8px; transition: 0.2s; display: flex; align-items: center; gap: 15px; font-family: 'Montserrat', sans-serif; font-weight: 600; }
+        /* --- MENU BURGER --- */
+        #burger-btn { 
+            position: fixed; top: 20px; left: 20px; width: 45px; height: 45px; 
+            background: rgba(255,255,255,0.15); border-radius: 12px; cursor: pointer; 
+            display: none; z-index: 9000; align-items: center; justify-content: center; 
+            font-size: 28px; border: 1px solid rgba(255,255,255,0.3); transition: 0.2s;
+            backdrop-filter: blur(5px);
+        }
+        #burger-btn:hover { background: rgba(255,255,255,0.25); transform: scale(1.05); }
+
+        #ingame-menu {
+            position: fixed; top: 75px; left: 20px; width: 260px;
+            background: #1e293b; border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 15px; padding: 15px;
+            display: none; flex-direction: column; gap: 10px;
+            z-index: 9000; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+        }
+        .menu-item {
+            background: rgba(255,255,255,0.05); border: none;
+            padding: 15px; text-align: left; font-size: 15px;
+            color: #fff; cursor: pointer; border-radius: 8px;
+            transition: 0.2s; display: flex; align-items: center; gap: 15px;
+            font-family: 'Montserrat', sans-serif; font-weight: 600;
+        }
         .menu-item:hover { background: rgba(255,255,255,0.15); padding-left: 20px; }
         .menu-item.danger { color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .menu-item.danger:hover { background: rgba(239, 68, 68, 0.2); }
 
-        /* UI */
+        /* UI GEN */
         h1 { font-size: 50px; color: var(--gold); margin-bottom: 30px; text-shadow: 0 0 30px rgba(251, 191, 36, 0.3); }
         input, select { padding: 12px; font-size: 16px; width: 100%; box-sizing: border-box; text-align: center; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: #fff; font-weight: bold; font-family: 'Montserrat', sans-serif; margin-bottom: 10px; outline: none; transition: 0.3s; }
         label { display: block; margin: 15px 0 5px; font-size: 14px; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; }
@@ -55,9 +86,9 @@
         .btn-secondary { background: transparent; border: 2px solid rgba(255,255,255,0.2); box-shadow: none; font-size: 14px; padding: 10px; }
         .btn-big { font-size: 24px; padding: 30px; margin-bottom: 20px; }
         
-        /* TCHAT BARRE BASSE */
+        /* TCHAT */
         #chat-container { position: fixed; bottom: 0; right: 20px; width: 300px; background: #0f172a; border-radius: 15px 15px 0 0; border: 1px solid rgba(255,255,255,0.2); z-index: 20000; display: none; flex-direction: column; transition: transform 0.3s; box-shadow: 0 -5px 20px rgba(0,0,0,0.5); }
-        #chat-header { padding: 10px; background: rgba(255,255,255,0.1); cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; }
+        #chat-header { padding: 10px; background: rgba(255,255,255,0.1); cursor: pointer; font-weight: bold; display: flex; justify-content: space-between; border-radius: 15px 15px 0 0; }
         #chat-body { height: 300px; display: flex; flex-direction: column; }
         #chat-messages { flex: 1; overflow-y: auto; padding: 10px; font-size: 13px; text-align: left; }
         .chat-msg { margin-bottom: 8px; line-height: 1.4; word-wrap: break-word; }
@@ -68,28 +99,56 @@
         .chat-collapsed { transform: translateY(300px); }
         #chat-notif { background: red; width: 10px; height: 10px; border-radius: 50%; display: none; }
 
-        /* JEU */
+        /* JEU LOBBY */
         #player-list { text-align: left; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 10px; margin: 20px 0; min-height: 100px; }
         .lobby-p { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
         .lobby-dot { width: 12px; height: 12px; border-radius: 50%; }
         #host-id-display { font-size: 24px; font-weight: 900; color: #4ade80; letter-spacing: 2px; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 10px; margin: 10px 0; user-select: text; cursor: pointer; }
         
-        #game-layout { display: flex; gap: 20px; align-items: center; justify-content: center; visibility: hidden; width: 100%; height: 100%; overflow: hidden; } 
-        #board-container { width: 760px; height: 760px; position: relative; background: rgba(255, 255, 255, 0.02); border-radius: 50%; box-shadow: 0 0 120px rgba(0,0,0,0.6), inset 0 0 60px rgba(0,0,0,0.8); border: 2px solid rgba(255,255,255,0.08); flex-shrink: 0; transform-origin: center center; transition: transform 0.3s; }
+        /* LAYOUT */
+        #game-layout { 
+            display: flex; gap: 20px; align-items: center; justify-content: center;
+            visibility: hidden; width: 100%; height: 100%; overflow: hidden;
+        } 
+        #board-container { 
+            width: 760px; height: 760px; position: relative; 
+            background: rgba(255, 255, 255, 0.02); border-radius: 50%; 
+            box-shadow: 0 0 120px rgba(0,0,0,0.6), inset 0 0 60px rgba(0,0,0,0.8); 
+            border: 2px solid rgba(255,255,255,0.08); 
+            flex-shrink: 0; transform-origin: center center; transition: transform 0.3s;
+        }
         .cell { position: absolute; width: 42px; height: 42px; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 10px; font-weight: bold; color: rgba(255,255,255,0.95); box-shadow: inset 0 0 8px rgba(0,0,0,0.4), 0 4px 6px rgba(0,0,0,0.3); cursor: pointer; z-index: 5; transition: transform 0.2s; border: 1px solid rgba(255,255,255,0.2); text-align:center; line-height:1; }
         .cell.qg { width: 58px; height: 58px; border: 3px solid #fff; z-index: 10; border-radius: 12px; font-size: 24px; box-shadow: 0 0 20px rgba(255,255,255,0.3); }
         .cell.roll { background: linear-gradient(135deg, #fff, #cbd5e1) !important; color: #000 !important; font-size: 9px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
         .hub { position: absolute; top: 380px; left: 380px; width: 90px; height: 90px; margin-top: -45px; margin-left: -45px; background: radial-gradient(circle, #fff, #fbbf24); border-radius: 50%; border: 6px solid rgba(255,255,255,0.9); box-shadow: 0 0 50px rgba(251, 191, 36, 0.5); z-index: 2; display: flex; justify-content: center; align-items: center; font-weight: 900; color: #000; cursor: pointer; font-size: 20px; }
-        .pawn { width: 28px; height: 28px; border-radius: 50%; border: 3px solid #fff; position: absolute; transition: left 0.28s linear, top 0.28s linear; box-shadow: 0 5px 15px rgba(0,0,0,0.8); z-index: 500; transform: translate(-50%, -50%); pointer-events: none; }
+        
+        .pawn { 
+            width: 28px; height: 28px; border-radius: 50%; border: 3px solid #fff; 
+            position: absolute; 
+            transition: left 0.28s linear, top 0.28s linear; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.8); 
+            z-index: 500; /* Au dessus de tout */
+            transform: translate(-50%, -50%); 
+            pointer-events: none; 
+        }
         
         #sidebar { width: 300px; height: auto; max-height: 90vh; display: flex; flex-direction: column; gap: 15px; flex-shrink: 1; }
-        .card { background: var(--sidebar-bg); padding: 10px 20px; border-radius: 18px; border-left: 6px solid #475569; border-top: 1px solid rgba(255,255,255,0.1); transition:0.3s; display: flex; justify-content: space-between; align-items: center; gap: 10px; overflow: hidden; }
+        
+        /* CARTE JOUEUR */
+        .card { 
+            background: var(--sidebar-bg); padding: 10px 20px; 
+            border-radius: 18px; border-left: 6px solid #475569; border-top: 1px solid rgba(255,255,255,0.1); 
+            transition: 0.3s; display: flex; justify-content: space-between; align-items: center; 
+            gap: 10px; overflow: hidden;
+        }
         .card.active { background: rgba(59, 130, 246, 0.15); border-left-color: var(--gold); transform: scale(1.02); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
         .player-name { font-size: 16px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0; text-align: left; }
         .wedges { display: flex; gap: 3px; flex-shrink: 0; }
         .wedge { width: 14px; height: 14px; background: rgba(0,0,0,0.6); border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); }
+        
         #controls { margin-top: auto; text-align: center; background: var(--sidebar-bg); padding: 20px; border-radius: 25px; border: var(--glass-border); }
         
+        /* CIBLES */
         .target { animation: flash-neon 0.8s infinite alternate !important; z-index: 200 !important; border: 2px solid #fff !important; cursor: pointer; }
         .target-passive { animation: flash-neon 0.8s infinite alternate !important; z-index: 100 !important; border: 2px solid #fff !important; cursor: default; opacity: 0.6; }
         @keyframes flash-neon { 0% { box-shadow: 0 0 5px #fff, 0 0 10px #fff inset; transform: scale(1.1) rotate(var(--r)); } 100% { box-shadow: 0 0 15px #fff, 0 0 20px #fff inset; transform: scale(1.2) rotate(var(--r)); } }
@@ -113,7 +172,9 @@
         .confetti { position: absolute; width: 10px; height: 10px; background: #f00; animation: fall 3s linear infinite; }
         @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
         #loading-overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:none; justify-content:center; align-items:center; z-index:7000; font-size:24px; color:#fbbf24; }
+        
         #pause-overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter: blur(5px); display:none; justify-content:center; align-items:center; z-index:8500; flex-direction: column; }
+
         #rules-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(5px); display:none; justify-content:center; align-items:center; z-index:9500; }
         #rules-box { background: #1e293b; padding: 30px; border-radius: 20px; max-width: 600px; width:90%; max-height:80vh; overflow-y:auto; border: 1px solid #fbbf24; text-align:left; position:relative; }
         .rule-section { margin-bottom: 15px; font-size: 14px; line-height: 1.4; }
@@ -122,28 +183,29 @@
         /* RESPONSIVE */
         @media (max-width: 1100px) {
             #game-layout { flex-direction: column-reverse; width: 100%; height: 100vh; padding: 0; justify-content: flex-end; }
-            #board-container { transform: scale(0.55); margin-bottom: -120px; margin-top: -50px; } /* Échelle 0.55 pour agrandir un peu */
-            #sidebar { width: 100%; flex-direction: row; background: rgba(15, 23, 42, 0.95); padding: 8px; box-sizing: border-box; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.1); height: 140px; }
+            #board-container { transform: scale(0.6); margin-bottom: -150px; margin-top: -80px; }
+            #sidebar { width: 100%; flex-direction: row; background: rgba(15, 23, 42, 0.95); padding: 8px; box-sizing: border-box; align-items: center; justify-content: space-between; border-top: 1px solid rgba(255,255,255,0.1); height: 200px; }
             #players-div { display: flex; flex-wrap: wrap; gap: 5px; width: 55%; height: 100%; overflow-y: auto; justify-content: flex-start; align-content: flex-start; }
             .card { padding: 5px 8px; font-size: 11px; flex: 1 1 45%; min-width: 0; border-radius: 8px; }
             .player-name { font-size: 12px; }
             .wedge { width: 10px; height: 10px; }
             #controls { width: 40%; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: none; border: none; height: 100%; }
-            #dice-tray { width: 60px; height: 60px; perspective: 400px; margin: 0 0 10px 0; flex-shrink: 0; }
+            #dice-tray { width: 60px; height: 60px; perspective: 400px; margin: 0 0 15px 0; flex-shrink: 0; }
             .dice-cube { width: 50px; height: 50px; }
             .face { width: 50px; height: 50px; border-radius: 8px; padding: 4px; }
             .dot { width: 10px; height: 10px; }
             .face-1 { transform: rotateY(0deg) translateZ(25px); } .face-2 { transform: rotateY(90deg) translateZ(25px); } .face-3 { transform: rotateY(180deg) translateZ(25px); } .face-4 { transform: rotateY(-90deg) translateZ(25px); } .face-5 { transform: rotateX(90deg) translateZ(25px); } .face-6 { transform: rotateX(-90deg) translateZ(25px); }
             #btn-roll { width: 90%; padding: 12px; font-size: 14px; margin-top: 0; }
             #legend { display: none; }
-            #chat-container { bottom: 0; width: 100%; right: 0; border-radius: 15px 15px 0 0; } /* Tchat barre basse mobile */
+            #chat-container { bottom: 200px; } 
         }
         @media (max-width: 900px) {
-            #game-layout { padding-top: 50px; }
-            #board-container { transform: scale(0.55); margin-top: -100px; margin-bottom: -100px; }
-            #sidebar { height: 150px; }
+            #game-layout { padding-top: 60px; }
+            #board-container { transform: scale(0.42); margin-top: -200px; margin-bottom: -200px; }
+            #sidebar { height: 160px; }
             .card { flex: 1 1 45%; } 
             h1 { font-size: 24px; }
+            #chat-container { bottom: 180px; width: 100%; right: 0; }
             .ans-btn { width: 100%; margin: 5px 0; padding: 15px; font-size: 14px; }
             #q-txt { font-size: 18px; margin: 15px 0; }
         }
@@ -167,11 +229,28 @@
 <div id="rules-overlay">
     <div id="rules-box">
         <h2 style="color:#fbbf24; text-align:center; margin-top:0;">RÈGLES DU JEU</h2>
-        <div class="rule-section"><div class="rule-title">1. LE BUT</div>Remplissez votre camembert en obtenant les 6 couleurs. Une fois rempli, retournez au Hub central pour la question finale.</div>
-        <div class="rule-section"><div class="rule-title">2. DÉPLACEMENT</div>Lancez le dé. Vous pouvez vous déplacer dans n'importe quelle direction.<br><i>Attention : Dans les rayons, c'est sens unique vers l'extérieur tant que vous n'avez pas les 6 couleurs !</i></div>
-        <div class="rule-section"><div class="rule-title">3. CASES</div><b>Case Couleur :</b> Répondez correctement pour rejouer.<br><b>Case QG (Grosse) :</b> Répondez correctement pour gagner le camembert !<br><b>Case "RELANCE" :</b> Relancez le dé.</div>
-        <div class="rule-section"><div class="rule-title">4. VICTOIRE</div>Avec les 6 camemberts, remontez au centre. Répondez juste à la question finale pour gagner !</div>
-        <div style="text-align:center; margin-top:30px;"><button onclick="closeRules()">FERMER</button></div>
+        <div class="rule-section">
+            <div class="rule-title">1. LE BUT</div>
+            Remplissez votre camembert en obtenant les 6 couleurs. Une fois rempli, retournez au Hub central pour la question finale.
+        </div>
+        <div class="rule-section">
+            <div class="rule-title">2. DÉPLACEMENT</div>
+            Lancez le dé. Vous pouvez vous déplacer dans n'importe quelle direction.
+            <br><i>Attention : Dans les rayons, c'est sens unique vers l'extérieur tant que vous n'avez pas les 6 couleurs !</i>
+        </div>
+        <div class="rule-section">
+            <div class="rule-title">3. CASES</div>
+            <b>Case Couleur :</b> Répondez correctement pour rejouer.
+            <br><b>Case QG (Grosse) :</b> Répondez correctement pour gagner le camembert de cette couleur !
+            <br><b>Case "RELANCE" :</b> Relancez immédiatement le dé.
+        </div>
+        <div class="rule-section">
+            <div class="rule-title">4. VICTOIRE</div>
+            Avec les 6 camemberts, remontez au centre. Si vous répondez juste à la question finale, vous gagnez !
+        </div>
+        <div style="text-align:center; margin-top:30px;">
+            <button onclick="closeRules()">FERMER</button>
+        </div>
     </div>
 </div>
 
@@ -323,14 +402,15 @@ const CATS = [
     {id:"SCI", c:"#22c55e", n:"Sciences"},
     {id:"SPO", c:"#f97316", n:"Sports"}
 ];
+
+// NOUVEAUX TAUX DE DIFFICULTÉ
 const DROP_RATES = {
     "EASY": { EASY: 50, NORMAL: 35, HARD: 12, IMPOSSIBLE: 3 },
     "NORMAL": { EASY: 15, NORMAL: 45, HARD: 30, IMPOSSIBLE: 10 },   
     "HARD": { EASY: 5, NORMAL: 20, HARD: 50, IMPOSSIBLE: 25 },       
     "IMPOSSIBLE": { EASY: 0, NORMAL: 5, HARD: 30, IMPOSSIBLE: 65 } 
 };
-
-// ... La suite du code (MASTER_DB) ne change pas ...
+// --- FIN CONFIGURATION ---
 
 // 2. BASE DE DONNÉES MAÎTRE (Toutes les questions ici)
 const MASTER_DB = {
@@ -2737,7 +2817,7 @@ const MASTER_DB = {
 };
 
 // =============================================================================
-// 3. MOTEUR DU JEU (FINAL)
+// 3. MOTEUR DU JEU (PARTIE 3 - FINAL)
 // =============================================================================
 
 let GAME_MODE = ''; 
@@ -2764,11 +2844,13 @@ let autoRollTimer = null;
 let autoMoveTimer = null; 
 let IS_MUTED = false; 
 
+// --- CONFIGURATION ---
 const SOUND_VOLUMES = {
     'sfx-dice': 1.0, 'sfx-correct': 1.0, 'sfx-wrong': 0.3, 
     'sfx-win': 0.8, 'bg-music': 0.1, 'sfx-click': 0.3   
 };
 
+// Config réseau compatible 4G (Serveurs Google)
 const PEER_CONFIG = {
     debug: 1,
     config: {
@@ -2779,24 +2861,19 @@ const PEER_CONFIG = {
     }
 };
 
+// --- GESTION CLAVIER & SOURIS ---
 document.addEventListener('keydown', function(event) {
     if (GAME_STATE.paused) return;
     if (document.activeElement.tagName === 'INPUT') return;
+    
     if (event.code === 'Space' || event.code === 'Enter') {
         event.preventDefault(); 
         let p = GAME_STATE.players[GAME_STATE.curr];
         let isMyTurn = (GAME_MODE === 'LOCAL' || (p && p.id === myPeerId));
 
         if(GAME_STATE.phase === 'INITIATIVE' && isMyTurn) {
-            // On vérifie si le joueur DOIT jouer (pas de score affiché pour ce tour)
-            let needsToRoll = false;
-            if (GAME_STATE.tiedPlayers.length === 0) {
-                if (GAME_STATE.initRolls[p.id] === undefined) needsToRoll = true;
-            } else {
-                if (GAME_STATE.tiedPlayers.includes(p.id) && GAME_STATE.displayRolls[p.id] === undefined) needsToRoll = true;
-            }
-            
-            if(needsToRoll) actionInitiativeRoll();
+            let btn = document.getElementById('btn-init-roll');
+            if(btn && btn.style.display !== 'none') actionInitiativeRoll();
         }
         else if(GAME_STATE.phase === 'GAME' && !GAME_STATE.question && isMyTurn) {
             if(GAME_STATE.moves.length === 0) {
@@ -2813,15 +2890,19 @@ document.addEventListener('keydown', function(event) {
 document.addEventListener('click', function(e) {
     let m = document.getElementById('ingame-menu');
     let btn = document.getElementById('burger-btn');
-    if(m.style.display === 'flex' && e.target !== m && !m.contains(e.target) && e.target !== btn) m.style.display = 'none';
-
+    if(m.style.display === 'flex' && e.target !== m && !m.contains(e.target) && e.target !== btn) {
+        m.style.display = 'none';
+    }
     if(GAME_STATE.paused && e.target.id !== 'pause-overlay' && !e.target.closest('#pause-overlay') && !e.target.closest('#ingame-menu')) {
          e.stopPropagation(); return;
     }
     if(e.target.classList.contains('target') || e.target.classList.contains('target-passive')) return;
-    if(e.target.tagName === 'BUTTON' || e.target.closest('button') || e.target.classList.contains('cell')) safePlaySound('sfx-click');
+    if(e.target.tagName === 'BUTTON' || e.target.closest('button') || e.target.classList.contains('cell')) {
+        safePlaySound('sfx-click');
+    }
 });
 
+// --- MENU & UTILS ---
 function toggleGameMenu() { let m = document.getElementById('ingame-menu'); m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; }
 function toggleGlobalSound() {
     IS_MUTED = !IS_MUTED;
@@ -2907,6 +2988,8 @@ function hostStartGame() {
     initQuestionDecks();
     broadcastState('INIT_START');
 }
+
+// --- RESEAU (HÔTE & CLIENT) ---
 function initHost() {
     GAME_MODE = 'HOST'; myPseudo = document.getElementById('my-pseudo').value || "Hôte"; unlockAudio();
     if(peer) { peer.destroy(); peer = null; }
@@ -2928,7 +3011,8 @@ function initJoin() {
     peer = new Peer(null, PEER_CONFIG);
     peer.on('open', (id) => {
         myPeerId = id;
-        myConn = peer.connect(hostId, {serialization: 'json'});
+        // RETOUR A LA CONFIG SIMPLE SANS SERIALIZATION JSON FORCÉ
+        myConn = peer.connect(hostId);
         myConn.on('open', () => { document.getElementById('loading-overlay').style.display = 'none'; showLobby(); myConn.send({ type: 'JOIN', name: myPseudo, id: myPeerId }); });
         myConn.on('data', (data) => handleClientData(data));
         myConn.on('error', () => { alert("Erreur connexion"); document.getElementById('loading-overlay').style.display = 'none'; });
@@ -2936,7 +3020,8 @@ function initJoin() {
     peer.on('error', (err) => { if(err.type === 'peer-unavailable') alert("Partie introuvable."); else alert("Erreur Réseau: " + err.type); document.getElementById('loading-overlay').style.display = 'none'; });
 }
 
-// --- LOGIQUE INITIATIVE ---
+// --- LOGIQUE INITIATIVE (CORRIGÉE & VISIBLE) ---
+
 function actionInitiativeRoll() {
     let btn = document.getElementById('btn-init-roll');
     if(btn) btn.style.display = 'none'; 
@@ -2949,12 +3034,15 @@ function performInitiativeRoll() {
     let p = GAME_STATE.players[GAME_STATE.curr];
     
     GAME_STATE.displayRolls[p.id] = roll;
+    
+    // Calcul du score décimal (ex: 5.0, 4.3)
     let increment = roll / Math.pow(10, GAME_STATE.tieDepth);
     if(!GAME_STATE.initRolls[p.id]) GAME_STATE.initRolls[p.id] = 0;
     GAME_STATE.initRolls[p.id] += increment;
     
     broadcastState('INIT_ANIM', { val: roll, pid: p.id });
     
+    // Délais réduits : 1.2s animation + courte pause
     setTimeout(() => {
         let group = (GAME_STATE.tiedPlayers.length > 0) ? GAME_STATE.tiedPlayers : GAME_STATE.players.map(pl=>pl.id);
         let idxInGroup = group.indexOf(p.id);
@@ -2972,26 +3060,28 @@ function performInitiativeRoll() {
 function resolveInitiative() {
     broadcastState(); 
     setTimeout(() => {
+        // 1. Tri Global décroissant
         GAME_STATE.players.sort((a, b) => (GAME_STATE.initRolls[b.id] || 0) - (GAME_STATE.initRolls[a.id] || 0));
         
+        // 2. Analyse des égalités dans le groupe actif
         let scoreMap = {};
         let group = (GAME_STATE.tiedPlayers.length > 0) ? GAME_STATE.tiedPlayers : GAME_STATE.players.map(pl=>pl.id);
         
         group.forEach(id => {
+            // Arrondi pour éviter les bugs de float (ex 4.30000001)
             let s = parseFloat((GAME_STATE.initRolls[id] || 0).toFixed(4));
             if(!scoreMap[s]) scoreMap[s] = [];
             scoreMap[s].push(id);
         });
 
         let newTies = [];
-        for(let s in scoreMap) {
-            if(scoreMap[s].length > 1) newTies.push(...scoreMap[s]);
-        }
+        for(let s in scoreMap) { if(scoreMap[s].length > 1) newTies.push(...scoreMap[s]); }
         
         if(newTies.length > 0) {
             GAME_STATE.tiedPlayers = newTies;
             GAME_STATE.tieDepth++; 
             GAME_STATE.curr = GAME_STATE.players.findIndex(p => p.id === newTies[0]);
+            // On reset l'affichage pour les égalités
             newTies.forEach(id => delete GAME_STATE.displayRolls[id]);
             broadcastState('INIT_TIE', { tied: newTies });
         } else {
@@ -3000,7 +3090,7 @@ function resolveInitiative() {
             GAME_STATE.tiedPlayers = [];
             broadcastState('GAME_START');
         }
-    }, 1000);
+    }, 1500);
 }
 
 function updateInitiativeUI() {
@@ -3008,10 +3098,15 @@ function updateInitiativeUI() {
     document.getElementById('initiative-screen').style.display = 'flex';
     document.getElementById('game-layout').style.visibility = 'hidden';
     
+    // Dé 3D Initiative
     let container = document.getElementById('dice-tray-init');
     if(container.innerHTML.trim() === '') {
         let original = document.querySelector('.dice-cube');
-        if(original) { let clone = original.cloneNode(true); clone.id = 'cube-init'; container.appendChild(clone); }
+        if(original) {
+            let clone = original.cloneNode(true);
+            clone.id = 'cube-init';
+            container.appendChild(clone);
+        }
     }
 
     let p = GAME_STATE.players[GAME_STATE.curr];
@@ -3019,26 +3114,31 @@ function updateInitiativeUI() {
     let btn = document.getElementById('btn-init-roll');
     let resDiv = document.getElementById('init-results');
     
-    // Masquer par défaut
-    btn.style.display = 'none';
-
+    // Tri pour affichage propre
     let sortedList = [...GAME_STATE.players].sort((a, b) => (GAME_STATE.initRolls[b.id] || 0) - (GAME_STATE.initRolls[a.id] || 0));
 
     let html = "<h3>Classement :</h3>";
     sortedList.forEach(pl => {
         let total = GAME_STATE.initRolls[pl.id];
         let displayVal = "-";
+        
         if (total !== undefined) {
+            // Si le joueur est en attente de relance (égalité) ET qu'il n'a pas encore lancé ce tour-ci
             if (GAME_STATE.tiedPlayers.includes(pl.id) && GAME_STATE.displayRolls[pl.id] === undefined) {
                  let prevDepth = Math.max(0, GAME_STATE.tieDepth - 1);
-                 displayVal = parseFloat(total.toFixed(prevDepth)) + "...";
+                 // Affiche "4" ou "4.3" ...
+                 displayVal = parseFloat(total.toFixed(prevDepth)) + "..."; 
             } else {
+                // Sinon affiche le score complet (ex: 4.3, 5)
                 let decimals = GAME_STATE.tieDepth > 0 ? GAME_STATE.tieDepth : 0;
-                displayVal = parseFloat(total.toFixed(decimals)); 
+                displayVal = parseFloat(total.toFixed(decimals));
             }
         }
+        
         let activeStyle = (pl.id === p.id) ? "border: 2px solid var(--gold); background: rgba(251, 191, 36, 0.15);" : "border: 1px solid transparent;";
-        html += `<div style="color:${pl.c}; font-size:18px; margin-bottom:5px; padding:8px; border-radius:8px; ${activeStyle} transition:0.3s;">${pl.n} : <b>${displayVal}</b></div>`;
+        html += `<div style="color:${pl.c}; font-size:18px; margin-bottom:5px; padding:8px; border-radius:8px; ${activeStyle} transition:0.3s;">
+            ${pl.n} : <b>${displayVal}</b> 
+        </div>`;
     });
     resDiv.innerHTML = html;
 
@@ -3046,20 +3146,11 @@ function updateInitiativeUI() {
     else msg.innerText = "Tour de " + p.n + " pour l'ordre du jeu";
 
     let isMyTurn = (GAME_MODE === 'LOCAL' || p.id === myPeerId);
-    
-    // CORRECTION BUG : Le bouton ne s'affiche que si je DOIS jouer
-    let needsToRoll = false;
-    if (GAME_STATE.tiedPlayers.length === 0) {
-        // Tour normal
-        if (GAME_STATE.initRolls[p.id] === undefined) needsToRoll = true;
-    } else {
-        // Egalité
-        if (GAME_STATE.tiedPlayers.includes(p.id) && GAME_STATE.displayRolls[p.id] === undefined) needsToRoll = true;
-    }
-
-    if(isMyTurn && needsToRoll) {
+    if(isMyTurn) {
         btn.style.display = 'inline-block';
         btn.disabled = false;
+    } else {
+        btn.style.display = 'none';
     }
 }
 
@@ -3070,15 +3161,23 @@ function stopTimers() {
     if(autoMoveTimer) clearTimeout(autoMoveTimer);
     questionTimer = null; autoRollTimer = null; autoMoveTimer = null;
 }
+
 function performRoll() {
     stopTimers();
     let btn = document.getElementById('btn-roll');
     if(btn) btn.style.display = 'none'; 
+
     let roll = Math.floor(Math.random() * 6) + 1;
     let p = GAME_STATE.players[GAME_STATE.curr];
+    
     broadcastState('ROLL_ANIM', { val: roll });
-    setTimeout(() => { GAME_STATE.moves = calculatePossibleMoves(p.p, roll, p); broadcastState(); }, 1600);
+    
+    setTimeout(() => {
+        GAME_STATE.moves = calculatePossibleMoves(p.p, roll, p);
+        broadcastState(); 
+    }, 1600);
 }
+
 function performMove(targetId) {
     stopTimers();
     let p = GAME_STATE.players[GAME_STATE.curr];
@@ -3086,6 +3185,7 @@ function performMove(targetId) {
     GAME_STATE.moves = []; 
     broadcastState('ANIM_MOVE', { playerId: p.id, path: path });
     let duration = (path.length * 300) + 500; 
+    
     setTimeout(() => {
         p.p = targetId; p.hub = (targetId === 999);
         let isMyQG = (targetId === p.homeColorIdx * 7);
@@ -3097,6 +3197,7 @@ function performMove(targetId) {
         }
     }, duration);
 }
+
 function startEntry() {
     stopTimers();
     let p = GAME_STATE.players[GAME_STATE.curr];
@@ -3104,6 +3205,7 @@ function startEntry() {
     else if (p.p >= 1000) askQuestion(boardCells[p.p].cat, false, false, "ASCENSION");
     else askQuestion(boardCells[p.p].cat, false, false, "ENTRY");
 }
+
 function askQuestion(catObj, isQG, isFin, mode) {
     let catId = catObj ? catObj.id : "FINALE";
     if(isFin || mode === "ENTRY") { let rc = CATS[Math.floor(Math.random() * 6)]; catId = rc.id; catObj = rc; }
@@ -3111,6 +3213,7 @@ function askQuestion(catObj, isQG, isFin, mode) {
     GAME_STATE.question = { q: qData.q, r: qData.r, bon: qData.bon, cat: catObj, mode: mode, isQG: isQG };
     broadcastState('SHOW_QUESTION');
 }
+
 function checkAnswer(txt) {
     stopTimers();
     let q = GAME_STATE.question;
@@ -3118,6 +3221,7 @@ function checkAnswer(txt) {
     let isCorrect = (txt && txt === q.bon);
     let p = GAME_STATE.players[GAME_STATE.curr];
     broadcastState('REVEAL_RESULT', { correct: q.bon, given: txt });
+    
     setTimeout(() => {
         GAME_STATE.question = null; 
         if(q.mode === "FINALE" && isCorrect) { broadcastState('VICTORY', { winnerName: p.n }); return; }
@@ -3125,6 +3229,7 @@ function checkAnswer(txt) {
             if(q.mode === "ENTRY") p.p = 1000 + (p.homeColorIdx * 10);
             else if(q.mode === "ASCENSION") { let step = (p.p - 1000) % 10; if(step === 4) p.p = 999; else p.p++; }
             else if(q.isQG && !p.w.includes(q.cat.id)) p.w.push(q.cat.id);
+            
             if(q.mode === "ENTRY" || q.mode === "ASCENSION") { broadcastState(); setTimeout(() => startEntry(), 1500); }
             else broadcastState();
         } else {
@@ -3133,6 +3238,7 @@ function checkAnswer(txt) {
         }
     }, 3000);
 }
+
 function handleHostData(conn, data) {
     if(data.type === 'JOIN') addPlayerToLobby(data.id, data.name);
     else if(data.type === 'ACTION_INIT_ROLL' && isPlayerTurn(data.senderId)) performInitiativeRoll();
@@ -3145,11 +3251,19 @@ function handleHostData(conn, data) {
         if(p) broadcastChat(p.n, p.c, data.msg);
     }
 }
+
 function handleClientData(data) {
     if(data.type === 'LOBBY_UPDATE') { GAME_STATE.players = data.players; renderLobbyList(); }
     else if(data.type === 'STATE_UPDATE') {
-        if(data.event === 'INIT_START' || data.event === 'INIT_TIE') { GAME_STATE = data.state; updateInitiativeUI(); }
-        else if(data.event === 'INIT_ANIM') { GAME_STATE = data.state; rollDice3D(data.extra.val, 'cube-init'); updateInitiativeUI(); }
+        if(data.event === 'INIT_START' || data.event === 'INIT_TIE') {
+            GAME_STATE = data.state;
+            updateInitiativeUI();
+        }
+        else if(data.event === 'INIT_ANIM') {
+            GAME_STATE = data.state;
+            rollDice3D(data.extra.val, 'cube-init');
+            updateInitiativeUI(); 
+        }
         else if(data.event === 'GAME_START') {
             document.getElementById('lobby-screen').style.display = 'none';
             document.getElementById('initiative-screen').style.display = 'none';
@@ -3159,9 +3273,17 @@ function handleClientData(data) {
             if(!IS_MUTED) safePlaySound('bg-music');
             setTimeout(() => { buildBoard(); buildLegend(); updateUI(); drawPawns(); }, 50);
         }
-        else if(data.event === 'ROLL_ANIM') { GAME_STATE = data.state; updateUI(); rollDice3D(data.extra.val, 'cube'); }
+        else if(data.event === 'ROLL_ANIM') {
+            GAME_STATE = data.state;
+            updateUI(); 
+            rollDice3D(data.extra.val, 'cube');
+        }
         else if(data.event === 'ANIM_MOVE') { animatePawnMovement(data.extra.playerId, data.extra.path); }
-        else if(data.event === 'SHOW_QUESTION') { GAME_STATE = data.state; drawPawns(); showQuestionModal(GAME_STATE.question); }
+        else if(data.event === 'SHOW_QUESTION') {
+            GAME_STATE = data.state;
+            drawPawns(); 
+            showQuestionModal(GAME_STATE.question);
+        }
         else if(data.event === 'REVEAL_RESULT') {
             stopTimers();
             document.querySelectorAll('.ans-btn').forEach(b => {
@@ -3190,6 +3312,17 @@ function handleClientData(data) {
     }
     else if(data.type === 'CHAT_BROADCAST') { addChatMessageToUI(data.data.sender, data.data.color, data.data.msg); }
 }
+
+function actionRoll() { safePlaySound('sfx-dice'); if(GAME_MODE === 'LOCAL' || GAME_MODE === 'HOST') performRoll(); else myConn.send({ type: 'ACTION_ROLL', senderId: myPeerId }); }
+function tryMove(id) {
+    if(GAME_MODE === 'CLIENT' && GAME_STATE.players[GAME_STATE.curr].id !== myPeerId) return;
+    if(!GAME_STATE.moves.includes(id)) return;
+    if(GAME_MODE === 'LOCAL' || GAME_MODE === 'HOST') performMove(id);
+    else myConn.send({ type: 'ACTION_MOVE', senderId: myPeerId, cellId: id });
+}
+function actionEntry() { if(GAME_MODE === 'LOCAL' || GAME_MODE === 'HOST') startEntry(); else myConn.send({ type: 'ACTION_ENTRY', senderId: myPeerId }); }
+function submitAnswer(txt) { if(GAME_MODE === 'LOCAL' || GAME_MODE === 'HOST') checkAnswer(txt); else myConn.send({ type: 'ACTION_ANSWER', senderId: myPeerId, txt: txt }); }
+
 function rollDice3D(result, cubeId) {
     let cube = document.getElementById(cubeId);
     let container = cube.parentElement;
@@ -3201,6 +3334,7 @@ function rollDice3D(result, cubeId) {
     let turnsX = (Math.floor(Math.random() * 2) + 2) * 360; let turnsY = (Math.floor(Math.random() * 2) + 2) * 360;
     cube.style.transform = `rotateX(${rx + turnsX}deg) rotateY(${ry + turnsY}deg)`;
 }
+
 function findPath(start, end, player = null) {
     let queue = [[start]];
     let visited = new Set(); visited.add(start);
@@ -3212,6 +3346,7 @@ function findPath(start, end, player = null) {
     }
     return [start, end];
 }
+
 function animatePawnMovement(playerId, path) {
     let pIdx = GAME_STATE.players.findIndex(p => p.id === playerId);
     let pawns = document.querySelectorAll('.pawn');
@@ -3232,6 +3367,7 @@ function animatePawnMovement(playerId, path) {
     }
     moveStep();
 }
+
 function startQuestionTimer() {
     stopTimers();
     let bar = document.getElementById('timer-bar');
@@ -3247,6 +3383,7 @@ function startAutoMoveTimer() {
     stopTimers();
     autoMoveTimer = setTimeout(() => { if(GAME_STATE.moves.length > 0) { let firstChoice = GAME_STATE.moves[0]; tryMove(firstChoice); } }, 10000);
 }
+
 function unlockAudio() {
     const soundIds = ['sfx-dice', 'sfx-correct', 'sfx-wrong', 'sfx-win', 'bg-music', 'sfx-click'];
     soundIds.forEach(id => { let s = document.getElementById(id); if(s) s.load(); });
@@ -3258,6 +3395,7 @@ function safePlaySound(id) {
     let s = original.cloneNode(true); s.volume = SOUND_VOLUMES[id] || 1.0;
     let p = s.play(); if(p) p.catch(()=>{}); s.onended = function() { s.remove(); };
 }
+
 function broadcastState(event, extra) { let msg = { type: 'STATE_UPDATE', state: GAME_STATE, event: event, extra: extra }; handleClientData(msg); if(GAME_MODE === 'HOST') hostConns.forEach(c => c.send(msg)); }
 function broadcastLobby() { let msg = { type: 'LOBBY_UPDATE', players: GAME_STATE.players }; if(GAME_MODE === 'HOST') hostConns.forEach(c => c.send(msg)); renderLobbyList(); }
 function isPlayerTurn(id) { return GAME_STATE.players[GAME_STATE.curr] && GAME_STATE.players[GAME_STATE.curr].id === id; }
