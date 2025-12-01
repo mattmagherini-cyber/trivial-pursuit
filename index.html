@@ -2996,29 +2996,44 @@ function initHost() {
     
     document.getElementById('loading-overlay').style.display = 'flex';
     
-    // ZÉRO CONFIG: On laisse PeerJS utiliser ses serveurs par défaut
-    peer = new Peer(); 
+    peer = new Peer(); // Config par défaut
     
     peer.on('open', (id) => {
+        console.log("Hôte prêt, ID:", id);
         myPeerId = id;
         document.getElementById('loading-overlay').style.display = 'none';
         showLobby();
         addPlayerToLobby(id, myPseudo); 
     });
+
+    // QUAND UN JOUEUR SE CONNECTE
     peer.on('connection', (conn) => {
-        if(!hostConns.find(c => c.peer === conn.peer)) {
-            hostConns.push(conn);
-            conn.on('data', (data) => handleHostData(conn, data));
-            conn.on('open', () => { setTimeout(() => { broadcastLobby(); }, 500); });
-            conn.on('close', () => { 
-                hostConns = hostConns.filter(c => c !== conn);
-                let p = GAME_STATE.players.find(pl => pl.id === conn.peer);
-                if(p) broadcastChat("Système", "#ff0000", p.n + " déconnecté.");
-            });
-        }
+        console.log("Nouvelle connexion entrante de :", conn.peer);
+        
+        hostConns.push(conn);
+        
+        // On écoute les données
+        conn.on('data', (data) => {
+            console.log("Hôte a reçu:", data);
+            handleHostData(conn, data);
+        });
+
+        // Dès que c'est ouvert, on envoie l'état du lobby pour débloquer le client
+        conn.on('open', () => {
+            console.log("Tunnel ouvert avec", conn.peer);
+            broadcastLobby();
+        });
+
+        conn.on('close', () => { 
+            console.log("Fermeture connexion", conn.peer);
+            hostConns = hostConns.filter(c => c !== conn);
+            // Optionnel : Retirer le joueur de la liste visuelle ici
+        });
     });
+
     peer.on('error', (err) => { 
-        alert("Erreur PeerJS : " + err.type); 
+        console.error("Erreur Hôte:", err);
+        alert("Erreur création hôte : " + err.type); 
         document.getElementById('loading-overlay').style.display='none'; 
     });
 }
@@ -3026,53 +3041,62 @@ function initHost() {
 function initJoin() {
     GAME_MODE = 'CLIENT';
     myPseudo = document.getElementById('my-pseudo').value || "Invité";
-    unlockAudio();
+    unlockAudio(); // Important pour les sons sur mobile
     
     let hostId = document.getElementById('host-id-input').value.trim();
-    if(!hostId) return alert("Code manquant");
-    
-    if(peer) { peer.destroy(); peer = null; }
+    if(!hostId) return alert("Veuillez entrer le code de l'hôte.");
     
     document.getElementById('loading-overlay').style.display = 'flex';
     
-    // ZÉRO CONFIG pour le client aussi
-    peer = new Peer();
+    // Destruction préventive si une instance existe déjà
+    if(peer) { peer.destroy(); peer = null; }
+
+    // 1. Création du Peer client
+    peer = new Peer(); // Laisse PeerJS gérer l'ID automatiquement
     
     peer.on('open', (id) => {
         myPeerId = id;
-        // Connexion simple
-        myConn = peer.connect(hostId);
+        console.log("Mon ID Client:", id);
+
+        // 2. TENTATIVE DE CONNEXION AVEC OPTIONS EXPLICITES
+        // C'est ici que ça bloquait souvent : on force le JSON et la fiabilité
+        myConn = peer.connect(hostId, {
+            reliable: true,
+            serialization: 'json' 
+        });
         
+        // 3. Gestion de l'ouverture du tunnel
         myConn.on('open', () => {
+            console.log("Connexion établie avec l'hôte !");
             document.getElementById('loading-overlay').style.display = 'none';
             showLobby();
+            // On envoie immédiatement ses infos
             myConn.send({ type: 'JOIN', name: myPseudo, id: myPeerId });
         });
         
-        myConn.on('data', (data) => handleClientData(data));
+        // 4. Écoute des messages venant de l'hôte
+        myConn.on('data', (data) => {
+            console.log("Données reçues:", data);
+            handleClientData(data);
+        });
         
-        // Gestion d'erreur spécifique à la connexion
+        // 5. Gestion des erreurs de connexion directe
         myConn.on('error', (err) => {
-            alert("Erreur de connexion à l'hôte.");
+            console.error("Erreur connexion:", err);
+            alert("Erreur de connexion : " + err);
             document.getElementById('loading-overlay').style.display = 'none';
         });
 
         myConn.on('close', () => {
-            alert("Déconnecté de l'hôte.");
+            alert("L'hôte a fermé la connexion.");
             quitGame();
         });
-        
-        // Timeout manuel si la connexion ne s'ouvre jamais
-        setTimeout(() => {
-            if(myConn && !myConn.open && document.getElementById('loading-overlay').style.display === 'flex') {
-                alert("La connexion prend trop de temps. Vérifiez le code.");
-                document.getElementById('loading-overlay').style.display = 'none';
-            }
-        }, 8000);
     });
     
+    // Erreur globale du Peer (ex: pare-feu bloquant)
     peer.on('error', (err) => { 
-        alert("Erreur PeerJS : " + err.type); 
+        console.error("Erreur PeerJS:", err);
+        alert("Erreur réseau (Code " + err.type + "). Vérifiez le code de l'hôte."); 
         document.getElementById('loading-overlay').style.display = 'none'; 
     });
 }
