@@ -14,53 +14,23 @@
         .screen { position: absolute; z-index: 6000; background: rgba(2, 6, 23, 0.98); width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .setup-box { background: rgba(255, 255, 255, 0.05); padding: 40px; border-radius: 30px; text-align: center; border: var(--glass-border); box-shadow: 0 0 60px rgba(0,0,0,0.6); width: 550px; max-width: 90%; max-height: 90vh; overflow-y: auto; backdrop-filter: blur(10px); }
         
-        /* --- DÉ 3D PHYSIQUE --- */
-        #dice-tray {
-            width: 120px; height: 120px; margin: 0 auto 20px auto;
-            perspective: 800px; display: flex; justify-content: center; align-items: center;
-            transition: all 0.3s;
-        }
-        .dice-cube {
-            width: 80px; height: 80px; position: relative; transform-style: preserve-3d;
-            transition: transform 1.5s cubic-bezier(0.15, 0.9, 0.34, 1.0); 
-        }
-        .face {
-            position: absolute; width: 80px; height: 80px; background: #fdfbf7;
-            border: 2px solid #d1d5db; /* Arêtes nettes pour fermer le cube */
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.1);
-            display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); padding: 8px; box-sizing: border-box;
-        }
+        /* --- DÉ 3D --- */
+        #dice-tray { width: 120px; height: 120px; margin: 0 auto 20px auto; perspective: 800px; display: flex; justify-content: center; align-items: center; transition: all 0.3s; }
+        .dice-cube { width: 80px; height: 80px; position: relative; transform-style: preserve-3d; transition: transform 1.5s cubic-bezier(0.15, 0.9, 0.34, 1.0); }
+        .face { position: absolute; width: 80px; height: 80px; background: #fdfbf7; border: 2px solid #d1d5db; box-shadow: inset 0 0 15px rgba(0,0,0,0.1); display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); padding: 8px; box-sizing: border-box; }
         .dot { align-self: center; justify-self: center; width: 16px; height: 16px; background-color: #222; border-radius: 50%; box-shadow: inset 1px 1px 2px rgba(255,255,255,0.3); }
-        
-        .face-1 { transform: rotateY(0deg) translateZ(40px); }
-        .face-2 { transform: rotateY(90deg) translateZ(40px); }
-        .face-3 { transform: rotateY(180deg) translateZ(40px); }
-        .face-4 { transform: rotateY(-90deg) translateZ(40px); }
-        .face-5 { transform: rotateX(90deg) translateZ(40px); }
-        .face-6 { transform: rotateX(-90deg) translateZ(40px); }
-
-        @keyframes toss {
-            0% { transform: translateY(0) rotateZ(0); }
-            30% { transform: translateY(-120px) rotateZ(10deg); } 
-            60% { transform: translateY(0) rotateZ(-5deg); } 
-            80% { transform: translateY(-30px) rotateZ(2deg); } 
-            100% { transform: translateY(0) rotateZ(0); }
-        }
+        .face-1 { transform: rotateY(0deg) translateZ(40px); } .face-2 { transform: rotateY(90deg) translateZ(40px); } .face-3 { transform: rotateY(180deg) translateZ(40px); } .face-4 { transform: rotateY(-90deg) translateZ(40px); } .face-5 { transform: rotateX(90deg) translateZ(40px); } .face-6 { transform: rotateX(-90deg) translateZ(40px); }
+        @keyframes toss { 0% { transform: translateY(0) rotateZ(0); } 30% { transform: translateY(-120px) rotateZ(10deg); } 60% { transform: translateY(0) rotateZ(-5deg); } 80% { transform: translateY(-30px) rotateZ(2deg); } 100% { transform: translateY(0) rotateZ(0); } }
         .tossing { animation: toss 1.2s ease-in-out; }
 
-        /* BOUTONS NAV */
-        .nav-btn { 
-            position: fixed; top: 15px; width: 45px; height: 45px; 
-            background: rgba(255,255,255,0.15); border-radius: 50%; cursor: pointer; 
-            display: none; z-index: 9000; align-items: center; justify-content: center; 
-            font-size: 22px; border: 1px solid rgba(255,255,255,0.3); transition: 0.2s;
-            backdrop-filter: blur(5px);
-        }
-        .nav-btn:hover { background: rgba(255,255,255,0.3); transform: scale(1.1); }
-        #home-btn { right: 15px; }
-        #home-btn:hover { background: rgba(239, 68, 68, 0.8); }
-        #pause-btn { left: 15px; }
-        
+        /* MENU BURGER */
+        #burger-btn { position: fixed; top: 15px; left: 15px; width: 45px; height: 45px; background: rgba(255,255,255,0.15); border-radius: 12px; cursor: pointer; display: none; z-index: 9000; align-items: center; justify-content: center; font-size: 28px; border: 1px solid rgba(255,255,255,0.3); transition: 0.2s; backdrop-filter: blur(5px); }
+        #burger-btn:hover { background: rgba(255,255,255,0.25); transform: scale(1.05); }
+        #ingame-menu { position: fixed; top: 70px; left: 15px; width: 240px; background: #1e293b; border: 1px solid rgba(255,255,255,0.2); border-radius: 15px; padding: 10px; display: none; flex-direction: column; gap: 8px; z-index: 9000; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
+        .menu-item { background: rgba(255,255,255,0.05); border: none; padding: 12px; text-align: left; font-size: 14px; color: #fff; cursor: pointer; border-radius: 8px; transition: 0.2s; display: flex; align-items: center; gap: 10px; font-family: 'Montserrat', sans-serif; font-weight: 600; }
+        .menu-item:hover { background: rgba(255,255,255,0.15); padding-left: 15px; }
+        .menu-item.danger { color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+
         /* UI GEN */
         h1 { font-size: 50px; color: var(--gold); margin-bottom: 30px; text-shadow: 0 0 30px rgba(251, 191, 36, 0.3); }
         input, select { padding: 12px; font-size: 16px; width: 100%; box-sizing: border-box; text-align: center; border-radius: 10px; border: 1px solid rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); color: #fff; font-weight: bold; font-family: 'Montserrat', sans-serif; margin-bottom: 10px; outline: none; transition: 0.3s; }
@@ -91,53 +61,46 @@
         #host-id-display { font-size: 24px; font-weight: 900; color: #4ade80; letter-spacing: 2px; padding: 15px; background: rgba(255,255,255,0.1); border-radius: 10px; margin: 10px 0; user-select: text; cursor: pointer; }
         
         /* LAYOUT */
-        #game-layout { 
-            display: flex; gap: 20px; align-items: center; justify-content: center;
-            visibility: hidden; width: 100%; height: 100%; overflow: hidden;
-        } 
-        
-        #board-container { 
-            width: 760px; height: 760px; position: relative; 
-            background: rgba(255, 255, 255, 0.02); border-radius: 50%; 
-            box-shadow: 0 0 120px rgba(0,0,0,0.6), inset 0 0 60px rgba(0,0,0,0.8); 
-            border: 2px solid rgba(255,255,255,0.08); 
-            flex-shrink: 0; transform-origin: center center; transition: transform 0.3s;
-        }
-        
+        #game-layout { display: flex; gap: 20px; align-items: center; justify-content: center; visibility: hidden; width: 100%; height: 100%; overflow: hidden; } 
+        #board-container { width: 760px; height: 760px; position: relative; background: rgba(255, 255, 255, 0.02); border-radius: 50%; box-shadow: 0 0 120px rgba(0,0,0,0.6), inset 0 0 60px rgba(0,0,0,0.8); border: 2px solid rgba(255,255,255,0.08); flex-shrink: 0; transform-origin: center center; transition: transform 0.3s; }
         .cell { position: absolute; width: 42px; height: 42px; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 10px; font-weight: bold; color: rgba(255,255,255,0.95); box-shadow: inset 0 0 8px rgba(0,0,0,0.4), 0 4px 6px rgba(0,0,0,0.3); cursor: pointer; z-index: 5; transition: transform 0.2s; border: 1px solid rgba(255,255,255,0.2); text-align:center; line-height:1; }
         .cell.qg { width: 58px; height: 58px; border: 3px solid #fff; z-index: 10; border-radius: 12px; font-size: 24px; box-shadow: 0 0 20px rgba(255,255,255,0.3); }
         .cell.roll { background: linear-gradient(135deg, #fff, #cbd5e1) !important; color: #000 !important; font-size: 9px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
         .hub { position: absolute; top: 380px; left: 380px; width: 90px; height: 90px; margin-top: -45px; margin-left: -45px; background: radial-gradient(circle, #fff, #fbbf24); border-radius: 50%; border: 6px solid rgba(255,255,255,0.9); box-shadow: 0 0 50px rgba(251, 191, 36, 0.5); z-index: 2; display: flex; justify-content: center; align-items: center; font-weight: 900; color: #000; cursor: pointer; font-size: 20px; }
-        
-        .pawn { 
-            width: 28px; height: 28px; border-radius: 50%; border: 3px solid #fff; 
-            position: absolute; 
-            transition: left 0.28s linear, top 0.28s linear; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.8); 
-            z-index: 200; transform: translate(-50%, -50%); pointer-events: none; 
-        }
+        .pawn { width: 28px; height: 28px; border-radius: 50%; border: 3px solid #fff; position: absolute; transition: left 0.28s linear, top 0.28s linear; box-shadow: 0 5px 15px rgba(0,0,0,0.8); z-index: 200; transform: translate(-50%, -50%); pointer-events: none; }
         
         #sidebar { width: 300px; height: auto; max-height: 90vh; display: flex; flex-direction: column; gap: 15px; flex-shrink: 1; }
-        .card { background: var(--sidebar-bg); padding: 10px 20px; border-radius: 18px; border-left: 6px solid #475569; border-top: 1px solid rgba(255,255,255,0.1); transition:0.3s; display:flex; justify-content:space-between; align-items:center; }
-        .card.active { background: rgba(59, 130, 246, 0.15); border-left-color: var(--gold); transform: scale(1.02) translateX(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
-        .wedges { display: flex; gap: 4px; }
-        .wedge { width: 16px; height: 16px; background: rgba(0,0,0,0.6); border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); }
+        
+        /* CORRECTION CARTE JOUEUR POUR NOMS LONGS ET AFFICHAGE GRID MOBILE */
+        .card { 
+            background: var(--sidebar-bg); padding: 10px 15px; 
+            border-radius: 12px; border-left: 5px solid #475569; border-top: 1px solid rgba(255,255,255,0.1); 
+            transition: 0.3s; display: flex; justify-content: space-between; align-items: center; 
+            gap: 10px; overflow: hidden; /* Important pour le troncage */
+        }
+        .card.active { background: rgba(59, 130, 246, 0.15); border-left-color: var(--gold); transform: scale(1.02); box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
+        
+        .player-name {
+            font-size: 16px; font-weight: bold; 
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; /* Troncage */
+            flex: 1; min-width: 0; text-align: left; /* Force le layout */
+        }
+        
+        .wedges { display: flex; gap: 3px; flex-shrink: 0; /* Ne jamais écraser les points */ }
+        .wedge { width: 14px; height: 14px; background: rgba(0,0,0,0.6); border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); }
+        
         #controls { margin-top: auto; text-align: center; background: var(--sidebar-bg); padding: 20px; border-radius: 25px; border: var(--glass-border); }
         
-        /* CIBLES */
         .target { animation: flash-neon 0.8s infinite alternate !important; z-index: 200 !important; border: 2px solid #fff !important; cursor: pointer; }
-        
-        /* CORRECTION : Le passif est identique au target visuellement (flash-neon) mais sans curseur main */
         .target-passive { animation: flash-neon 0.8s infinite alternate !important; z-index: 100 !important; border: 2px solid #fff !important; cursor: default; opacity: 0.6; }
-        
         @keyframes flash-neon { 0% { box-shadow: 0 0 5px #fff, 0 0 10px #fff inset; transform: scale(1.1) rotate(var(--r)); } 100% { box-shadow: 0 0 15px #fff, 0 0 20px #fff inset; transform: scale(1.2) rotate(var(--r)); } }
 
         #modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); backdrop-filter: blur(12px); display: none; justify-content: center; align-items: center; z-index: 9000; }
-        #q-box { background: #1e293b; color: #fff; padding: 50px; border-radius: 25px; width: 700px; max-width: 95%; text-align: center; border-top: 15px solid #333; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8); position: relative; }
+        #q-box { background: #1e293b; color: #fff; padding: 40px; border-radius: 25px; width: 700px; max-width: 95%; text-align: center; border-top: 15px solid #333; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8); position: relative; }
         #timer-bar-container { width: 100%; height: 6px; background: #334155; position: absolute; top: 0; left: 0; overflow: hidden; border-radius: 25px 25px 0 0; }
         #timer-bar { height: 100%; width: 100%; background: #22c55e; transition: width 1s linear, background 0.3s; }
 
-        .ans-btn { padding: 22px; margin: 12px; width: 45%; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; background: rgba(255,255,255,0.05); color: #fff; cursor: pointer; font-size: 17px; font-weight: 600; transition: 0.2s; }
+        .ans-btn { padding: 20px; margin: 10px; width: 45%; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; background: rgba(255,255,255,0.05); color: #fff; cursor: pointer; font-size: 16px; font-weight: 600; transition: 0.2s; }
         .ans-btn:hover:not(:disabled) { background: rgba(255,255,255,0.15); transform: translateY(-3px); }
         .correct { background: linear-gradient(135deg, #10b981, #059669) !important; border: 2px solid #fff !important; box-shadow: 0 0 30px rgba(16, 185, 129, 0.4) !important; }
         .wrong { background: linear-gradient(135deg, #ef4444, #b91c1c) !important; opacity: 0.6; }
@@ -153,51 +116,103 @@
         #loading-overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:none; justify-content:center; align-items:center; z-index:7000; font-size:24px; color:#fbbf24; }
         #pause-overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter: blur(5px); display:none; justify-content:center; align-items:center; z-index:8500; flex-direction: column; }
 
-        /* --- RESPONSIVE OPTIMISÉ POUR MOBILE --- */
+        #rules-overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); backdrop-filter:blur(5px); display:none; justify-content:center; align-items:center; z-index:9500; }
+        #rules-box { background: #1e293b; padding: 30px; border-radius: 20px; max-width: 600px; width:90%; max-height:80vh; overflow-y:auto; border: 1px solid #fbbf24; text-align:left; position:relative; }
+        .rule-section { margin-bottom: 15px; font-size: 14px; line-height: 1.4; }
+        .rule-title { color: var(--gold); font-weight:bold; font-size:16px; margin-bottom:5px; }
+
+        /* RESPONSIVE */
         @media (max-width: 1100px) {
             #game-layout { flex-direction: column-reverse; width: 100%; height: 100vh; padding: 0; justify-content: flex-end; }
             #board-container { transform: scale(0.6); margin-bottom: -150px; margin-top: -80px; }
+            
+            /* Barre de contrôle Mobile */
             #sidebar { 
-                width: 100%; flex-direction: row; background: rgba(15, 23, 42, 0.95); padding: 10px; 
-                box-sizing: border-box; align-items: center; justify-content: space-between;
-                border-top: 1px solid rgba(255,255,255,0.1); height: 160px; 
+                width: 100%; flex-direction: row; background: rgba(15, 23, 42, 0.95); padding: 8px; 
+                box-sizing: border-box; align-items: center; justify-content: space-between; 
+                border-top: 1px solid rgba(255,255,255,0.1); height: 140px; /* Réduit un peu la hauteur */
             }
-            #players-div { display: flex; flex-wrap: wrap; gap: 5px; width: 50%; height: 100%; overflow-y: auto; justify-content: flex-start; }
-            .card { padding: 5px 10px; font-size: 12px; min-width: 120px; }
-            #controls { width: 45%; padding: 5px; display: flex; flex-direction: row; align-items: center; justify-content: space-around; background: none; border: none; }
-            #dice-tray { width: 60px; height: 60px; perspective: 400px; margin: 0 10px; }
+            
+            /* Grille des joueurs Mobile */
+            #players-div { 
+                display: flex; flex-wrap: wrap; /* Permet le retour à la ligne */
+                gap: 5px; width: 55%; height: 100%; 
+                overflow-y: auto; /* Scroll vertical si vraiment trop de joueurs */
+                justify-content: flex-start; align-content: flex-start;
+            }
+            .card { 
+                padding: 5px 8px; font-size: 11px; 
+                flex: 1 1 45%; /* 2 cartes par ligne (environ 45%) */
+                min-width: 0; /* Permet au flex de rétrécir si besoin */
+                border-radius: 8px;
+            }
+            .player-name { font-size: 12px; }
+            .wedge { width: 10px; height: 10px; }
+
+            #controls { width: 40%; padding: 0; display: flex; flex-direction: row; align-items: center; justify-content: space-around; background: none; border: none; }
+            #dice-tray { width: 60px; height: 60px; perspective: 400px; margin: 0 5px; }
             .dice-cube { width: 50px; height: 50px; }
             .face { width: 50px; height: 50px; border-radius: 8px; padding: 4px; }
             .dot { width: 10px; height: 10px; }
             .face-1 { transform: rotateY(0deg) translateZ(25px); } .face-2 { transform: rotateY(90deg) translateZ(25px); } .face-3 { transform: rotateY(180deg) translateZ(25px); } .face-4 { transform: rotateY(-90deg) translateZ(25px); } .face-5 { transform: rotateX(90deg) translateZ(25px); } .face-6 { transform: rotateX(-90deg) translateZ(25px); }
+            
             #legend { display: none; }
-            .nav-btn { width: 35px; height: 35px; font-size: 18px; top: 10px; }
-            #home-btn { right: 10px; }
-            #pause-btn { left: 10px; }
-            #chat-container { bottom: 160px; } 
+            #chat-container { bottom: 140px; } 
         }
-
         @media (max-width: 900px) {
-            /* CORRECTION : Espace en haut pour les boutons */
             #game-layout { padding-top: 60px; }
             #board-container { transform: scale(0.42); margin-top: -200px; margin-bottom: -200px; }
-            #sidebar { height: 180px; flex-direction: column-reverse; }
-            #players-div { width: 100%; height: 60px; flex-wrap: nowrap; overflow-x: auto; }
-            #controls { width: 100%; height: 100px; }
-            .card { min-width: 100px; }
+            #sidebar { height: 160px; }
+            /* Ajustement pour petits écrans : grille de joueurs */
+            .card { flex: 1 1 45%; } 
             h1 { font-size: 24px; }
-            #chat-container { bottom: 180px; width: 100%; right: 0; }
+            #chat-container { bottom: 160px; width: 100%; right: 0; }
+            .ans-btn { width: 100%; margin: 5px 0; padding: 15px; font-size: 14px; }
+            #q-txt { font-size: 18px; margin: 15px 0; }
         }
     </style>
 </head>
 <body>
 
-<div id="home-btn" class="nav-btn" onclick="quitGame()" title="Retour Menu">🏠</div>
-<div id="pause-btn" class="nav-btn" onclick="togglePause()" title="Pause" style="display:none;">⏸️</div>
+<div id="burger-btn" onclick="toggleGameMenu()">☰</div>
+<div id="ingame-menu">
+    <button class="menu-item" onclick="togglePause()" id="menu-pause-text">⏸️ PAUSE</button>
+    <button class="menu-item" onclick="toggleGlobalSound()" id="menu-sound-text">🔊 SON : ON</button>
+    <button class="menu-item" onclick="showRules()">📜 RÈGLES</button>
+    <button class="menu-item danger" onclick="quitGame()">🚪 QUITTER</button>
+</div>
 
 <div id="pause-overlay">
     <h1 style="font-size: 60px; margin-bottom: 10px;">PAUSE</h1>
     <button class="btn-big" onclick="togglePause()">REPRENDRE</button>
+</div>
+
+<div id="rules-overlay">
+    <div id="rules-box">
+        <h2 style="color:#fbbf24; text-align:center; margin-top:0;">RÈGLES DU JEU</h2>
+        <div class="rule-section">
+            <div class="rule-title">1. LE BUT</div>
+            Remplissez votre camembert en obtenant les 6 couleurs (catégories) différentes. Une fois rempli, retournez au Hub central pour la question finale.
+        </div>
+        <div class="rule-section">
+            <div class="rule-title">2. DÉPLACEMENT</div>
+            Lancez le dé. Vous pouvez vous déplacer dans n'importe quelle direction.
+            <br><i>Attention : Dans les rayons, c'est sens unique vers l'extérieur tant que vous n'avez pas les 6 couleurs !</i>
+        </div>
+        <div class="rule-section">
+            <div class="rule-title">3. CASES</div>
+            <b>Case Couleur :</b> Répondez correctement pour rejouer.
+            <br><b>Case QG (Grosse) :</b> Répondez correctement pour gagner le camembert de cette couleur !
+            <br><b>Case "RELANCE" :</b> Relancez immédiatement le dé.
+        </div>
+        <div class="rule-section">
+            <div class="rule-title">4. VICTOIRE</div>
+            Avec les 6 camemberts, remontez au centre (Hub). Si vous répondez juste à la question finale, vous gagnez !
+        </div>
+        <div style="text-align:center; margin-top:30px;">
+            <button onclick="closeRules()">FERMER</button>
+        </div>
+    </div>
 </div>
 
 <div id="chat-container">
@@ -285,7 +300,10 @@
         <h2>TIRAGE AU SORT</h2>
         <p style="margin-bottom: 30px; color: #cbd5e1;">Chacun lance le dé pour déterminer l'ordre de jeu. Le plus grand score commence !</p>
         <p id="init-msg" style="font-size: 1.2em; font-weight: bold; color: var(--gold);">Qui commence ?</p>
-        <div id="dice-tray-init" style="width: 120px; height: 120px; margin: 0 auto 20px auto; perspective: 800px; display: flex; justify-content: center; align-items: center;"></div>
+        
+        <div id="dice-tray-init" style="width: 120px; height: 120px; margin: 0 auto 20px auto; perspective: 800px; display: flex; justify-content: center; align-items: center;">
+            </div>
+
         <button id="btn-init-roll" style="display:none;" onclick="actionInitiativeRoll()">LANCER LE DÉ</button>
         <div id="init-results" style="margin-top:20px; text-align:left;"></div>
     </div>
@@ -300,6 +318,7 @@
         <div id="players-div"></div>
         <div id="controls">
             <div id="msg" style="min-height:30px; margin-bottom:15px; font-weight:bold; color:#fbbf24; font-size: 16px;">En attente...</div>
+            
             <div id="dice-tray">
                 <div class="dice-cube" id="cube">
                     <div class="face face-1"><div class="dot" style="grid-area:2/2;"></div></div>
@@ -310,9 +329,9 @@
                     <div class="face face-6"><div class="dot" style="grid-area:1/1;"></div><div class="dot" style="grid-area:1/3;"></div><div class="dot" style="grid-area:2/1;"></div><div class="dot" style="grid-area:2/3;"></div><div class="dot" style="grid-area:3/1;"></div><div class="dot" style="grid-area:3/3;"></div></div>
                 </div>
             </div>
+
             <button id="btn-roll" onclick="actionRoll()">LANCER LE DÉ</button>
-            <button id="btn-music" onclick="toggleMusic()" style="margin-top:10px; padding:10px; font-size:12px; background:transparent; border:1px solid #555;">🎵 Musique : ON</button>
-        </div>
+            </div>
     </div>
 </div>
 
@@ -334,6 +353,7 @@
 
 <audio id="sfx-dice" src="dice-95077.mp3" preload="auto"></audio>
 <audio id="sfx-correct" src="correct-156911.mp3" preload="auto"></audio>
+
 <audio id="sfx-wrong" src="https://assets.mixkit.co/active_storage/sfx/948/948-preview.mp3" preload="auto"></audio>
 <audio id="sfx-win" src="https://assets.mixkit.co/active_storage/sfx/1431/1431-preview.mp3" preload="auto"></audio>
 <audio id="bg-music" src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3" loop preload="auto"></audio>
@@ -348,8 +368,7 @@ const CATS = [
     {id:"SCI", c:"#22c55e", n:"Sciences"},
     {id:"SPO", c:"#f97316", n:"Sports"}
 ];
-
-// NOUVEAUX TAUX DE DIFFICULTÉ (Plus challengeants)
+// NOUVEAUX TAUX DE DIFFICULTÉ
 const DROP_RATES = {
     "EASY": { EASY: 50, NORMAL: 35, HARD: 12, IMPOSSIBLE: 3 },
     "NORMAL": { EASY: 15, NORMAL: 45, HARD: 30, IMPOSSIBLE: 10 },   
@@ -2764,7 +2783,7 @@ const MASTER_DB = {
 };
 
 // =============================================================================
-// MOTEUR FINAL (LOGIQUE SENS UNIQUE + CLIC)
+// MOTEUR FINAL (UI MOBILE GRID + NOMS LONGS)
 // =============================================================================
 
 let GAME_MODE = ''; 
@@ -2779,6 +2798,7 @@ let GAME_STATE = {
     question: null,
     initRolls: {}, 
     tiedPlayers: [],
+    tieDepth: 0,
     paused: false 
 };
 
@@ -2787,6 +2807,7 @@ let AVAILABLE_INDICES = {};
 let questionTimer = null;
 let autoRollTimer = null;
 let autoMoveTimer = null; 
+let IS_MUTED = false; 
 
 // --- CONFIGURATION VOLUME ---
 const SOUND_VOLUMES = {
@@ -2798,6 +2819,41 @@ const SOUND_VOLUMES = {
     'sfx-click': 0.3   
 };
 
+// --- MENU BURGER LOGIC ---
+function toggleGameMenu() {
+    let m = document.getElementById('ingame-menu');
+    if(m.style.display === 'flex') m.style.display = 'none';
+    else m.style.display = 'flex';
+}
+
+function toggleGlobalSound() {
+    IS_MUTED = !IS_MUTED;
+    let btn = document.getElementById('menu-sound-text');
+    let music = document.getElementById('bg-music');
+    
+    if(IS_MUTED) {
+        btn.innerText = "🔇 SON : OFF";
+        if(music) music.pause();
+    } else {
+        btn.innerText = "🔊 SON : ON";
+        if(GAME_STATE.phase === 'GAME' || GAME_STATE.phase === 'INITIATIVE') {
+            if(music) { music.volume = SOUND_VOLUMES['bg-music']; music.play().catch(()=>{}); }
+        }
+    }
+    toggleGameMenu(); 
+}
+
+function showRules() {
+    if(GAME_MODE === 'LOCAL') { GAME_STATE.paused = true; updatePauseUI(); }
+    document.getElementById('rules-overlay').style.display = 'flex';
+    document.getElementById('ingame-menu').style.display = 'none';
+}
+
+function closeRules() {
+    document.getElementById('rules-overlay').style.display = 'none';
+    if(GAME_MODE === 'LOCAL') { GAME_STATE.paused = false; updatePauseUI(); }
+}
+
 // --- CLAVIER & SONS ---
 document.addEventListener('keydown', function(event) {
     if (GAME_STATE.paused) return;
@@ -2807,8 +2863,9 @@ document.addEventListener('keydown', function(event) {
         let p = GAME_STATE.players[GAME_STATE.curr];
         let isMyTurn = (GAME_MODE === 'LOCAL' || (p && p.id === myPeerId));
 
-        if(GAME_STATE.phase === 'INITIATIVE' && isMyTurn && !GAME_STATE.initRolls[p.id]) {
-            actionInitiativeRoll();
+        if(GAME_STATE.phase === 'INITIATIVE' && isMyTurn) {
+            let btn = document.getElementById('btn-init-roll');
+            if(btn && btn.style.display !== 'none') btn.click();
         }
         else if(GAME_STATE.phase === 'GAME' && !GAME_STATE.question && isMyTurn) {
             if(GAME_STATE.moves.length === 0) {
@@ -2823,10 +2880,16 @@ document.addEventListener('keydown', function(event) {
 });
 
 document.addEventListener('click', function(e) {
-    if(GAME_STATE.paused && e.target.id !== 'pause-overlay' && !e.target.closest('#pause-overlay')) {
+    let m = document.getElementById('ingame-menu');
+    let btn = document.getElementById('burger-btn');
+    if(m.style.display === 'flex' && e.target !== m && !m.contains(e.target) && e.target !== btn) {
+        m.style.display = 'none';
+    }
+
+    if(GAME_STATE.paused && e.target.id !== 'pause-overlay' && !e.target.closest('#pause-overlay') && !e.target.closest('#ingame-menu')) {
          e.stopPropagation(); return;
     }
-    // Suppression du son clic sur les cibles pour éviter le doublon avec le son de pas
+    
     if(e.target.classList.contains('target') || e.target.classList.contains('target-passive')) return;
 
     if(e.target.tagName === 'BUTTON' || e.target.closest('button') || e.target.classList.contains('cell')) {
@@ -2840,18 +2903,23 @@ function togglePause() {
         GAME_STATE.paused = !GAME_STATE.paused;
         updatePauseUI();
     }
+    document.getElementById('ingame-menu').style.display = 'none';
 }
 
 function updatePauseUI() {
     let overlay = document.getElementById('pause-overlay');
+    let btnText = document.getElementById('menu-pause-text');
+    
     if(GAME_STATE.paused) {
         overlay.style.display = 'flex';
+        btnText.innerText = "▶️ REPRENDRE";
         stopTimers(); 
         let m = document.getElementById('bg-music'); if(m) m.pause();
     } else {
         overlay.style.display = 'none';
+        btnText.innerText = "⏸️ PAUSE";
         let m = document.getElementById('bg-music'); 
-        if(document.getElementById('btn-music').innerText.includes('ON')) m.play().catch(()=>{});
+        if(!IS_MUTED) m.play().catch(()=>{});
         
         let p = GAME_STATE.players[GAME_STATE.curr];
         if(GAME_STATE.phase === 'GAME' && GAME_MODE === 'LOCAL') {
@@ -2888,12 +2956,13 @@ function quitGame() {
     document.getElementById('setup-online').style.display = 'none';
     document.getElementById('victory-overlay').style.display = 'none';
     document.getElementById('modal').style.display = 'none';
-    document.getElementById('home-btn').style.display = 'none';
-    document.getElementById('pause-btn').style.display = 'none';
+    document.getElementById('burger-btn').style.display = 'none';
+    document.getElementById('ingame-menu').style.display = 'none';
     document.getElementById('pause-overlay').style.display = 'none';
+    document.getElementById('rules-overlay').style.display = 'none';
     document.getElementById('chat-container').style.display = 'none'; 
     
-    GAME_STATE = { players: [], curr: 0, difficulty: "NORMAL", phase: "LOBBY", moves: [], question: null, initRolls:{}, tiedPlayers:[], paused:false };
+    GAME_STATE = { players: [], curr: 0, difficulty: "NORMAL", phase: "LOBBY", moves: [], question: null, initRolls:{}, displayRolls:{}, tiedPlayers:[], tieDepth:0, paused:false };
     document.getElementById('main-menu').style.display = 'flex';
 }
 
@@ -2952,7 +3021,9 @@ function startLocalGame() {
     GAME_STATE.difficulty = document.getElementById('local-difficulty').value;
     GAME_STATE.phase = "INITIATIVE";
     GAME_STATE.initRolls = {};
+    GAME_STATE.displayRolls = {};
     GAME_STATE.tiedPlayers = [];
+    GAME_STATE.tieDepth = 0;
     GAME_STATE.curr = 0;
     GAME_STATE.paused = false;
 
@@ -2967,9 +3038,10 @@ function startLocalGame() {
     }
     initQuestionDecks();
     document.getElementById('setup-local').style.display = 'none';
-    document.getElementById('home-btn').style.display = 'flex';
-    document.getElementById('pause-btn').style.display = 'flex';
-    safePlaySound('bg-music');
+    document.getElementById('burger-btn').style.display = 'flex';
+    
+    if(!IS_MUTED) safePlaySound('bg-music');
+    
     updateInitiativeUI();
 }
 
@@ -2985,7 +3057,9 @@ function hostStartGame() {
     GAME_STATE.phase = "INITIATIVE";
     GAME_STATE.curr = 0;
     GAME_STATE.initRolls = {};
+    GAME_STATE.displayRolls = {};
     GAME_STATE.tiedPlayers = [];
+    GAME_STATE.tieDepth = 0;
     initQuestionDecks();
     broadcastState('INIT_START');
 }
@@ -3030,7 +3104,7 @@ function initJoin() {
     });
 }
 
-// --- LOGIQUE INITIATIVE ---
+// --- LOGIQUE INITIATIVE (Méthode Décimale) ---
 function actionInitiativeRoll() {
     let btn = document.getElementById('btn-init-roll');
     if(btn) btn.style.display = 'none'; // Anti-double click
@@ -3041,23 +3115,24 @@ function actionInitiativeRoll() {
 function performInitiativeRoll() {
     let roll = Math.floor(Math.random() * 6) + 1;
     let p = GAME_STATE.players[GAME_STATE.curr];
-    GAME_STATE.initRolls[p.id] = roll;
+    
+    GAME_STATE.displayRolls[p.id] = roll;
+    let increment = roll / Math.pow(10, GAME_STATE.tieDepth);
+    if(!GAME_STATE.initRolls[p.id]) GAME_STATE.initRolls[p.id] = 0;
+    GAME_STATE.initRolls[p.id] += increment;
     
     broadcastState('INIT_ANIM', { val: roll, pid: p.id });
     
     setTimeout(() => {
-        if(GAME_STATE.tiedPlayers.length > 0) {
-            let idxInTied = GAME_STATE.tiedPlayers.indexOf(p.id);
-            if(idxInTied < GAME_STATE.tiedPlayers.length - 1) {
-                let nextId = GAME_STATE.tiedPlayers[idxInTied + 1];
-                GAME_STATE.curr = GAME_STATE.players.findIndex(pl => pl.id === nextId);
-                broadcastState();
-            } else resolveInitiative();
+        let group = (GAME_STATE.tiedPlayers.length > 0) ? GAME_STATE.tiedPlayers : GAME_STATE.players.map(pl=>pl.id);
+        let idxInGroup = group.indexOf(p.id);
+        
+        if(idxInGroup < group.length - 1) {
+            let nextId = group[idxInGroup + 1];
+            GAME_STATE.curr = GAME_STATE.players.findIndex(pl => pl.id === nextId);
+            broadcastState();
         } else {
-            if(GAME_STATE.curr < GAME_STATE.players.length - 1) {
-                GAME_STATE.curr++;
-                broadcastState();
-            } else resolveInitiative();
+            resolveInitiative();
         }
     }, 3000);
 }
@@ -3065,22 +3140,28 @@ function performInitiativeRoll() {
 function resolveInitiative() {
     broadcastState(); 
     setTimeout(() => {
-        let concernedIds = (GAME_STATE.tiedPlayers.length > 0) ? GAME_STATE.tiedPlayers : GAME_STATE.players.map(p=>p.id);
-        let scoreMap = {};
-        concernedIds.forEach(id => {
-            let s = GAME_STATE.initRolls[id];
-            if(!scoreMap[s]) scoreMap[s] = [];
-            scoreMap[s].push(id);
-        });
+        let group = (GAME_STATE.tiedPlayers.length > 0) ? GAME_STATE.tiedPlayers : GAME_STATE.players.map(pl=>pl.id);
         GAME_STATE.players.sort((a, b) => (GAME_STATE.initRolls[b.id] || 0) - (GAME_STATE.initRolls[a.id] || 0));
         
+        let scoreMap = {};
+        GAME_STATE.players.forEach(pl => {
+            let s = parseFloat((GAME_STATE.initRolls[pl.id] || 0).toFixed(4));
+            if(!scoreMap[s]) scoreMap[s] = [];
+            scoreMap[s].push(pl.id);
+        });
+
         let newTies = [];
-        for(let s in scoreMap) { if(scoreMap[s].length > 1) newTies.push(...scoreMap[s]); }
+        for(let s in scoreMap) {
+            if(scoreMap[s].length > 1) {
+                newTies.push(...scoreMap[s]);
+            }
+        }
         
         if(newTies.length > 0) {
             GAME_STATE.tiedPlayers = newTies;
-            GAME_STATE.initRolls = {}; 
+            GAME_STATE.tieDepth++; 
             GAME_STATE.curr = GAME_STATE.players.findIndex(p => p.id === newTies[0]);
+            newTies.forEach(id => delete GAME_STATE.displayRolls[id]);
             broadcastState('INIT_TIE', { tied: newTies });
         } else {
             GAME_STATE.phase = "GAME";
@@ -3113,12 +3194,23 @@ function updateInitiativeUI() {
     
     let html = "<h3>Scores :</h3>";
     GAME_STATE.players.forEach(pl => {
-        let score = GAME_STATE.initRolls[pl.id];
-        html += `<div style="color:${pl.c}">${pl.n} : <b>${score !== undefined ? score : '-'}</b></div>`;
+        let faceVal = GAME_STATE.displayRolls[pl.id];
+        let total = GAME_STATE.initRolls[pl.id];
+        
+        let isTied = GAME_STATE.tiedPlayers.includes(pl.id);
+        let displayVal = faceVal !== undefined ? faceVal : (isTied ? '?' : '-');
+        
+        if(!isTied && faceVal === undefined && total !== undefined) {
+             displayVal = Math.floor(total); 
+        }
+
+        html += `<div style="color:${pl.c}; font-size:18px; margin-bottom:5px;">
+            ${pl.n} : <b>${displayVal}</b> 
+        </div>`;
     });
     resDiv.innerHTML = html;
 
-    if(GAME_STATE.tiedPlayers.length > 0) msg.innerText = "ÉGALITÉ ! " + p.n + " doit relancer !";
+    if(GAME_STATE.tiedPlayers.length > 0) msg.innerText = "ÉGALITÉ ! " + p.n + " départage !";
     else msg.innerText = "Tour de " + p.n + " pour l'ordre du jeu";
 
     let isMyTurn = (GAME_MODE === 'LOCAL' || p.id === myPeerId);
@@ -3157,7 +3249,6 @@ function performRoll() {
 function performMove(targetId) {
     stopTimers();
     let p = GAME_STATE.players[GAME_STATE.curr];
-    // On recalcule les voisins en passant le joueur pour vérifier les camemberts
     let path = findPath(p.p, targetId, p);
     GAME_STATE.moves = []; 
     broadcastState('ANIM_MOVE', { playerId: p.id, path: path });
@@ -3245,10 +3336,9 @@ function handleClientData(data) {
             document.getElementById('lobby-screen').style.display = 'none';
             document.getElementById('initiative-screen').style.display = 'none';
             document.getElementById('game-layout').style.visibility = 'visible';
-            document.getElementById('home-btn').style.display = 'flex';
-            document.getElementById('pause-btn').style.display = (GAME_MODE==='LOCAL'?'flex':'none');
+            document.getElementById('burger-btn').style.display = 'flex';
             if(GAME_MODE !== 'LOCAL') { let c = document.getElementById('chat-container'); c.style.display = 'flex'; c.classList.add('chat-collapsed'); }
-            safePlaySound('bg-music');
+            if(!IS_MUTED) safePlaySound('bg-music');
             buildBoard(); buildLegend(); updateUI(); drawPawns();
         }
         else if(data.event === 'ROLL_ANIM') {
@@ -3334,12 +3424,10 @@ function findPath(start, end, player = null) {
         let path = queue.shift();
         let node = path[path.length-1];
         if(node === end) return path;
-        // On passe le joueur à getNeighbors pour appliquer la contrainte de direction
         getNeighbors(node, player).forEach(n => { if(!visited.has(n)) { visited.add(n); let newPath = [...path, n]; queue.push(newPath); } });
     }
     return [start, end];
 }
-
 function animatePawnMovement(playerId, path) {
     let pIdx = GAME_STATE.players.findIndex(p => p.id === playerId);
     let pawns = document.getElementsByClassName('pawn');
@@ -3397,6 +3485,8 @@ function unlockAudio() {
 }
 
 function safePlaySound(id) { 
+    if(IS_MUTED) return;
+
     let original = document.getElementById(id);
     if(!original) return;
 
@@ -3414,7 +3504,6 @@ function safePlaySound(id) {
     s.onended = function() { s.remove(); };
 }
 
-function toggleMusic() { let m = document.getElementById('bg-music'); let btn = document.getElementById('btn-music'); if(m.paused) { m.volume=SOUND_VOLUMES['bg-music']; m.play().catch(()=>{}); if(btn) btn.innerText="🎵 Musique : ON"; } else { m.pause(); if(btn) btn.innerText="🎵 Musique : OFF"; } }
 function broadcastState(event, extra) { let msg = { type: 'STATE_UPDATE', state: GAME_STATE, event: event, extra: extra }; handleClientData(msg); if(GAME_MODE === 'HOST') hostConns.forEach(c => c.send(msg)); }
 function broadcastLobby() { let msg = { type: 'LOBBY_UPDATE', players: GAME_STATE.players }; if(GAME_MODE === 'HOST') hostConns.forEach(c => c.send(msg)); renderLobbyList(); }
 function isPlayerTurn(id) { return GAME_STATE.players[GAME_STATE.curr] && GAME_STATE.players[GAME_STATE.curr].id === id; }
@@ -3422,51 +3511,26 @@ function addPlayerToLobby(id, name) { if(GAME_STATE.players.length >= 6) return;
 function initQuestionDecks() { AVAILABLE_INDICES = {}; for (let t in MASTER_DB) { AVAILABLE_INDICES[t] = {}; MASTER_DB[t].forEach((q, idx) => { let c = q[0]; if (!AVAILABLE_INDICES[t][c]) AVAILABLE_INDICES[t][c] = []; AVAILABLE_INDICES[t][c].push(idx); }); } }
 function pickQuestion(catId) { let rates = DROP_RATES[GAME_STATE.difficulty]; let r = Math.random() * 100, tier = "NORMAL"; if (r < rates.EASY) tier = "EASY"; else if (r < rates.EASY + rates.NORMAL) tier = "NORMAL"; else if (r < rates.EASY + rates.NORMAL + rates.HARD) tier = "HARD"; else tier = "IMPOSSIBLE"; let deck = AVAILABLE_INDICES[tier][catId]; if (!deck || !deck.length) deck = AVAILABLE_INDICES["NORMAL"][catId]; if (!deck || !deck.length) { MASTER_DB[tier].forEach((q, idx) => { if (q[0] === catId) deck.push(idx); }); } let rndIdx = Math.floor(Math.random() * deck.length); let qIdx = deck[rndIdx]; deck.splice(rndIdx, 1); let qRaw = MASTER_DB[tier][qIdx]; return { q: qRaw[1], r: [qRaw[2],qRaw[3],qRaw[4],qRaw[5]].sort(()=>Math.random()-0.5), bon: qRaw[2] }; }
 function calculatePossibleMoves(start, steps, p) { let dests = []; function explore(curr, rem, prev) { if(rem === 0) { dests.push(curr); return; } getNeighbors(curr, p).forEach(n => { if(n !== prev) explore(n, rem-1, curr); }); } explore(start, steps, -1); return [...new Set(dests)]; }
-
-// --- CORRECTION LOGIQUE : SENS UNIQUE SUR RAYONS ---
 function getNeighbors(id, player = null) { 
     let n = []; 
-    // HUB (999) : Toujours connecté au bout intérieur des rayons (1004, 1014...)
-    if(id === 999) { 
-        for(let r=0; r<6; r++) n.push(1000 + r*10 + 4); 
-        return n; 
-    } 
-    // RAYONS (1000-1054)
+    if(id === 999) { for(let r=0; r<6; r++) n.push(1000 + r*10 + 4); return n; } 
     if(id >= 1000) { 
         let r = Math.floor((id - 1000) / 10), s = (id - 1000) % 10; 
-        
-        // Vers l'intérieur (Hub) : ID + 1 (ex: 1000 -> 1001 ... 1004 -> 999)
         if(s < 4) n.push(id + 1); else n.push(999); 
-        
-        // Vers l'extérieur (Cercle) : ID - 1 (ex: 1004 -> 1003 ... 1000 -> Cercle)
         if(s > 0) n.push(id - 1); else n.push(r * 7); 
-
-        // CONTRAINTE : Si on n'a pas les 6 camemberts, on interdit la remontée vers le Hub
         if(player && player.w.length < 6) {
-            // Le chemin vers le Hub est celui qui augmente 's' ou mène à 999
-            // Donc on retire le voisin qui est soit id+1, soit 999
-            if(s < 4) {
-                n = n.filter(neighbor => neighbor !== id + 1);
-            } else {
-                n = n.filter(neighbor => neighbor !== 999);
-            }
+            if(s < 4) n = n.filter(neighbor => neighbor !== id + 1);
+            else n = n.filter(neighbor => neighbor !== 999);
         }
         return n; 
     } 
-    // CERCLE EXTERIEUR (<100)
     if(id < 100) { 
         n.push((id + 1) % 42); 
         n.push((id - 1 + 42) % 42); 
-        // Connexion vers les rayons (si on est sur une case QG)
-        if(id % 7 === 0) {
-            let r = id / 7;
-            // Le début du rayon est 1000 + r*10 + 0
-            n.push(1000 + r*10);
-        }
+        if(id % 7 === 0) { let r = id / 7; n.push(1000 + r*10); }
     } 
     return n; 
 }
-
 function buildBoard() { const c = document.getElementById('board-content'); c.innerHTML = ""; for(let i=0; i<42; i++) { let ang = (i * (360/42)) - 90; createCellDOM(i, 380 + 340 * Math.cos(ang * Math.PI/180), 380 + 340 * Math.sin(ang * Math.PI/180), (i%7===0) ? "qg" : ((i%7===2 || i%7===5) ? "roll" : "norm"), CATS[i%6], c, ang+90); } for(let r=0; r<6; r++) { let ang = (r * 7 * (360/42)) - 90; for(let s=0; s<5; s++) { let dist = 340 - ((s+1)*(340/6)); createCellDOM(1000 + r*10 + s, 380 + dist * Math.cos(ang * Math.PI/180), 380 + dist * Math.sin(ang * Math.PI/180), "spoke", CATS[(r+1+s)%6], c, ang+90); } } }
 function createCellDOM(id, x, y, type, cat, container, rot) { let d = document.createElement('div'); d.className = 'cell ' + (type==='qg'?'qg':(type==='roll'?'roll':'')); if(type!=='roll') { d.style.background = cat.c; d.style.boxShadow = `0 0 10px ${cat.c}`; } let s = (type==='qg') ? 58 : 42; d.style.left = (x - s/2) + 'px'; d.style.top = (y - s/2) + 'px'; d.style.transform = `rotate(${rot}deg)`; d.style.setProperty('--r', rot+'deg'); if(type==='qg') d.innerHTML='★'; if(type==='roll') d.innerHTML='RE<br>LANCE'; d.id = 'cell-' + id; d.onclick = () => tryMove(id); boardCells[id] = { type: type, cat: cat }; container.appendChild(d); }
 function buildLegend() { document.getElementById('legend').innerHTML = CATS.map(c => `<div class="legend-item"><div class="legend-color" style="background:${c.c}"></div><span>${c.n}</span></div>`).join(''); }
@@ -3475,9 +3539,10 @@ function drawPawns() { document.querySelectorAll('.pawn').forEach(e=>e.remove())
 function updateUI() { 
     const div = document.getElementById('players-div'); div.innerHTML = ''; 
     GAME_STATE.players.forEach((p,i) => { 
+        // ADD CLASS player-name to strong element here to apply new CSS
         let c = document.createElement('div'); c.className = 'card ' + (i === GAME_STATE.curr ? 'active' : ''); if(i === GAME_STATE.curr) c.style.borderLeftColor = p.c; 
         let wHtml = CATS.map(cat => `<div class="wedge" style="background:${p.w.includes(cat.id)?cat.c:'rgba(255,255,255,0.1)'}; box-shadow:${p.w.includes(cat.id)?'0 0 8px '+cat.c:'none'}"></div>`).join(''); 
-        c.innerHTML = `<strong style="color:${p.c}; font-size:18px;">${p.n}</strong><div class="wedges">${wHtml}</div>`; div.appendChild(c); 
+        c.innerHTML = `<strong class="player-name" style="color:${p.c};">${p.n}</strong><div class="wedges">${wHtml}</div>`; div.appendChild(c); 
     }); 
     if(GAME_STATE.players.length === 0) return; 
     let p = GAME_STATE.players[GAME_STATE.curr]; 
@@ -3495,7 +3560,7 @@ function updateUI() {
 
     if(!isMyTurn) { 
         msg.innerText = "Tour de " + p.n; btn.innerText = "EN ATTENTE..."; 
-        btn.style.display = 'inline-block'; diceDiv.style.visibility = 'visible'; 
+        btn.style.display = 'inline-block'; btn.disabled = true; diceDiv.style.visibility = 'visible'; 
         if(GAME_STATE.moves && GAME_STATE.moves.length > 0) {
             GAME_STATE.moves.forEach(mId => {
                 let el = (mId === 999) ? document.getElementById('hub-cell') : document.getElementById('cell-' + mId);
@@ -3508,8 +3573,7 @@ function updateUI() {
     
     if(GAME_STATE.moves && GAME_STATE.moves.length > 0) { 
         stopTimers(); 
-        if(!GAME_STATE.paused && !autoMoveTimer) startAutoMoveTimer(); // Lance le timer de déplacement si pas en pause
-
+        if(!GAME_STATE.paused && !autoMoveTimer) startAutoMoveTimer(); 
         msg.innerText = "Choisis une case !"; btn.innerText = "SÉLECTIONNEZ..."; btn.disabled = true; btn.style.display = 'inline-block';
         diceDiv.style.visibility = 'visible'; 
         GAME_STATE.moves.forEach(mId => { let el = (mId === 999) ? document.getElementById('hub-cell') : document.getElementById('cell-' + mId); if(el) el.classList.add('target'); }); 
