@@ -5,7 +5,7 @@
     <title>TRIVIAL PURSUIT - ULTIMATE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
     <style>
         :root { --bg-color: #0f172a; --sidebar-bg: rgba(30, 41, 59, 0.95); --gold: #fbbf24; --glass-border: 1px solid rgba(255, 255, 255, 0.1); }
         body { background: radial-gradient(circle at center, #1e293b, #020617); color: #fff; font-family: 'Montserrat', sans-serif; height: 100vh; margin: 0; display: flex; flex-direction:column; justify-content:center; align-items:center; overflow: hidden; user-select: none; }
@@ -2825,7 +2825,7 @@ const MASTER_DB = {
 };
 
 // =============================================================================
-// 3. MOTEUR DU JEU (RÉSEAU SIMPLIFIÉ VERSION QUI MARCHE)
+// 3. MOTEUR DU JEU (RÉSEAU "ZÉRO CONFIG" REFAIT DE ZÉRO)
 // =============================================================================
 
 let GAME_MODE = ''; 
@@ -2857,10 +2857,6 @@ const SOUND_VOLUMES = {
     'sfx-dice': 1.0, 'sfx-correct': 1.0, 'sfx-wrong': 0.3, 
     'sfx-win': 0.8, 'bg-music': 0.1, 'sfx-click': 0.3   
 };
-
-// --- CONFIGURATION RÉSEAU SIMPLE (CELLE QUI MARCHE) ---
-// On revient à la config de base sans serveurs STUN/TURN complexes
-const PEER_CONFIG = { debug: 1 }; 
 
 // --- GESTION CLAVIER & SOURIS ---
 document.addEventListener('keydown', function(event) {
@@ -2960,7 +2956,7 @@ function sendChat() {
 function addChatMessageToUI(sender, color, txt) { let div = document.getElementById('chat-messages'); let d = document.createElement('div'); d.className = 'chat-msg'; d.innerHTML = `<span class="chat-name" style="color:${color}">${sender}:</span> ${txt}`; div.appendChild(d); div.scrollTop = div.scrollHeight; let c = document.getElementById('chat-container'); if(c.classList.contains('chat-collapsed')) document.getElementById('chat-notif').style.display = 'inline-block'; }
 function broadcastChat(sender, color, txt) { addChatMessageToUI(sender, color, txt); let netMsg = { type: 'CHAT_BROADCAST', data: {sender:sender, color:color, msg:txt} }; if(GAME_MODE === 'HOST') hostConns.forEach(c => c.send(netMsg)); }
 
-// --- INITIALISATION & RESEAU (CORRECTIF BUG) ---
+// --- INITIALISATION & RESEAU (VERSION NETTOYÉE) ---
 function startLocalGame() {
     GAME_MODE = 'LOCAL'; unlockAudio();
     let nb = document.getElementById('nb-players-local').value;
@@ -2999,8 +2995,9 @@ function initHost() {
     if(peer) { peer.destroy(); peer = null; } 
     
     document.getElementById('loading-overlay').style.display = 'flex';
-    // Utilisation de la config simple (comme l'ancien code)
-    peer = new Peer(null, PEER_CONFIG);
+    
+    // ZÉRO CONFIG: On laisse PeerJS utiliser ses serveurs par défaut
+    peer = new Peer(); 
     
     peer.on('open', (id) => {
         myPeerId = id;
@@ -3012,7 +3009,7 @@ function initHost() {
         if(!hostConns.find(c => c.peer === conn.peer)) {
             hostConns.push(conn);
             conn.on('data', (data) => handleHostData(conn, data));
-            conn.on('open', () => { broadcastLobby(); });
+            conn.on('open', () => { setTimeout(() => { broadcastLobby(); }, 500); });
             conn.on('close', () => { 
                 hostConns = hostConns.filter(c => c !== conn);
                 let p = GAME_STATE.players.find(pl => pl.id === conn.peer);
@@ -3021,7 +3018,7 @@ function initHost() {
         }
     });
     peer.on('error', (err) => { 
-        alert("Erreur Réseau : " + err.type); 
+        alert("Erreur PeerJS : " + err.type); 
         document.getElementById('loading-overlay').style.display='none'; 
     });
 }
@@ -3038,12 +3035,12 @@ function initJoin() {
     
     document.getElementById('loading-overlay').style.display = 'flex';
     
-    // Utilisation de la config simple (comme l'ancien code)
-    peer = new Peer(null, PEER_CONFIG);
+    // ZÉRO CONFIG pour le client aussi
+    peer = new Peer();
     
     peer.on('open', (id) => {
         myPeerId = id;
-        // Connexion simple sans options complexes (comme l'ancien code)
+        // Connexion simple
         myConn = peer.connect(hostId);
         
         myConn.on('open', () => {
@@ -3054,6 +3051,7 @@ function initJoin() {
         
         myConn.on('data', (data) => handleClientData(data));
         
+        // Gestion d'erreur spécifique à la connexion
         myConn.on('error', (err) => {
             alert("Erreur de connexion à l'hôte.");
             document.getElementById('loading-overlay').style.display = 'none';
@@ -3063,10 +3061,18 @@ function initJoin() {
             alert("Déconnecté de l'hôte.");
             quitGame();
         });
+        
+        // Timeout manuel si la connexion ne s'ouvre jamais
+        setTimeout(() => {
+            if(myConn && !myConn.open && document.getElementById('loading-overlay').style.display === 'flex') {
+                alert("La connexion prend trop de temps. Vérifiez le code.");
+                document.getElementById('loading-overlay').style.display = 'none';
+            }
+        }, 8000);
     });
     
     peer.on('error', (err) => { 
-        alert("Erreur Réseau : " + err.type); 
+        alert("Erreur PeerJS : " + err.type); 
         document.getElementById('loading-overlay').style.display = 'none'; 
     });
 }
@@ -3135,7 +3141,7 @@ function resolveInitiative() {
             GAME_STATE.tiedPlayers = [];
             broadcastState('GAME_START');
         }
-    }, 2000); // 2s pour lire le classement final
+    }, 2000); 
 }
 
 function updateInitiativeUI() {
