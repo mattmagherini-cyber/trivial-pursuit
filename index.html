@@ -5,7 +5,7 @@
     <title>TRIVIAL PURSUIT - ULTIMATE</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800;900&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
     <style>
         :root { --bg-color: #0f172a; --sidebar-bg: rgba(30, 41, 59, 0.95); --gold: #fbbf24; --glass-border: 1px solid rgba(255, 255, 255, 0.1); }
         body { background: radial-gradient(circle at center, #1e293b, #020617); color: #fff; font-family: 'Montserrat', sans-serif; height: 100vh; margin: 0; display: flex; flex-direction:column; justify-content:center; align-items:center; overflow: hidden; user-select: none; }
@@ -26,7 +26,7 @@
         }
         .face {
             position: absolute; width: 80px; height: 80px; background: #fdfbf7;
-            border: 2px solid #d1d5db; /* Arêtes nettes */
+            border: 2px solid #d1d5db;
             box-shadow: inset 0 0 15px rgba(0,0,0,0.1);
             display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); padding: 8px; box-sizing: border-box;
         }
@@ -2825,7 +2825,7 @@ const MASTER_DB = {
 };
 
 // =============================================================================
-// 3. MOTEUR DU JEU (RÉSEAU CORRIGÉ)
+// 3. MOTEUR DU JEU (RÉSEAU SIMPLIFIÉ VERSION QUI MARCHE)
 // =============================================================================
 
 let GAME_MODE = ''; 
@@ -2858,18 +2858,9 @@ const SOUND_VOLUMES = {
     'sfx-win': 0.8, 'bg-music': 0.1, 'sfx-click': 0.3   
 };
 
-// --- CONFIG RESEAU ROBUSTE (STUN + TIMEOUTS) ---
-const PEER_CONFIG = {
-    debug: 1,
-    pingInterval: 5000, 
-    config: {
-        iceServers: [
-            { urls: 'stun:stun.l.google.com:19302' },
-            { urls: 'stun:stun1.l.google.com:19302' },
-            { urls: 'stun:global.stun.twilio.com:3478' }
-        ]
-    }
-};
+// --- CONFIGURATION RÉSEAU SIMPLE (CELLE QUI MARCHE) ---
+// On revient à la config de base sans serveurs STUN/TURN complexes
+const PEER_CONFIG = { debug: 1 }; 
 
 // --- GESTION CLAVIER & SOURIS ---
 document.addEventListener('keydown', function(event) {
@@ -3008,6 +2999,7 @@ function initHost() {
     if(peer) { peer.destroy(); peer = null; } 
     
     document.getElementById('loading-overlay').style.display = 'flex';
+    // Utilisation de la config simple (comme l'ancien code)
     peer = new Peer(null, PEER_CONFIG);
     
     peer.on('open', (id) => {
@@ -3017,11 +3009,10 @@ function initHost() {
         addPlayerToLobby(id, myPseudo); 
     });
     peer.on('connection', (conn) => {
-        // Eviter doublons si reconnexion
         if(!hostConns.find(c => c.peer === conn.peer)) {
             hostConns.push(conn);
             conn.on('data', (data) => handleHostData(conn, data));
-            conn.on('open', () => { setTimeout(() => { broadcastLobby(); }, 500); });
+            conn.on('open', () => { broadcastLobby(); });
             conn.on('close', () => { 
                 hostConns = hostConns.filter(c => c !== conn);
                 let p = GAME_STATE.players.find(pl => pl.id === conn.peer);
@@ -3047,31 +3038,15 @@ function initJoin() {
     
     document.getElementById('loading-overlay').style.display = 'flex';
     
-    // Timeout de sécurité pour éviter le blocage infini
-    let connectionTimeout = setTimeout(() => {
-        if(document.getElementById('loading-overlay').style.display === 'flex') {
-            alert("Délai d'attente dépassé. Vérifiez le code ou la connexion.");
-            document.getElementById('loading-overlay').style.display = 'none';
-            if(peer) peer.destroy();
-        }
-    }, 10000); // 10 secondes max
-
+    // Utilisation de la config simple (comme l'ancien code)
     peer = new Peer(null, PEER_CONFIG);
     
     peer.on('open', (id) => {
         myPeerId = id;
-        // Connexion sécurisée
-        myConn = peer.connect(hostId, {serialization: 'json', reliable: true});
+        // Connexion simple sans options complexes (comme l'ancien code)
+        myConn = peer.connect(hostId);
         
-        // Gestion erreur spécifique à la connexion (code invalide etc)
-        myConn.on('error', (err) => {
-            clearTimeout(connectionTimeout);
-            alert("Erreur de connexion à l'hôte.");
-            document.getElementById('loading-overlay').style.display = 'none';
-        });
-
         myConn.on('open', () => {
-            clearTimeout(connectionTimeout);
             document.getElementById('loading-overlay').style.display = 'none';
             showLobby();
             myConn.send({ type: 'JOIN', name: myPseudo, id: myPeerId });
@@ -3079,6 +3054,11 @@ function initJoin() {
         
         myConn.on('data', (data) => handleClientData(data));
         
+        myConn.on('error', (err) => {
+            alert("Erreur de connexion à l'hôte.");
+            document.getElementById('loading-overlay').style.display = 'none';
+        });
+
         myConn.on('close', () => {
             alert("Déconnecté de l'hôte.");
             quitGame();
@@ -3086,9 +3066,7 @@ function initJoin() {
     });
     
     peer.on('error', (err) => { 
-        clearTimeout(connectionTimeout);
-        if(err.type === 'peer-unavailable') alert("Partie introuvable. Vérifiez le code.");
-        else alert("Erreur Réseau : " + err.type); 
+        alert("Erreur Réseau : " + err.type); 
         document.getElementById('loading-overlay').style.display = 'none'; 
     });
 }
