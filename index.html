@@ -2822,7 +2822,7 @@ const MASTER_DB = {
 };
 
 // =============================================================================
-// 3. MOTEUR DU JEU
+// 3. MOTEUR DU JEU (RÉSEAU BLINDÉ)
 // =============================================================================
 
 let GAME_MODE = ''; 
@@ -2851,17 +2851,14 @@ let IS_MUTED = false;
 
 // --- CONFIGURATION VOLUMES ---
 const SOUND_VOLUMES = {
-    'sfx-dice': 1.0,
-    'sfx-correct': 1.0,
-    'sfx-wrong': 0.3, 
-    'sfx-win': 0.8,
-    'bg-music': 0.1,  
-    'sfx-click': 0.3   
+    'sfx-dice': 1.0, 'sfx-correct': 1.0, 'sfx-wrong': 0.3, 
+    'sfx-win': 0.8, 'bg-music': 0.1, 'sfx-click': 0.3   
 };
 
-// --- CONFIG RESEAU (STUN) ---
+// --- CONFIG RESEAU (STUN + KEEPALIVE) ---
 const PEER_CONFIG = {
     debug: 1,
+    pingInterval: 5000, // Garde la connexion active sur mobile
     config: {
         iceServers: [
             { urls: 'stun:stun.l.google.com:19302' },
@@ -2871,14 +2868,11 @@ const PEER_CONFIG = {
 };
 
 // --- GESTION CLAVIER & SOURIS ---
-
 document.addEventListener('keydown', function(event) {
     if (GAME_STATE.paused) return;
     if (document.activeElement.tagName === 'INPUT') return;
-    
     if (event.code === 'Space' || event.code === 'Enter') {
         event.preventDefault(); 
-        
         let p = GAME_STATE.players[GAME_STATE.curr];
         let isMyTurn = (GAME_MODE === 'LOCAL' || (p && p.id === myPeerId));
 
@@ -2901,105 +2895,39 @@ document.addEventListener('keydown', function(event) {
 document.addEventListener('click', function(e) {
     let m = document.getElementById('ingame-menu');
     let btn = document.getElementById('burger-btn');
-    if(m.style.display === 'flex' && e.target !== m && !m.contains(e.target) && e.target !== btn) {
-        m.style.display = 'none';
-    }
-
-    if(GAME_STATE.paused && e.target.id !== 'pause-overlay' && !e.target.closest('#pause-overlay') && !e.target.closest('#ingame-menu')) {
-         e.stopPropagation(); return;
-    }
-    
+    if(m.style.display === 'flex' && e.target !== m && !m.contains(e.target) && e.target !== btn) m.style.display = 'none';
+    if(GAME_STATE.paused && e.target.id !== 'pause-overlay' && !e.target.closest('#pause-overlay') && !e.target.closest('#ingame-menu')) { e.stopPropagation(); return; }
     if(e.target.classList.contains('target') || e.target.classList.contains('target-passive')) return;
-
-    if(e.target.tagName === 'BUTTON' || e.target.closest('button') || e.target.classList.contains('cell')) {
-        safePlaySound('sfx-click');
-    }
+    if(e.target.tagName === 'BUTTON' || e.target.closest('button') || e.target.classList.contains('cell')) safePlaySound('sfx-click');
 });
 
 // --- FONCTIONS MENU ---
-
-function toggleGameMenu() {
-    let m = document.getElementById('ingame-menu');
-    m.style.display = (m.style.display === 'flex') ? 'none' : 'flex';
-}
-
+function toggleGameMenu() { let m = document.getElementById('ingame-menu'); m.style.display = (m.style.display === 'flex') ? 'none' : 'flex'; }
 function toggleGlobalSound() {
     IS_MUTED = !IS_MUTED;
     let btn = document.getElementById('menu-sound-text');
     let music = document.getElementById('bg-music');
-    
-    if(IS_MUTED) {
-        btn.innerText = "🔇 SON : OFF";
-        if(music) music.pause();
-    } else {
-        btn.innerText = "🔊 SON : ON";
-        if(GAME_STATE.phase === 'GAME' || GAME_STATE.phase === 'INITIATIVE') {
-            if(music) { music.volume = SOUND_VOLUMES['bg-music']; music.play().catch(()=>{}); }
-        }
-    }
+    if(IS_MUTED) { btn.innerText = "🔇 SON : OFF"; if(music) music.pause(); } 
+    else { btn.innerText = "🔊 SON : ON"; if(GAME_STATE.phase === 'GAME' || GAME_STATE.phase === 'INITIATIVE') { if(music) { music.volume = SOUND_VOLUMES['bg-music']; music.play().catch(()=>{}); } } }
     toggleGameMenu(); 
 }
-
-function showRules() {
-    if(GAME_MODE === 'LOCAL') { GAME_STATE.paused = true; updatePauseUI(); }
-    document.getElementById('rules-overlay').style.display = 'flex';
-    document.getElementById('ingame-menu').style.display = 'none';
-}
-
-function closeRules() {
-    document.getElementById('rules-overlay').style.display = 'none';
-    if(GAME_MODE === 'LOCAL') { GAME_STATE.paused = false; updatePauseUI(); }
-}
-
-function togglePause() {
-    if(GAME_MODE === 'LOCAL') {
-        GAME_STATE.paused = !GAME_STATE.paused;
-        updatePauseUI();
-    }
-    document.getElementById('ingame-menu').style.display = 'none';
-}
-
+function showRules() { if(GAME_MODE === 'LOCAL') { GAME_STATE.paused = true; updatePauseUI(); } document.getElementById('rules-overlay').style.display = 'flex'; document.getElementById('ingame-menu').style.display = 'none'; }
+function closeRules() { document.getElementById('rules-overlay').style.display = 'none'; if(GAME_MODE === 'LOCAL') { GAME_STATE.paused = false; updatePauseUI(); } }
+function togglePause() { if(GAME_MODE === 'LOCAL') { GAME_STATE.paused = !GAME_STATE.paused; updatePauseUI(); } document.getElementById('ingame-menu').style.display = 'none'; }
 function updatePauseUI() {
     let overlay = document.getElementById('pause-overlay');
     let btnText = document.getElementById('menu-pause-text');
-    
-    if(GAME_STATE.paused) {
-        overlay.style.display = 'flex';
-        btnText.innerText = "▶️ REPRENDRE";
-        stopTimers(); 
-        let m = document.getElementById('bg-music'); if(m) m.pause();
-    } else {
-        overlay.style.display = 'none';
-        btnText.innerText = "⏸️ PAUSE";
-        let m = document.getElementById('bg-music'); 
-        if(!IS_MUTED) m.play().catch(()=>{});
-        
-        if(GAME_STATE.phase === 'GAME' && GAME_MODE === 'LOCAL') {
-             if(GAME_STATE.question) startQuestionTimer(); 
-             else if(GAME_STATE.moves.length > 0) startAutoMoveTimer();
-             else startAutoRollTimer();
-        }
+    if(GAME_STATE.paused) { overlay.style.display = 'flex'; btnText.innerText = "▶️ REPRENDRE"; stopTimers(); let m = document.getElementById('bg-music'); if(m) m.pause(); } 
+    else { overlay.style.display = 'none'; btnText.innerText = "⏸️ PAUSE"; let m = document.getElementById('bg-music'); if(!IS_MUTED) m.play().catch(()=>{}); 
+        if(GAME_STATE.phase === 'GAME' && GAME_MODE === 'LOCAL') { if(GAME_STATE.question) startQuestionTimer(); else if(GAME_STATE.moves.length > 0) startAutoMoveTimer(); else startAutoRollTimer(); }
     }
 }
-
-function selectMode(mode) {
-    unlockAudio();
-    document.getElementById('main-menu').style.display = 'none';
-    if(mode === 'LOCAL') {
-        document.getElementById('setup-local').style.display = 'flex';
-        generateLocalInputs();
-    } else {
-        document.getElementById('setup-online').style.display = 'flex';
-    }
-}
-
+function selectMode(mode) { unlockAudio(); document.getElementById('main-menu').style.display = 'none'; if(mode === 'LOCAL') { document.getElementById('setup-local').style.display = 'flex'; generateLocalInputs(); } else { document.getElementById('setup-online').style.display = 'flex'; } }
 function quitGame() {
     if(peer) { peer.destroy(); peer = null; }
     hostConns = []; myConn = null;
-    let music = document.getElementById('bg-music');
-    if(music) { music.pause(); music.currentTime = 0; }
+    let music = document.getElementById('bg-music'); if(music) { music.pause(); music.currentTime = 0; }
     stopTimers();
-    
     document.getElementById('game-layout').style.visibility = 'hidden';
     document.getElementById('lobby-screen').style.display = 'none';
     document.getElementById('initiative-screen').style.display = 'none';
@@ -3012,33 +2940,17 @@ function quitGame() {
     document.getElementById('pause-overlay').style.display = 'none';
     document.getElementById('rules-overlay').style.display = 'none';
     document.getElementById('chat-container').style.display = 'none'; 
-    
     GAME_STATE = { players: [], curr: 0, difficulty: "NORMAL", phase: "LOBBY", moves: [], question: null, initRolls:{}, displayRolls:{}, tiedPlayers:[], tieDepth:0, paused:false };
     document.getElementById('main-menu').style.display = 'flex';
 }
-
 function generateLocalInputs() {
     let nb = document.getElementById('nb-players-local').value;
-    if(nb < 1) nb = 1; if(nb > 6) nb = 6;
-    let c = document.getElementById('local-names-container');
-    c.innerHTML = "";
-    for(let i=0; i<nb; i++) {
-        let inp = document.createElement("input");
-        inp.type = "text"; inp.id = "local-p-"+i; inp.placeholder = "Nom Joueur "+(i+1); inp.value = "Joueur "+(i+1);
-        c.appendChild(inp);
-    }
+    let c = document.getElementById('local-names-container'); c.innerHTML = "";
+    for(let i=0; i<nb; i++) { let inp = document.createElement("input"); inp.type = "text"; inp.id = "local-p-"+i; inp.placeholder = "Nom Joueur "+(i+1); inp.value = "Joueur "+(i+1); c.appendChild(inp); }
 }
 
 // --- TCHAT ---
-function toggleChat() {
-    let h = document.getElementById('chat-container');
-    if(h.classList.contains('chat-collapsed')) {
-        h.classList.remove('chat-collapsed');
-        document.getElementById('chat-notif').style.display = 'none';
-    } else {
-        h.classList.add('chat-collapsed');
-    }
-}
+function toggleChat() { let h = document.getElementById('chat-container'); if(h.classList.contains('chat-collapsed')) { h.classList.remove('chat-collapsed'); document.getElementById('chat-notif').style.display = 'none'; } else { h.classList.add('chat-collapsed'); } }
 function sendChat() {
     let input = document.getElementById('chat-input');
     let txt = input.value.trim();
@@ -3049,69 +2961,36 @@ function sendChat() {
     else if(GAME_MODE === 'CLIENT') myConn.send({ type: 'ACTION_CHAT', senderId: myPeerId, msg: txt });
     input.value = "";
 }
-function addChatMessageToUI(sender, color, txt) {
-    let div = document.getElementById('chat-messages');
-    let d = document.createElement('div');
-    d.className = 'chat-msg';
-    d.innerHTML = `<span class="chat-name" style="color:${color}">${sender}:</span> ${txt}`;
-    div.appendChild(d); div.scrollTop = div.scrollHeight;
-    let c = document.getElementById('chat-container');
-    if(c.classList.contains('chat-collapsed')) document.getElementById('chat-notif').style.display = 'inline-block';
-}
-function broadcastChat(sender, color, txt) {
-    addChatMessageToUI(sender, color, txt); 
-    let netMsg = { type: 'CHAT_BROADCAST', data: {sender:sender, color:color, msg:txt} };
-    if(GAME_MODE === 'HOST') hostConns.forEach(c => c.send(netMsg));
-}
+function addChatMessageToUI(sender, color, txt) { let div = document.getElementById('chat-messages'); let d = document.createElement('div'); d.className = 'chat-msg'; d.innerHTML = `<span class="chat-name" style="color:${color}">${sender}:</span> ${txt}`; div.appendChild(d); div.scrollTop = div.scrollHeight; let c = document.getElementById('chat-container'); if(c.classList.contains('chat-collapsed')) document.getElementById('chat-notif').style.display = 'inline-block'; }
+function broadcastChat(sender, color, txt) { addChatMessageToUI(sender, color, txt); let netMsg = { type: 'CHAT_BROADCAST', data: {sender:sender, color:color, msg:txt} }; if(GAME_MODE === 'HOST') hostConns.forEach(c => c.send(netMsg)); }
 
-// --- INITIALISATION ---
+// --- INITIALISATION & RESEAU ---
 function startLocalGame() {
-    GAME_MODE = 'LOCAL';
-    unlockAudio();
+    GAME_MODE = 'LOCAL'; unlockAudio();
     let nb = document.getElementById('nb-players-local').value;
     GAME_STATE.players = [];
     GAME_STATE.difficulty = document.getElementById('local-difficulty').value;
     GAME_STATE.phase = "INITIATIVE";
-    GAME_STATE.initRolls = {};
-    GAME_STATE.displayRolls = {};
-    GAME_STATE.tiedPlayers = [];
-    GAME_STATE.tieDepth = 0;
-    GAME_STATE.curr = 0;
-    GAME_STATE.paused = false;
-
+    GAME_STATE.initRolls = {}; GAME_STATE.displayRolls = {}; GAME_STATE.tiedPlayers = []; GAME_STATE.tieDepth = 0; GAME_STATE.curr = 0; GAME_STATE.paused = false;
     let colorIndices = [0,1,2,3,4,5].sort(() => Math.random() - 0.5);
     for(let i=0; i<nb; i++) {
         let name = document.getElementById("local-p-" + i).value || "J"+(i+1);
         let cIdx = colorIndices[i];
-        GAME_STATE.players.push({
-            id: 'local-'+i, n: name, c: CATS[cIdx].c, homeColorIdx: cIdx,
-            p: 999, w: [], hub: true
-        });
+        GAME_STATE.players.push({ id: 'local-'+i, n: name, c: CATS[cIdx].c, homeColorIdx: cIdx, p: 999, w: [], hub: true });
     }
     initQuestionDecks();
     document.getElementById('setup-local').style.display = 'none';
     document.getElementById('burger-btn').style.display = 'flex';
-    
     if(!IS_MUTED) safePlaySound('bg-music');
-    
     updateInitiativeUI();
 }
 
 function hostStartGame() {
     if(GAME_STATE.players.length < 1) return;
     let colorIndices = [0,1,2,3,4,5].sort(() => Math.random() - 0.5);
-    GAME_STATE.players.forEach((p, idx) => {
-        let cIdx = colorIndices[idx % 6];
-        p.c = CATS[cIdx].c;
-        p.homeColorIdx = cIdx;
-    });
+    GAME_STATE.players.forEach((p, idx) => { let cIdx = colorIndices[idx % 6]; p.c = CATS[cIdx].c; p.homeColorIdx = cIdx; });
     GAME_STATE.difficulty = document.getElementById('online-difficulty').value;
-    GAME_STATE.phase = "INITIATIVE";
-    GAME_STATE.curr = 0;
-    GAME_STATE.initRolls = {};
-    GAME_STATE.displayRolls = {};
-    GAME_STATE.tiedPlayers = [];
-    GAME_STATE.tieDepth = 0;
+    GAME_STATE.phase = "INITIATIVE"; GAME_STATE.curr = 0; GAME_STATE.initRolls = {}; GAME_STATE.displayRolls = {}; GAME_STATE.tiedPlayers = []; GAME_STATE.tieDepth = 0;
     initQuestionDecks();
     broadcastState('INIT_START');
 }
@@ -3120,6 +2999,9 @@ function initHost() {
     GAME_MODE = 'HOST';
     myPseudo = document.getElementById('my-pseudo').value || "Hôte";
     unlockAudio();
+    
+    if(peer) { peer.destroy(); peer = null; } // Nettoyage préventif
+    
     document.getElementById('loading-overlay').style.display = 'flex';
     peer = new Peer(null, PEER_CONFIG);
     
@@ -3132,37 +3014,60 @@ function initHost() {
     peer.on('connection', (conn) => {
         hostConns.push(conn);
         conn.on('data', (data) => handleHostData(conn, data));
-        conn.on('open', () => { 
-            setTimeout(() => { broadcastLobby(); }, 500);
-        });
+        conn.on('open', () => { setTimeout(() => { broadcastLobby(); }, 500); });
     });
-    peer.on('error', (err) => { alert("Erreur PeerJS: "+err.type); document.getElementById('loading-overlay').style.display='none'; });
+    peer.on('error', (err) => { 
+        alert("Erreur Réseau : " + err.type); 
+        document.getElementById('loading-overlay').style.display='none'; 
+    });
 }
 
 function initJoin() {
     GAME_MODE = 'CLIENT';
     myPseudo = document.getElementById('my-pseudo').value || "Invité";
     unlockAudio();
-    let hostId = document.getElementById('host-id-input').value.trim();
+    
+    let hostId = document.getElementById('host-id-input').value.trim(); // IMPORTANT : Supprime les espaces
     if(!hostId) return alert("Code manquant");
+    
+    if(peer) { peer.destroy(); peer = null; } // Nettoyage préventif
+    
     document.getElementById('loading-overlay').style.display = 'flex';
     peer = new Peer(null, PEER_CONFIG);
     
     peer.on('open', (id) => {
         myPeerId = id;
-        myConn = peer.connect(hostId, {serialization: 'json'});
+        myConn = peer.connect(hostId, {serialization: 'json', reliable: true});
+        
         myConn.on('open', () => {
             document.getElementById('loading-overlay').style.display = 'none';
             showLobby();
             myConn.send({ type: 'JOIN', name: myPseudo, id: myPeerId });
         });
+        
         myConn.on('data', (data) => handleClientData(data));
-        myConn.on('error', () => { alert("Erreur connexion"); document.getElementById('loading-overlay').style.display = 'none'; });
+        
+        myConn.on('close', () => {
+            alert("Déconnecté de l'hôte.");
+            quitGame();
+        });
+        
+        // Erreur spécifique à la connexion
+        myConn.on('error', (err) => {
+            console.error(err);
+            alert("Erreur connexion hôte.");
+            document.getElementById('loading-overlay').style.display = 'none';
+        });
+    });
+    
+    peer.on('error', (err) => { 
+        if(err.type === 'peer-unavailable') alert("Partie introuvable. Vérifiez le code.");
+        else alert("Erreur Réseau : " + err.type); 
+        document.getElementById('loading-overlay').style.display = 'none'; 
     });
 }
 
-// --- LOGIQUE INITIATIVE (Méthode Décimale) ---
-
+// --- LOGIQUE INITIATIVE ---
 function actionInitiativeRoll() {
     let btn = document.getElementById('btn-init-roll');
     if(btn) btn.style.display = 'none'; 
@@ -3175,9 +3080,8 @@ function performInitiativeRoll() {
     let p = GAME_STATE.players[GAME_STATE.curr];
     
     GAME_STATE.displayRolls[p.id] = roll;
-
     let increment = roll / Math.pow(10, GAME_STATE.tieDepth);
-    if(!GAME_STATE.initRolls[p.id]) GAME_STATE.initRolls[p.id] = 0;
+    if(GAME_STATE.initRolls[p.id] === undefined) GAME_STATE.initRolls[p.id] = 0;
     GAME_STATE.initRolls[p.id] += increment;
     
     broadcastState('INIT_ANIM', { val: roll, pid: p.id });
@@ -3202,9 +3106,9 @@ function resolveInitiative() {
         GAME_STATE.players.sort((a, b) => (GAME_STATE.initRolls[b.id] || 0) - (GAME_STATE.initRolls[a.id] || 0));
         
         let scoreMap = {};
-        let activeGroup = (GAME_STATE.tiedPlayers.length > 0) ? GAME_STATE.tiedPlayers : GAME_STATE.players.map(pl=>pl.id);
+        let group = (GAME_STATE.tiedPlayers.length > 0) ? GAME_STATE.tiedPlayers : GAME_STATE.players.map(pl=>pl.id);
         
-        activeGroup.forEach(id => {
+        group.forEach(id => {
             let s = parseFloat((GAME_STATE.initRolls[id] || 0).toFixed(4));
             if(!scoreMap[s]) scoreMap[s] = [];
             scoreMap[s].push(id);
@@ -3212,9 +3116,7 @@ function resolveInitiative() {
 
         let newTies = [];
         for(let s in scoreMap) {
-            if(scoreMap[s].length > 1) {
-                newTies.push(...scoreMap[s]);
-            }
+            if(scoreMap[s].length > 1) newTies.push(...scoreMap[s]);
         }
         
         if(newTies.length > 0) {
@@ -3229,7 +3131,7 @@ function resolveInitiative() {
             GAME_STATE.tiedPlayers = [];
             broadcastState('GAME_START');
         }
-    }, 1000);
+    }, 2000); // 2s pour lire le classement final
 }
 
 function updateInitiativeUI() {
