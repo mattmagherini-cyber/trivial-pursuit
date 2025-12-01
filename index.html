@@ -169,7 +169,7 @@
         #confetti-container { position: absolute; width: 100%; height: 100%; top: 0; left: 0; pointer-events: none; overflow: hidden; }
         .confetti { position: absolute; width: 10px; height: 10px; background: #f00; animation: fall 3s linear infinite; }
         @keyframes fall { to { transform: translateY(100vh) rotate(720deg); } }
-        #loading-overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:none; justify-content:center; align-items:center; z-index:7000; font-size:24px; color:#fbbf24; }
+        #loading-overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); display:none; justify-content:center; align-items:center; z-index:7000; font-size:24px; color:#fbbf24; flex-direction: column; gap: 20px;}
         
         #pause-overlay { position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter: blur(5px); display:none; justify-content:center; align-items:center; z-index:8500; flex-direction: column; }
 
@@ -346,7 +346,10 @@
     </div>
 </div>
 
-<div id="loading-overlay">Connexion...</div>
+<div id="loading-overlay">
+    <div>Connexion en cours...</div>
+    <button onclick="location.reload()" class="btn-secondary" style="margin-top:20px;">ANNULER</button>
+</div>
 
 <div id="legend"></div>
 <div id="game-layout">
@@ -410,7 +413,7 @@ const CATS = [
 const DROP_RATES = {
     "EASY": { EASY: 50, NORMAL: 35, HARD: 12, IMPOSSIBLE: 3 },
     "NORMAL": { EASY: 15, NORMAL: 45, HARD: 30, IMPOSSIBLE: 10 },   
-    "HARD": { EASY: 5, NORMAL: 20, HARD: 50, IMPOSSIBLE: 25 },       
+    "HARD": { EASY: 5, NORMAL: 20, HARD: 50, IMPOSSIBLE: 25 },        
     "IMPOSSIBLE": { EASY: 0, NORMAL: 5, HARD: 30, IMPOSSIBLE: 65 } 
 };
 // --- FIN CONFIGURATION ---
@@ -2822,7 +2825,7 @@ const MASTER_DB = {
 };
 
 // =============================================================================
-// 3. MOTEUR DU JEU (RÉSEAU BLINDÉ)
+// 3. MOTEUR DU JEU (RÉSEAU CORRIGÉ)
 // =============================================================================
 
 let GAME_MODE = ''; 
@@ -2835,7 +2838,7 @@ let GAME_STATE = {
     phase: "LOBBY", 
     moves: [],
     question: null,
-    initRolls: {},     
+    initRolls: {},      
     displayRolls: {},  
     tiedPlayers: [],   
     tieDepth: 0,       
@@ -2855,13 +2858,14 @@ const SOUND_VOLUMES = {
     'sfx-win': 0.8, 'bg-music': 0.1, 'sfx-click': 0.3   
 };
 
-// --- CONFIG RESEAU (STUN + KEEPALIVE) ---
+// --- CONFIG RESEAU ROBUSTE (STUN + TIMEOUTS) ---
 const PEER_CONFIG = {
     debug: 1,
-    pingInterval: 5000, // Garde la connexion active sur mobile
+    pingInterval: 5000, 
     config: {
         iceServers: [
             { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun1.l.google.com:19302' },
             { urls: 'stun:global.stun.twilio.com:3478' }
         ]
     }
@@ -2942,6 +2946,7 @@ function quitGame() {
     document.getElementById('chat-container').style.display = 'none'; 
     GAME_STATE = { players: [], curr: 0, difficulty: "NORMAL", phase: "LOBBY", moves: [], question: null, initRolls:{}, displayRolls:{}, tiedPlayers:[], tieDepth:0, paused:false };
     document.getElementById('main-menu').style.display = 'flex';
+    document.getElementById('loading-overlay').style.display = 'none';
 }
 function generateLocalInputs() {
     let nb = document.getElementById('nb-players-local').value;
@@ -2964,7 +2969,7 @@ function sendChat() {
 function addChatMessageToUI(sender, color, txt) { let div = document.getElementById('chat-messages'); let d = document.createElement('div'); d.className = 'chat-msg'; d.innerHTML = `<span class="chat-name" style="color:${color}">${sender}:</span> ${txt}`; div.appendChild(d); div.scrollTop = div.scrollHeight; let c = document.getElementById('chat-container'); if(c.classList.contains('chat-collapsed')) document.getElementById('chat-notif').style.display = 'inline-block'; }
 function broadcastChat(sender, color, txt) { addChatMessageToUI(sender, color, txt); let netMsg = { type: 'CHAT_BROADCAST', data: {sender:sender, color:color, msg:txt} }; if(GAME_MODE === 'HOST') hostConns.forEach(c => c.send(netMsg)); }
 
-// --- INITIALISATION & RESEAU ---
+// --- INITIALISATION & RESEAU (CORRECTIF BUG) ---
 function startLocalGame() {
     GAME_MODE = 'LOCAL'; unlockAudio();
     let nb = document.getElementById('nb-players-local').value;
@@ -3000,7 +3005,7 @@ function initHost() {
     myPseudo = document.getElementById('my-pseudo').value || "Hôte";
     unlockAudio();
     
-    if(peer) { peer.destroy(); peer = null; } // Nettoyage préventif
+    if(peer) { peer.destroy(); peer = null; } 
     
     document.getElementById('loading-overlay').style.display = 'flex';
     peer = new Peer(null, PEER_CONFIG);
@@ -3012,9 +3017,17 @@ function initHost() {
         addPlayerToLobby(id, myPseudo); 
     });
     peer.on('connection', (conn) => {
-        hostConns.push(conn);
-        conn.on('data', (data) => handleHostData(conn, data));
-        conn.on('open', () => { setTimeout(() => { broadcastLobby(); }, 500); });
+        // Eviter doublons si reconnexion
+        if(!hostConns.find(c => c.peer === conn.peer)) {
+            hostConns.push(conn);
+            conn.on('data', (data) => handleHostData(conn, data));
+            conn.on('open', () => { setTimeout(() => { broadcastLobby(); }, 500); });
+            conn.on('close', () => { 
+                hostConns = hostConns.filter(c => c !== conn);
+                let p = GAME_STATE.players.find(pl => pl.id === conn.peer);
+                if(p) broadcastChat("Système", "#ff0000", p.n + " déconnecté.");
+            });
+        }
     });
     peer.on('error', (err) => { 
         alert("Erreur Réseau : " + err.type); 
@@ -3027,19 +3040,38 @@ function initJoin() {
     myPseudo = document.getElementById('my-pseudo').value || "Invité";
     unlockAudio();
     
-    let hostId = document.getElementById('host-id-input').value.trim(); // IMPORTANT : Supprime les espaces
+    let hostId = document.getElementById('host-id-input').value.trim();
     if(!hostId) return alert("Code manquant");
     
-    if(peer) { peer.destroy(); peer = null; } // Nettoyage préventif
+    if(peer) { peer.destroy(); peer = null; }
     
     document.getElementById('loading-overlay').style.display = 'flex';
+    
+    // Timeout de sécurité pour éviter le blocage infini
+    let connectionTimeout = setTimeout(() => {
+        if(document.getElementById('loading-overlay').style.display === 'flex') {
+            alert("Délai d'attente dépassé. Vérifiez le code ou la connexion.");
+            document.getElementById('loading-overlay').style.display = 'none';
+            if(peer) peer.destroy();
+        }
+    }, 10000); // 10 secondes max
+
     peer = new Peer(null, PEER_CONFIG);
     
     peer.on('open', (id) => {
         myPeerId = id;
+        // Connexion sécurisée
         myConn = peer.connect(hostId, {serialization: 'json', reliable: true});
         
+        // Gestion erreur spécifique à la connexion (code invalide etc)
+        myConn.on('error', (err) => {
+            clearTimeout(connectionTimeout);
+            alert("Erreur de connexion à l'hôte.");
+            document.getElementById('loading-overlay').style.display = 'none';
+        });
+
         myConn.on('open', () => {
+            clearTimeout(connectionTimeout);
             document.getElementById('loading-overlay').style.display = 'none';
             showLobby();
             myConn.send({ type: 'JOIN', name: myPseudo, id: myPeerId });
@@ -3051,16 +3083,10 @@ function initJoin() {
             alert("Déconnecté de l'hôte.");
             quitGame();
         });
-        
-        // Erreur spécifique à la connexion
-        myConn.on('error', (err) => {
-            console.error(err);
-            alert("Erreur connexion hôte.");
-            document.getElementById('loading-overlay').style.display = 'none';
-        });
     });
     
     peer.on('error', (err) => { 
+        clearTimeout(connectionTimeout);
         if(err.type === 'peer-unavailable') alert("Partie introuvable. Vérifiez le code.");
         else alert("Erreur Réseau : " + err.type); 
         document.getElementById('loading-overlay').style.display = 'none'; 
